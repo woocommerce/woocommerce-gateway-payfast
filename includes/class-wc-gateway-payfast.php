@@ -987,9 +987,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		$results = wp_remote_request( $api_endpoint, $api_args );
 
+		// Check PayFast server response
 		if ( 200 !== $results['response']['code'] ) {
 			$this->log( "Error posting API request:\n" . print_r( $results['response'], true ) );
-			return new WP_Error( $results['response']['code'], $results['response']['message'], $results );
+			return new WP_Error( $results['response']['code'], json_decode( $results['body'] )->data->response, $results );
+		}
+
+		// Check adhoc bank charge response
+		if ( $command == 'adhoc' && 'true' !== json_decode( $results['body'])->data->response ) {
+			$this->log( "Error posting API request:\n" . print_r( json_decode( $results['body'] )->data->response , true ) );
+			return new WP_Error( json_decode( $results['body'] )->data->message, json_decode( $results['body'] )->data->response, $results );
 		}
 
 		$maybe_json = json_decode( $results['body'], true );
