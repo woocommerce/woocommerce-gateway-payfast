@@ -8,7 +8,7 @@
  * Version: 1.4.12
  * Requires at least: 4.4
  * Tested up to: 5.0
- * WC tested up to: 3.6
+ * WC tested up to: 3.7
  * WC requires at least: 2.6
  *
  */
