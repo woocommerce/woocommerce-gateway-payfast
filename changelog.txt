@@ -1,5 +1,8 @@
 *** PayFast Changelog ***
 
+2019-xx-xx - version 1.4.13
+ * Tweak - WC tested up to 3.7
+
 2019-04-16 - version 1.4.12
  * Tweak - WC tested up to 3.6
 
