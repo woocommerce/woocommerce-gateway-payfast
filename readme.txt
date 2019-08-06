@@ -2,9 +2,9 @@
 Contributors: automattic, royho, akeda, mattyza, bor0, woothemes, dwainm, laurendavissmith001
 Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 4.4
-Tested up to: 5.0
+Tested up to: 5.2
 Requires PHP: 5.6
-Stable tag: 1.4.12
+Stable tag: 1.4.13
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,19 +38,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.4.12 - 2019-04-16
-* Tweak - WC tested up to 3.6
+= 2019-08-06 - version 1.4.13 =
+ * Tweak - WC tested up to 3.7
 
-= 1.4.11 - 2018-11-19 =
-* Update - WP tested up to 5.0
-
-= 1.4.10 - 2018-09-26 =
-* Update - WC tested up to 3.5
-
-= 1.4.9 - 2018-05-22 =
-* Update - WC tested up to 3.4
-* Update - Privacy policy notification.
-* Update - Export/erasure hooks added.
-
-= 1.4.8 - 2018-05-01 =
-* Tweak - Add support for X-Forwarded-For header.
+[See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce-gateway-payfast/master/changelog.txt).
