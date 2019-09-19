@@ -1,0 +1,14 @@
+{
+  "name": "woocommerce-gateway-payfast",
+  "title": "WooCommerce Gateway Payfast",
+  "version": "1.4.13",
+  "license": "GPL-3.0",
+  "homepage": "https://wordpress.org/plugins/woocommerce-payfast-gateway/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/woocommerce/woocommerce-gateway-payfast.git"
+  },
+  "config": {
+    "wp_org_slug": "woocommerce-payfast-gateway"
+  }
+}
