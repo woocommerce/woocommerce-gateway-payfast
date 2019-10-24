@@ -5,16 +5,14 @@
  * Description: Receive payments using the South African PayFast payments provider.
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
- * Version: 1.4.12
+ * Version: 1.4.14
  * Requires at least: 4.4
- * Tested up to: 5.0
- * WC tested up to: 3.6
+ * Tested up to: 5.3
+ * WC tested up to: 3.8
  * WC requires at least: 2.6
  *
  */
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Initialize the gateway.
@@ -25,7 +23,7 @@ function woocommerce_payfast_init() {
 		return;
 	}
 
-	define( 'WC_GATEWAY_PAYFAST_VERSION', '1.4.12' );
+	define( 'WC_GATEWAY_PAYFAST_VERSION', '1.4.14' );
 
 	require_once( plugin_basename( 'includes/class-wc-gateway-payfast.php' ) );
 	require_once( plugin_basename( 'includes/class-wc-gateway-payfast-privacy.php' ) );

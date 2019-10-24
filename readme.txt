@@ -38,7 +38,12 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.4.12 - 2019-04-16
+= 1.4.14 - 2019-10-24
+ * Fix   - Incorrect API response handling for subscription renewal payments.
+ * Tweak - WC tested up to 3.8
+ * Tweak - WP tested up to 3.8
+
+= 1.4.12 - 2019-10-24
 * Tweak - WC tested up to 3.6
 
 = 1.4.11 - 2018-11-19 =
