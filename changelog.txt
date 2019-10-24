@@ -1,5 +1,10 @@
 *** PayFast Changelog ***
 
+2019-10-24 - version 1.4.14
+ * Fix   - Incorrect API response handling for subscription renewal payments.
+ * Tweak - WC tested up to 3.8
+ * Tweak - WP tested up to 3.8
+
 = 2019-08-06 - version 1.4.13 =
  * Tweak - WC tested up to 3.7
 
