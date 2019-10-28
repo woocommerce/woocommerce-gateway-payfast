@@ -41,7 +41,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 = 1.4.14 - 2019-10-24
  * Fix   - Incorrect API response handling for subscription renewal payments.
  * Tweak - WC tested up to 3.8
- * Tweak - WP tested up to 3.8
+ * Tweak - WP tested up to 5.3
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce-gateway-payfast/master/changelog.txt).
 
