@@ -2,7 +2,7 @@
 Contributors: automattic, royho, akeda, mattyza, bor0, woothemes, dwainm, laurendavissmith001
 Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 4.4
-Tested up to: 5.3
+Tested up to: 5.4
 Requires PHP: 5.6
 Stable tag: 1.4.14
 License: GPLv3
@@ -38,7 +38,11 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.4.14 - 2019-10-24
+= 1.4.15 - 2020-xx-xx =
+ * Tweak - WC tested up to 4.0
+ * Tweak - WP tested up to 5.4
+
+= 1.4.14 - 2019-10-24 =
  * Fix   - Incorrect API response handling for subscription renewal payments.
  * Tweak - WC tested up to 3.8
  * Tweak - WP tested up to 5.3
