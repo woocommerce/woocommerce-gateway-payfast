@@ -1,6 +1,6 @@
 *** PayFast Changelog ***
 
-= 1.4.15 - 2020-xx-xx =
+= 1.4.15 - 2020-03-30 =
  * Tweak - WC tested up to 4.0
  * Tweak - WP tested up to 5.4
 
