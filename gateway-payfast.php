@@ -23,7 +23,7 @@ function woocommerce_payfast_init() {
 		return;
 	}
 
-	define( 'WC_GATEWAY_PAYFAST_VERSION', '1.4.15' );
+	define( 'WC_GATEWAY_PAYFAST_VERSION', '1.4.15' ); // WRCS: DEFINED_VERSION.
 
 	require_once( plugin_basename( 'includes/class-wc-gateway-payfast.php' ) );
 	require_once( plugin_basename( 'includes/class-wc-gateway-payfast-privacy.php' ) );
