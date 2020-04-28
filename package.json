@@ -8,6 +8,16 @@
     "type": "git",
     "url": "git://github.com/woocommerce/woocommerce-gateway-payfast.git"
   },
+  "devDependencies": {
+    "node-wp-i18n": "~1.2.3"
+  },
+  "scripts": {
+    "build": "npm run makepot",
+    "postbuild": "npm run -s && npm run archive",
+    "archive": "composer archive --file=$npm_package_name --format=zip",
+    "postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
+    "makepot": "wpi18n makepot --domain-path languages --pot-file $npm_package_name.pot --type plugin --main-file $npm_package_name.php --exclude node_modules,tests,docs"
+  },
   "config": {
     "wp_org_slug": "woocommerce-payfast-gateway"
   }
