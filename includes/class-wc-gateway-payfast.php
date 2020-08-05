@@ -1228,6 +1228,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
 			$source_ip = (string) rest_is_ip_address( trim( current( preg_split( '/[,:]/', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ) ) ) ) ?: $source_ip;
 		}
+		
+		// Adds support for CloudFlare "HTTP_CF_CONNECTING_IP"
+        	// https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-Cloudflare-handle-HTTP-Request-headers-
+        	if ( isset($_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
+            		$source_ip = (string) rest_is_ip_address( trim( current( sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) ) ) ) ?: $source_ip;
+        	}
 
 		$this->log( "Valid IPs:\n" . print_r( $valid_ips, true ) );
 		$is_valid_ip = in_array( $source_ip, $valid_ips );
