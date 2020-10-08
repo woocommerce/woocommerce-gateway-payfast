@@ -1,5 +1,5 @@
 === WooCommerce PayFast Gateway ===
-Contributors: automattic, royho, akeda, mattyza, bor0, woothemes, dwainm, laurendavissmith001
+Contributors: woocommerce, automattic, royho, akeda, mattyza, bor0, woothemes, dwainm, laurendavissmith001
 Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 4.4
 Tested up to: 5.4
