@@ -994,9 +994,14 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		// Check adhoc bank charge response
-		if ( $command == 'adhoc' && 'true' !== json_decode( $results['body'])->data->response ) {
-			$this->log( "Error posting API request:\n" . print_r( json_decode( $results['body'] )->data , true ) );
-			return new WP_Error( json_decode( $results['body'] )->data->message, json_decode( $results['body'] )->data->response, $results );
+		$results_data = json_decode( $results['body'], true )['data'];
+		if ( $command == 'adhoc' && 'true' !== $results_data['response'] ) {
+			$this->log( "Error posting API request:\n" . print_r( $results_data , true ) );
+
+			$code         = is_array( $results_data['response'] ) ? $results_data['response']['code'] : $results_data['response'];
+			$message      = is_array( $results_data['response'] ) ? $results_data['response']['reason'] : $results_data['message'];
+			// Use trim here to display it properly e.g. on an order note, since PayFast can include CRLF in a message.
+			return new WP_Error( $code, trim( $message ), $results );
 		}
 
 		$maybe_json = json_decode( $results['body'], true );
