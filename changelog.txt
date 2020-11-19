@@ -1,5 +1,8 @@
 *** PayFast Changelog ***
 
+= 1.4.16 - 2020-xx-xx =
+ * Fix - Fix Object could not be converted to string when renewing a subscription.
+
 = 1.4.15 - 2020-03-30 =
  * Tweak - WC tested up to 4.0
  * Tweak - WP tested up to 5.4
