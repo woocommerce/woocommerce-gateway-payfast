@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 4.4
 Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 1.4.16
+Stable tag: 1.4.17
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,7 +38,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.4.17 - 2020-xx-xx =
+= 1.4.17 - 2020-11-25 =
  * Fix   - Fix Object could not be converted to string when renewing a subscription.
  * Tweak - WC tested up to 4.7
  * Tweak - WP tested up to 5.6
