@@ -38,8 +38,11 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.4.16 - 2020-xx-xx =
- * Fix - Fix Object could not be converted to string when renewing a subscription.
+= 1.4.17 - 2020-xx-xx =
+ * Fix   - Fix Object could not be converted to string when renewing a subscription.
+ * Tweak - WC tested up to 4.7
+ * Tweak - WP tested up to 5.6
+ * Tweak - PHP 8.0 compatibility.
 
 = 1.4.15 - 2020-03-30 =
  * Tweak - WC tested up to 4.0
