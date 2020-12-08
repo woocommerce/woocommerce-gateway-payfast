@@ -1,0 +1,41 @@
+version: '3'
+
+volumes:
+  ## Kludge for not having the ./docker directory bound recursively
+  dockerdirectory:
+
+services:
+  wordpress:
+    build: ./docker/wordpress_xdebug
+    container_name: payfast_wordpress
+    image: wordpress
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db:mysql
+    ports:
+      - "8091:80"
+    environment:
+      - WORDPRESS_DB_PASSWORD=password
+    volumes:
+      - ./docker/wordpress:/var/www/html/
+      - .:/var/www/html/wp-content/plugins/woocommerce-gateway-payfast
+      - dockerdirectory:/var/www/html/wp-content/plugins/woocommerce-payments/docker
+      - ./docker/bin:/var/scripts
+  db:
+    container_name: woocommerce_payments_mysql
+    image: mysql:5.7
+    ports:
+      - "5678:3306"
+    env_file:
+      - default.env
+    volumes:
+      - ./docker/data:/var/lib/mysql
+  phpMyAdmin:
+    container_name: woocommerce_payments_phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "8083:80"
+    env_file:
+      - default.env
