@@ -12,7 +12,7 @@
  * WC requires at least: 2.6
  *
  */
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit
 
 /**
  * Initialize the gateway.
