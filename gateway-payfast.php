@@ -5,7 +5,7 @@
  * Description: Receive payments using the South African PayFast payments provider.
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
- * Version: 9.9.17
+ * Version: 1.4.17
  * Requires at least: 4.4
  * Tested up to: 5.6
  * WC tested up to: 4.7
