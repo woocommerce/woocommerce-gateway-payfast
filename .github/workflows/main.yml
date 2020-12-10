@@ -1,4 +1,5 @@
 # On push to staging deploy the plugin to zapaymentstaging.mystagingwebsite.comon:
+on:
   push:
     branches:
      - staging
