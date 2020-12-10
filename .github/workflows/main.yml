@@ -1,6 +1,4 @@
-# This is a basic workflow to help you get started with Actions
-# Controls when the action will run. 
-on:
+# On push to staging deploy the plugin to zapaymentstaging.mystagingwebsite.comon:
   push:
     branches:
      - staging
@@ -12,11 +10,13 @@ jobs:
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2.3.2
-    
+
+    - name: ⚙️ Install Utilities
+      run: sudo apt-get update && sudo apt-get install -y lftp=4.8.1-1ubuntu0.1 --allow-downgrades;
+      
+
+    - name: 🔑 Prepare SSH key and known hosts
+      run:  mkdir -p ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts && ssh-keyscan sftp.pressable.com >> ~/.ssh/known_hosts
+        
     - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
-      with:
-        server: sftp.pressable.com
-        username: ${{ secrets.SFTP_USER }}
-        password: ${{ secrets.SFTP_PASSWORD }}
-        server-dir: htdocs/wp-content/plugins/woocommerce-payfast-gateway/
+      run: lftp -p22 sftp://${{ secrets.SFTP_USER }}:${{ secrets.SFTP_PASSWORD }}@sftp.pressable.com -e "mirror -v -R --exclude .git/ --exclude docker/ --exclude .github/ ./ ./wp-content/plugins/woocommerce-payfast-gateway/"
