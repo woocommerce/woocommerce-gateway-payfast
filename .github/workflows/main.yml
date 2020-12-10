@@ -1,5 +1,4 @@
-# On push to staging deploy the plugin to zapaymentstaging.mystagingwebsite.com
-on:
+# On push to staging deploy the plugin to zapaymentstaging.mystagingwebsite.comon:
   push:
     branches:
      - staging
@@ -21,4 +20,3 @@ jobs:
         
     - name: 📂 Sync files
       run: lftp -p22 sftp://${{ secrets.SFTP_USER }}:${{ secrets.SFTP_PASSWORD }}@sftp.pressable.com -e "mirror -v -R --exclude .git/ --exclude docker/ --exclude .github/ ./ ./wp-content/plugins/woocommerce-payfast-gateway/"
-
