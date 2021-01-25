@@ -48,5 +48,5 @@ If you get stuck, you can ask for help in the Plugin Forum.
  * Tweak - WC tested up to 4.0
  * Tweak - WP tested up to 5.4
 
-[See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce-gateway-payfast/master/changelog.txt).
+[See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce-gateway-payfast/trunk/changelog.txt).
 
