@@ -88,7 +88,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		add_action( 'woocommerce_subscription_status_cancelled', array( $this, 'cancel_subscription_listener' ) );
 		add_action( 'wc_pre_orders_process_pre_order_completion_payment_' . $this->id, array( $this, 'process_pre_order_payments' ) );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
-		
+
 		//Add fees to order
 		add_action( 'woocommerce_admin_order_totals_after_total', array( $this, 'display_order_fee') );
 		add_action( 'woocommerce_admin_order_totals_after_total', array( $this, 'display_order_net'), 20 );
@@ -277,44 +277,44 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		$payfast_args_array = array();
-        $sign_strings = [];
+		$sign_strings = [];
 		foreach ( $this->data_to_send as $key => $value ) {
-		    if ($key !== 'source') {
-                $sign_strings[] = esc_attr( $key ) . '=' . urlencode(str_replace('&amp;', '&', trim( $value )));
-            }
+			if ($key !== 'source') {
+				$sign_strings[] = esc_attr( $key ) . '=' . urlencode(str_replace('&amp;', '&', trim( $value )));
+			}
 			$payfast_args_array[] = '<input type="hidden" name="' . esc_attr( $key ) . '" value="' . esc_attr( $value ) . '" />';
 		}
 
 		if (!empty($this->pass_phrase)) {
-            $payfast_args_array[] = '<input type="hidden" name="signature" value="' . md5(implode('&', $sign_strings) . '&passphrase=' . urlencode($this->pass_phrase)) . '" />';
-        } else {
-            $payfast_args_array[] = '<input type="hidden" name="signature" value="' . md5(implode('&', $sign_strings)) . '" />';
-        }
+			$payfast_args_array[] = '<input type="hidden" name="signature" value="' . md5(implode('&', $sign_strings) . '&passphrase=' . urlencode($this->pass_phrase)) . '" />';
+		} else {
+			$payfast_args_array[] = '<input type="hidden" name="signature" value="' . md5(implode('&', $sign_strings)) . '" />';
+		}
 
 		return '<form action="' . esc_url( $this->url ) . '" method="post" id="payfast_payment_form">
-				' . implode( '', $payfast_args_array ) . '
-				<input type="submit" class="button-alt" id="submit_payfast_payment_form" value="' . __( 'Pay via PayFast', 'woocommerce-gateway-payfast' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-payfast' ) . '</a>
-				<script type="text/javascript">
-					jQuery(function(){
-						jQuery("body").block(
-							{
-								message: "' . __( 'Thank you for your order. We are now redirecting you to PayFast to make payment.', 'woocommerce-gateway-payfast' ) . '",
-								overlayCSS:
-								{
-									background: "#fff",
-									opacity: 0.6
-								},
-								css: {
-									padding:        20,
-									textAlign:      "center",
-									color:          "#555",
-									border:         "3px solid #aaa",
-									backgroundColor:"#fff",
-									cursor:         "wait"
-								}
-							});
-						jQuery( "#submit_payfast_payment_form" ).click();
-					});
+			' . implode( '', $payfast_args_array ) . '
+			<input type="submit" class="button-alt" id="submit_payfast_payment_form" value="' . __( 'Pay via PayFast', 'woocommerce-gateway-payfast' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-payfast' ) . '</a>
+			<script type="text/javascript">
+			jQuery(function(){
+				jQuery("body").block(
+			{
+				message: "' . __( 'Thank you for your order. We are now redirecting you to PayFast to make payment.', 'woocommerce-gateway-payfast' ) . '",
+					overlayCSS:
+					{
+						background: "#fff",
+							opacity: 0.6
+	},
+		css: {
+		padding:        20,
+			textAlign:      "center",
+			color:          "#555",
+			border:         "3px solid #aaa",
+			backgroundColor:"#fff",
+			cursor:         "wait"
+	}
+	});
+	jQuery( "#submit_payfast_payment_form" ).click();
+	});
 				</script>
 			</form>';
 	}
@@ -1353,17 +1353,17 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			. __( 'PayFast requires a passphrase to work.', 'woocommerce-gateway-payfast' )
 			. '</p></div>';
 	}
-	
+
 	/**
 	 * Displays the amount_fee as returned by payfast.
 	 *
 	 * @param int $order_id The ID of the order.
 	 */
 	public function display_order_fee( $order_id ) {
-		
+
 		$order = wc_get_order( $order_id );
 		$fee = get_post_meta( $order->ID, 'payfast_amount_fee', TRUE);
-		
+
 		if (! $fee ) {
 			return;
 		}
@@ -1389,10 +1389,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param int $order_id The ID of the order.
 	 */
 	public function display_order_net( $order_id ) {
-		
+
 		$order = wc_get_order( $order_id );
 		$net = get_post_meta( $order->ID, 'payfast_amount_net', TRUE);
-		
+
 		if (! $net ) {
 			return;
 		}
@@ -1411,5 +1411,5 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		</tr>
 
 		<?php
-	}	
+	}
 }
