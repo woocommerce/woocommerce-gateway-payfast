@@ -1,0 +1,23 @@
+# On push to staging deploy the plugin to zapaymentstaging.mystagingwebsite.comon:
+on:
+  push:
+    branches:
+     - staging
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v2.3.2
+
+    - name: ⚙️ Install Utilities
+      run: sudo apt-get update && sudo apt-get install -y lftp=4.8.1-1ubuntu0.1 --allow-downgrades;
+      
+
+    - name: 🔑 Prepare SSH key and known hosts
+      run:  mkdir -p ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts && ssh-keyscan sftp.pressable.com >> ~/.ssh/known_hosts
+        
+    - name: 📂 Sync files
+      run: lftp -p22 sftp://${{ secrets.SFTP_USER }}:${{ secrets.SFTP_PASSWORD }}@sftp.pressable.com -e "mirror -v -R --exclude .git/ --exclude docker/ --exclude .github/ ./ ./wp-content/plugins/woocommerce-payfast-gateway/"

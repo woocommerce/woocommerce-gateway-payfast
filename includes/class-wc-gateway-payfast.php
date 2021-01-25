@@ -277,9 +277,19 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		$payfast_args_array = array();
+        $sign_strings = [];
 		foreach ( $this->data_to_send as $key => $value ) {
+		    if ($key !== 'source') {
+                $sign_strings[] = esc_attr( $key ) . '=' . urlencode(str_replace('&amp;', '&', trim( $value )));
+            }
 			$payfast_args_array[] = '<input type="hidden" name="' . esc_attr( $key ) . '" value="' . esc_attr( $value ) . '" />';
 		}
+
+		if (!empty($this->pass_phrase)) {
+            $payfast_args_array[] = '<input type="hidden" name="signature" value="' . md5(implode('&', $sign_strings) . '&passphrase=' . urlencode($this->pass_phrase)) . '" />';
+        } else {
+            $payfast_args_array[] = '<input type="hidden" name="signature" value="' . md5(implode('&', $sign_strings)) . '" />';
+        }
 
 		return '<form action="' . esc_url( $this->url ) . '" method="post" id="payfast_payment_form">
 				' . implode( '', $payfast_args_array ) . '
