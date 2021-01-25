@@ -88,6 +88,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		add_action( 'woocommerce_subscription_status_cancelled', array( $this, 'cancel_subscription_listener' ) );
 		add_action( 'wc_pre_orders_process_pre_order_completion_payment_' . $this->id, array( $this, 'process_pre_order_payments' ) );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
+		
+		//Add fees to order
+		add_action( 'woocommerce_admin_order_totals_after_total', array( $this, 'display_order_fee') );
+		add_action( 'woocommerce_admin_order_totals_after_total', array( $this, 'display_order_net'), 20 );
 	}
 
 	/**
@@ -614,6 +618,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function handle_itn_payment_complete( $data, $order, $subscriptions ) {
 		$this->log( '- Complete' );
 		$order->add_order_note( __( 'ITN payment completed', 'woocommerce-gateway-payfast' ) );
+		$order->update_meta_data( 'payfast_amount_fee', $data['amount_fee'] );
+		$order->update_meta_data( 'payfast_amount_net', $data['amount_net'] );
 		$order_id = self::get_order_prop( $order, 'id' );
 
 		// Store token for future subscription deductions.
@@ -1347,4 +1353,63 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			. __( 'PayFast requires a passphrase to work.', 'woocommerce-gateway-payfast' )
 			. '</p></div>';
 	}
+	
+	/**
+	 * Displays the amount_fee as returned by payfast.
+	 *
+	 * @param int $order_id The ID of the order.
+	 */
+	public function display_order_fee( $order_id ) {
+		
+		$order = wc_get_order( $order_id );
+		$fee = get_post_meta( $order->ID, 'payfast_amount_fee', TRUE);
+		
+		if (! $fee ) {
+			return;
+		}
+		?>
+
+		<tr>
+			<td class="label payfast-fee">
+				<?php echo wc_help_tip( __( 'This represents the fee Payfast collects for the transaction.', 'woocommerce-gateway-payfast' ) ); ?>
+				<?php esc_html_e( 'Payfast Fee:', 'woocommerce-gateway-payfast' ); ?>
+			</td>
+			<td width="1%"></td>
+			<td class="total">
+				<?php echo wc_price( $fee, array( 'decimals' => 2 ));  ?>
+			</td>
+		</tr>
+
+		<?php
+	}
+
+	/**
+	 * Displays the amount_net as returned by payfast.
+	 *
+	 * @param int $order_id The ID of the order.
+	 */
+	public function display_order_net( $order_id ) {
+		
+		$order = wc_get_order( $order_id );
+		$net = get_post_meta( $order->ID, 'payfast_amount_net', TRUE);
+		
+		if (! $net ) {
+			return;
+		}
+
+		?>
+
+		<tr>
+			<td class="label payfast-net">
+				<?php echo wc_help_tip( __( 'This represents the net total that was credited to your Payfast account.', 'woocommerce-gateway-payfast' ) ); ?>
+				<?php esc_html_e( 'Amount Net:', 'woocommerce-gateway-payfast' ); ?>
+			</td>
+			<td width="1%"></td>
+			<td class="total">
+				<?php echo wc_price( $net, array( 'decimals' => 2 ) ); ?>
+			</td>
+		</tr>
+
+		<?php
+	}	
 }
