@@ -1,5 +1,8 @@
 name: Sync Woo Labels to Repository
-on: [issues, pull_request]
+on:
+  schedule:
+    # run at noon every monday
+    - cron:  '0 12 * * 1'
 jobs:
   sync-labels:
     runs-on: ubuntu-latest
