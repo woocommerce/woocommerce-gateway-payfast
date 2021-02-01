@@ -1,0 +1,11 @@
+name: Sync Woo Labels to Repository
+on: [issues, pull_request]
+jobs:
+  sync-labels:
+    runs-on: ubuntu-latest
+    name: Sync repository labels
+    steps:
+      - uses: woocommerce/woo-std-labels@v1
+        with:
+          labels-path: /home/runner/work/_actions/woocommerce/woo-std-labels/v1/labels.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
