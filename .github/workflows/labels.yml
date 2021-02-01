@@ -1,0 +1,14 @@
+name: Sync Woo Labels to Repository
+on:
+  schedule:
+    # run at noon every monday
+    - cron:  '0 12 * * 1'
+jobs:
+  sync-labels:
+    runs-on: ubuntu-latest
+    name: Sync repository labels
+    steps:
+      - uses: woocommerce/woo-std-labels@v1
+        with:
+          labels-path: /home/runner/work/_actions/woocommerce/woo-std-labels/v1/labels.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
