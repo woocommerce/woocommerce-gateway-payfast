@@ -38,6 +38,10 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.4.18 - 2021-xx-xx =
+ * Add fees to order
+ * Add signature to the request to PayFast
+
 = 1.4.17 - 2020-11-25 =
  * Fix   - Fix Object could not be converted to string when renewing a subscription.
  * Tweak - WC tested up to 4.7
