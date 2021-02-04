@@ -38,7 +38,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.4.18 - 2021-xx-xx =
+= 1.4.18 - 2021-02-04 =
  * Add fees to order
  * Add signature to the request to PayFast
  * Tweak - WC 4.9.2 compatibility.
