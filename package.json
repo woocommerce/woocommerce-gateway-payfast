@@ -9,10 +9,16 @@
     "url": "git://github.com/woocommerce/woocommerce-gateway-payfast.git"
   },
   "devDependencies": {
+    "@woocommerce/dependency-extraction-webpack-plugin": "^1.4.0",
+    "@woocommerce/eslint-plugin": "^1.1.0",
+    "@wordpress/scripts": "^13.0.2",
     "node-wp-i18n": "~1.2.3"
   },
   "scripts": {
-    "build": "npm run makepot",
+    "build": "npm run makepot && npm run build:webpack",
+    "build:webpack": "wp-scripts build client/blocks/index.js",
+    "start:webpack": "rimraf build/* && wp-scripts start client/blocks/index.js",
+    "lint:js": "wp-scripts lint-js",
     "postbuild": "npm run -s && npm run archive",
     "archive": "composer archive --file=$npm_package_name --format=zip",
     "postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",

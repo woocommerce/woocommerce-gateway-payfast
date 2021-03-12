@@ -25,6 +25,6 @@ tests/e2e/config/local-*
 
 /vendor/
 
-dist
+build
 
 woocommerce-gateway-payfast.zip
