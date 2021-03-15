@@ -1362,7 +1362,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function display_order_fee( $order_id ) {
 
 		$order = wc_get_order( $order_id );
-		$fee = get_post_meta( $order->ID, 'payfast_amount_fee', TRUE);
+		$fee = get_post_meta( self::get_order_prop( $order, 'id' ), 'payfast_amount_fee', TRUE);
 
 		if (! $fee ) {
 			return;
@@ -1391,7 +1391,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function display_order_net( $order_id ) {
 
 		$order = wc_get_order( $order_id );
-		$net = get_post_meta( $order->ID, 'payfast_amount_net', TRUE);
+		$net = get_post_meta( self::get_order_prop( $order, 'id' ), 'payfast_amount_net', TRUE);
 
 		if (! $net ) {
 			return;
