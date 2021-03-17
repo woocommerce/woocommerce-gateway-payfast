@@ -8,6 +8,10 @@
     "type": "git",
     "url": "git://github.com/woocommerce/woocommerce-gateway-payfast.git"
   },
+  "engines": {
+    "node": ">=12.0.0",
+    "npm": ">=6.9.0"
+  },
   "devDependencies": {
     "@woocommerce/dependency-extraction-webpack-plugin": "^1.4.0",
     "@woocommerce/eslint-plugin": "^1.1.0",
