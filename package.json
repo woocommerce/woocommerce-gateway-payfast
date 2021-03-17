@@ -16,7 +16,7 @@
   },
   "scripts": {
     "build": "npm run makepot && npm run build:webpack",
-    "build:webpack": "wp-scripts build client/blocks/index.js",
+    "build:webpack": "rimraf build/* && wp-scripts build client/blocks/index.js",
     "start:webpack": "rimraf build/* && wp-scripts start client/blocks/index.js",
     "lint:js": "wp-scripts lint-js",
     "postbuild": "npm run -s && npm run archive",
