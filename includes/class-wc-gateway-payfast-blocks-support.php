@@ -58,8 +58,7 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 		);
 		wp_set_script_translations(
 			'wc-payfast-blocks-integration',
-			'woocommerce-gateway-payfast',
-			WC_GATEWAY_PAYFAST_PATH . '/languages'
+			'woocommerce-gateway-payfast'
 		);
 		return [ 'wc-payfast-blocks-integration' ];
 	}
