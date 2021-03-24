@@ -28,7 +28,10 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 	 * @return boolean
 	 */
 	public function is_active() {
-		return filter_var( $this->get_setting( 'enabled', false ), FILTER_VALIDATE_BOOLEAN );
+		$payment_gateways_class   = WC()->payment_gateways();
+		$payment_gateways         = $payment_gateways_class->payment_gateways();
+
+		return $payment_gateways['payfast']->is_valid_for_use();
 	}
 
 	/**
