@@ -169,6 +169,19 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Get the required form field keys for setup.
+	 *
+	 * @return array
+	 */
+	public function get_setup_form_field_keys() {
+		return array(
+			'merchant_id',
+			'merchant_key',
+			'pass_phrase',
+		);
+	}
+
+	/**
 	 * add_testmode_admin_settings_notice()
 	 * Add a notice to the merchant_key and merchant_id fields when in test mode.
 	 *
