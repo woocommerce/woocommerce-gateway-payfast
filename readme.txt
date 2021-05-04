@@ -38,6 +38,10 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.4.19 - 2021-xx-xx =
+ * Add - support for the Cart and Checkout blocks included
+ * Fix - Error notice from direct access to the order id property.
+
 = 1.4.18 - 2021-02-04 =
  * Add fees to order
  * Add signature to the request to PayFast
