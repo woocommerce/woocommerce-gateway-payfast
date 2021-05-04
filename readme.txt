@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 4.4
 Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 1.4.18
+Stable tag: 1.4.19
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,7 +38,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.4.19 - 2021-xx-xx =
+= 1.4.19 - 2021-05-04 =
  * Add - support for the Cart and Checkout blocks included
  * Fix - Error notice from direct access to the order id property.
 

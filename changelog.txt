@@ -1,6 +1,6 @@
 *** PayFast Changelog ***
 
-= 1.4.19 - 2021-xx-xx =
+= 1.4.19 - 2021-05-04 =
  * Add - support for the Cart and Checkout blocks included
  * Fix - Error notice from direct access to the order id property.
 
