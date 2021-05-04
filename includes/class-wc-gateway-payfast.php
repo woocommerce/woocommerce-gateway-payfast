@@ -9,6 +9,7 @@
  * @category Payment Gateways
  * @author WooCommerce
  */
+
 class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 	/**
@@ -173,11 +174,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 *
 	 * @return array
 	 */
-	public function get_setup_form_field_keys() {
+	public function get_required_settings_keys() {
 		return array(
 			'merchant_id',
 			'merchant_key',
-			'pass_phrase',
+			'pass_phrase'
 		);
 	}
 
