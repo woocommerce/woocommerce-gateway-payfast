@@ -10,6 +10,7 @@
  * @author WooCommerce
  */
 
+
 class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 	/**
@@ -180,6 +181,15 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'merchant_key',
 			'pass_phrase'
 		);
+	}
+
+	/**
+	 * Determine if the gateway still requires setup.
+	 *
+	 * @return bool
+	 */
+	public function needs_setup() {
+		return ! $this->merchant_id || ! $this->merchant_key || ! $this->pass_phrase;
 	}
 
 	/**
