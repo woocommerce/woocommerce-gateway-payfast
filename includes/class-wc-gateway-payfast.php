@@ -189,7 +189,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function needs_setup() {
-		return ! $this->merchant_id || ! $this->merchant_key || ! $this->pass_phrase;
+		return ! $this->get_option( 'merchant_id' ) || ! $this->get_option( 'merchant_key' ) || ! $this->get_option( 'pass_phrase' );
 	}
 
 	/**
