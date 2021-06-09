@@ -69,7 +69,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$this->response_url	    = add_query_arg( 'wc-api', 'WC_Gateway_PayFast', home_url( '/' ) );
 		$this->send_debug_email = 'yes' === $this->get_option( 'send_debug_email' );
 		$this->description      = $this->get_option( 'description' );
-		$this->enabled          = $this->is_valid_for_use() ? 'yes': 'no'; // Check if the base currency supports this gateway.
+		$this->enabled          = 'yes' === $this->get_option( 'enabled' ) ? 'yes' : 'no';
 		$this->enable_logging   = 'yes' === $this->get_option( 'enable_logging' );
 
 		// Setup the test data, if in test mode.
