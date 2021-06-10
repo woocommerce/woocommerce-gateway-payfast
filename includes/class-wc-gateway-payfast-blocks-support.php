@@ -30,7 +30,7 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 		$payment_gateways_class   = WC()->payment_gateways();
 		$payment_gateways         = $payment_gateways_class->payment_gateways();
 
-		return $payment_gateways['payfast']->is_valid_for_use();
+		return $payment_gateways['payfast']->enabled; // We can safely bind to this flag, because we don't allow it to be active if anything is missing in the constructor.
 	}
 
 	/**
