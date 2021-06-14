@@ -53,7 +53,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		);
 
 		$this->init_form_fields();
-		$this->validate_settings();
 		$this->init_settings();
 
 		if ( ! is_admin() ) {
@@ -93,23 +92,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		//Add fees to order
 		add_action( 'woocommerce_admin_order_totals_after_total', array( $this, 'display_order_fee') );
 		add_action( 'woocommerce_admin_order_totals_after_total', array( $this, 'display_order_net'), 20 );
-	}
-
-	/**
-	 * Checks the requird parameters and disables the gateway if any errors found
-	 *
-	 * @return  void
-	 */
-	public function validate_settings()
-	{
-		// Check for requirement errors.
-		$errors = $this->check_requirements();
-
-		// If any error exists;
-		if ( 0 < count( $errors ) ) {
-			// Disable the gateway.
-			$this->update_option( 'enabled', 'no' );
-		}
 	}
 
 	/**
@@ -219,6 +201,19 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		];
 
 		return array_filter( $errors );
+	}
+
+	/**
+	 * Check if the gateway is available for use.
+	 *
+	 * @return bool
+	 */
+	public function is_available() {
+
+		$errors = $this->check_requirements();
+
+		// Prevent using this gateway on frontend if there are any configuration errors.
+		return 0 === count( $errors );
 	}
 
 	/**
@@ -1388,6 +1383,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	*  Show possible admin notices
 	*/
 	public function admin_notices() {
+
 		// Get requirement errors.
 		$errors_to_show = $this->check_requirements();
 
@@ -1396,12 +1392,17 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			return;
 		}
 
+		// If the gateway isn't enabled, don't show it.
+		if ( "no" ===  $this->enabled ) {
+			return;
+		}
+
 		// Use transients to display the admin notice once after saving values.
 		if ( ! get_transient( 'wc-gateway-payfast-admin-notice-transient' ) ) {
 			set_transient( 'wc-gateway-payfast-admin-notice-transient', 1, 1);
 
 			echo '<div class="notice notice-error is-dismissible"><p>'
-				. __( 'PayFast is reverted back to the disabled state, because it needs you to fix these problems before enabling the service:', 'woocommerce-gateway-payfast' ) . '</p>'
+				. __( 'To use PayFast as a payment provider, you need to fix the problems below:', 'woocommerce-gateway-payfast' ) . '</p>'
 				. '<ul style="list-style-type: disc; list-style-position: inside; padding-left: 2em;">'
 				. array_reduce( $errors_to_show, function( $errors_list, $error_item ) {
 					$errors_list = $errors_list . PHP_EOL . ( '<li>' . $this->get_error_message($error_item) . '</li>' );
