@@ -69,7 +69,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$this->response_url	    = add_query_arg( 'wc-api', 'WC_Gateway_PayFast', home_url( '/' ) );
 		$this->send_debug_email = 'yes' === $this->get_option( 'send_debug_email' );
 		$this->description      = $this->get_option( 'description' );
-		$this->enabled          = $this->is_valid_for_use() ? 'yes': 'no'; // Check if the base currency supports this gateway.
+		$this->enabled          = 'yes' === $this->get_option( 'enabled' ) ? 'yes' : 'no';
 		$this->enable_logging   = 'yes' === $this->get_option( 'enable_logging' );
 
 		// Setup the test data, if in test mode.
@@ -106,7 +106,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				'label'       => __( 'Enable PayFast', 'woocommerce-gateway-payfast' ),
 				'type'        => 'checkbox',
 				'description' => __( 'This controls whether or not this gateway is enabled within WooCommerce.', 'woocommerce-gateway-payfast' ),
-				'default'     => 'yes',
+				'default'     => 'no',		// User should enter the required information before enabling the gateway.
 				'desc_tip'    => true,
 			),
 			'title' => array(
@@ -180,22 +180,42 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * is_valid_for_use()
+	 * check_requirements()
 	 *
 	 * Check if this gateway is enabled and available in the base currency being traded with.
 	 *
 	 * @since 1.0.0
+	 * @return array
+	 */
+	public function check_requirements() {
+
+		$errors = [
+			// Check if the store currency is supported by PayFast
+			! in_array( get_woocommerce_currency(), $this->available_currencies ) ? 'wc-gateway-payfast-error-invalid-currency' : null,
+			// Check if user entered the merchant ID
+			empty( $this->get_option( 'merchant_id' ) )  ? 'wc-gateway-payfast-error-missing-merchant-id' : null,
+			// Check if user entered the merchant key
+			empty( $this->get_option( 'merchant_key' ) ) ? 'wc-gateway-payfast-error-missing-merchant-key' : null,
+			// Check if user entered a pass phrase
+			empty( $this->get_option( 'pass_phrase' ) )  ? 'wc-gateway-payfast-error-missing-pass-phrase' : null
+		];
+
+		return array_filter( $errors );
+	}
+
+	/**
+	 * Check if the gateway is available for use.
+	 *
 	 * @return bool
 	 */
-	public function is_valid_for_use() {
-		$is_available          = false;
-		$is_available_currency = in_array( get_woocommerce_currency(), $this->available_currencies );
-
-		if ( $is_available_currency && $this->merchant_id && $this->merchant_key ) {
-			$is_available = true;
+	public function is_available() {
+		if ( 'yes' === $this->enabled ) {
+			$errors = $this->check_requirements();
+			// Prevent using this gateway on frontend if there are any configuration errors.
+			return 0 === count( $errors );
 		}
 
-		return $is_available;
+		return parent::is_available();
 	}
 
 	/**
@@ -1115,7 +1135,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 		// get the payment token and attempt to charge the transaction
 		$item_name = 'pre-order';
-		$results = $this->submit_ad_hoc_payment( $token, $total, $item_name );
+		$results = $this->submit_ad_hoc_payment( $token, $total, $item_name, '' );
 
 		if ( is_wp_error( $results ) ) {
 			/* translators: 1: error code 2: error message */
@@ -1340,18 +1360,58 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Gets user-friendly error message strings from keys
+	 *
+	 * @param   string  $key  The key representing an error
+	 *
+	 * @return  string        The user-friendly error message for display
+	 */
+	public function get_error_message( $key ) {
+		switch ( $key ) {
+			case 'wc-gateway-payfast-error-invalid-currency':
+				return __( 'Your store uses a currency that PayFast doesnt support yet.', 'woocommerce-gateway-payfast' );
+			case 'wc-gateway-payfast-error-missing-merchant-id':
+				return __( 'You forgot to fill your merchant ID.', 'woocommerce-gateway-payfast' );
+			case 'wc-gateway-payfast-error-missing-merchant-key':
+				return __( 'You forgot to fill your merchant key.', 'woocommerce-gateway-payfast' );
+			case 'wc-gateway-payfast-error-missing-pass-phrase':
+				return __( 'PayFast requires a passphrase to work.', 'woocommerce-gateway-payfast' );
+			default:
+				return '';
+		}
+	}
+
+	/**
 	*  Show possible admin notices
-	*
 	*/
 	public function admin_notices() {
-		if ( 'yes' !== $this->get_option( 'enabled' )
-			|| ! empty( $this->pass_phrase) ) {
+
+		// Get requirement errors.
+		$errors_to_show = $this->check_requirements();
+
+		// If everything is in place, don't display it.
+		if ( ! count( $errors_to_show ) ) {
 			return;
 		}
 
-		echo '<div class="error payfast-passphrase-message"><p>'
-			. __( 'PayFast requires a passphrase to work.', 'woocommerce-gateway-payfast' )
-			. '</p></div>';
+		// If the gateway isn't enabled, don't show it.
+		if ( "no" ===  $this->enabled ) {
+			return;
+		}
+
+		// Use transients to display the admin notice once after saving values.
+		if ( ! get_transient( 'wc-gateway-payfast-admin-notice-transient' ) ) {
+			set_transient( 'wc-gateway-payfast-admin-notice-transient', 1, 1);
+
+			echo '<div class="notice notice-error is-dismissible"><p>'
+				. __( 'To use PayFast as a payment provider, you need to fix the problems below:', 'woocommerce-gateway-payfast' ) . '</p>'
+				. '<ul style="list-style-type: disc; list-style-position: inside; padding-left: 2em;">'
+				. array_reduce( $errors_to_show, function( $errors_list, $error_item ) {
+					$errors_list = $errors_list . PHP_EOL . ( '<li>' . $this->get_error_message($error_item) . '</li>' );
+					return $errors_list;
+				}, '' )
+				. '</ul></p></div>';
+		}
 	}
 
 	/**
