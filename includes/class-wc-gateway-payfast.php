@@ -209,11 +209,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function is_available() {
+		if ( 'yes' === $this->enabled ) {
+			$errors = $this->check_requirements();
+			// Prevent using this gateway on frontend if there are any configuration errors.
+			return 0 === count( $errors );
+		}
 
-		$errors = $this->check_requirements();
-
-		// Prevent using this gateway on frontend if there are any configuration errors.
-		return 0 === count( $errors );
+		return parent::is_available();
 	}
 
 	/**
