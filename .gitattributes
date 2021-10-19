@@ -1,6 +1,7 @@
 .gitattributes export-ignore
 .gitmodules export-ignore
 .gitignore export-ignore
+.gitignore-temp export-ignore
 .github export-ignore
 bin export-ignore
 tests export-ignore
@@ -15,3 +16,4 @@ phpunit.xml.dist export-ignore
 .tx export-ignore
 .prettierrc.js export-ignore
 webpack.config.js export-ignore
+node_modules export-ignore
