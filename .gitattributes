@@ -16,4 +16,5 @@ phpunit.xml.dist export-ignore
 .tx export-ignore
 .prettierrc.js export-ignore
 webpack.config.js export-ignore
+client export-ignore
 node_modules export-ignore
