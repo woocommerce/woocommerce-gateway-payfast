@@ -193,11 +193,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			// Check if the store currency is supported by PayFast
 			! in_array( get_woocommerce_currency(), $this->available_currencies ) ? 'wc-gateway-payfast-error-invalid-currency' : null,
 			// Check if user entered the merchant ID
-			empty( $this->get_option( 'merchant_id' ) )  ? 'wc-gateway-payfast-error-missing-merchant-id' : null,
+			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'merchant_id' ) )  ? 'wc-gateway-payfast-error-missing-merchant-id' : null,
 			// Check if user entered the merchant key
-			empty( $this->get_option( 'merchant_key' ) ) ? 'wc-gateway-payfast-error-missing-merchant-key' : null,
+			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'merchant_key' ) ) ? 'wc-gateway-payfast-error-missing-merchant-key' : null,
 			// Check if user entered a pass phrase
-			empty( $this->get_option( 'pass_phrase' ) )  ? 'wc-gateway-payfast-error-missing-pass-phrase' : null
+			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'pass_phrase' ) )  ? 'wc-gateway-payfast-error-missing-pass-phrase' : null
 		];
 
 		return array_filter( $errors );
