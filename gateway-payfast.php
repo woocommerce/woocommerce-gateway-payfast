@@ -7,8 +7,8 @@
  * Author URI: http://woocommerce.com/
  * Version: 1.4.19
  * Requires at least: 4.4
- * Tested up to: 5.6
- * WC tested up to: 4.9.2
+ * Tested up to: 5.8.1
+ * WC tested up to: 5.8.0
  * WC requires at least: 2.6
  *
  */
