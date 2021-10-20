@@ -7,9 +7,9 @@
     "archive": {
         "exclude": [
             "!/assets",
-			"!/build",
-			"!/languages",
-			"/client",
+            "!/build",
+            "!/languages",
+            "/client",
             "/vendor"
         ]
     }
