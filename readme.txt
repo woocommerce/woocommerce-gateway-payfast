@@ -2,9 +2,9 @@
 Contributors: woocommerce, automattic, royho, akeda, mattyza, bor0, woothemes, dwainm, laurendavissmith001
 Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 4.4
-Tested up to: 5.6
+Tested up to: 5.8.3
 Requires PHP: 5.6
-Stable tag: 1.4.19
+Stable tag: 1.4.20
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,9 @@ For help setting up and configuring, please refer to our [user guide](https://do
 If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
+
+= 1.4.20 - 2022-01-18 =
+ * Fix - Status toggle button not working as expected
 
 = 1.4.19 - 2021-05-04 =
  * Add - support for the Cart and Checkout blocks included
