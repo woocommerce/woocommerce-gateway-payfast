@@ -1085,6 +1085,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'version'     => 'v1',
 		);
 
+		// Set content length to fix "411: requests require a Content-length header" error.
+		if ( 'cancel' === $command && ! isset( $api_args['body'] ) ) {
+			$api_args['headers']['content-length'] = 0;
+		}
+
 		// generate signature
 		$all_api_variables                = array_merge( $api_args['headers'], (array) $api_args['body'] );
 		$api_args['headers']['signature'] = md5( $this->_generate_parameter_string( $all_api_variables ) );
