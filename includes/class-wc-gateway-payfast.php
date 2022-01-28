@@ -275,7 +275,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		/**
 		 * Check If changing payment method.
-		 * We have to generate Tokenization (ad-hoc) token to charge payments.
+		 * We have to generate Tokenization (ad-hoc) token to charge future payments.
 		 */
 		if ( $this->is_subscription( $order_id ) ) {
 			// 2 == ad-hoc subscription type see PayFast API docs
@@ -291,7 +291,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		if ( function_exists( 'wcs_order_contains_renewal' ) && wcs_order_contains_renewal( $order ) ) {
 			$subscriptions = wcs_get_subscriptions_for_renewal_order( $order_id );
 			$current       = reset( $subscriptions );
-			// For renewal orders that have subscriptions with renewal flag OR renew orders which are paid using payfast.
+			// For renewal orders that have subscriptions with renewal flag OR
+			// For renew orders which are failed to pay by other payment gateway buy now payinh using Payfast.
 			// we will create a new subscription in PayFast and link it to the existing ones in WC.
 			// The old subscriptions in PayFast will be cancelled once we handle the itn request.
 			if ( count( $subscriptions ) > 0 && ( $this->_has_renewal_flag( $current ) || $this->id !== $current->get_payment_method() ) ) {
