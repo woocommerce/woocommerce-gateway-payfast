@@ -49,7 +49,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'subscription_amount_changes',
 			'subscription_date_changes',
 			'subscription_payment_method_change', // Subs 1.x support
-			//'subscription_payment_method_change_customer', // see issue #39
+			'subscription_payment_method_change_customer', // Enabled for https://github.com/woocommerce/woocommerce-gateway-payfast/issues/32.
 		);
 
 		$this->init_form_fields();
@@ -89,9 +89,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		add_action( 'wc_pre_orders_process_pre_order_completion_payment_' . $this->id, array( $this, 'process_pre_order_payments' ) );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 
-		//Add fees to order
+		// Add fees to order.
 		add_action( 'woocommerce_admin_order_totals_after_total', array( $this, 'display_order_fee') );
 		add_action( 'woocommerce_admin_order_totals_after_total', array( $this, 'display_order_net'), 20 );
+
+		// Change Payment Method actions.
+		add_action( 'woocommerce_subscription_payment_method_updated_from_' . $this->id, array( $this, 'maybe_cancel_subscription_token' ), 10, 2 );
 	}
 
 	/**
@@ -270,6 +273,15 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'source'           => 'WooCommerce-Free-Plugin',
 		);
 
+		/**
+		 * Check If changing payment method.
+		 * We have to generate Tokenization (ad-hoc) token to charge payments.
+		 */
+		if ( $this->is_subscription( $order_id ) ) {
+			// 2 == ad-hoc subscription type see PayFast API docs
+			$this->data_to_send['subscription_type'] = '2';
+		}
+
 		// add subscription parameters
 		if ( $this->order_contains_subscription( $order_id ) ) {
 			// 2 == ad-hoc subscription type see PayFast API docs
@@ -278,10 +290,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		if ( function_exists( 'wcs_order_contains_renewal' ) && wcs_order_contains_renewal( $order ) ) {
 			$subscriptions = wcs_get_subscriptions_for_renewal_order( $order_id );
-			// For renewal orders that have subscriptions with renewal flag,
+			$current       = reset( $subscriptions );
+			// For renewal orders that have subscriptions with renewal flag OR renew orders which are paid using payfast.
 			// we will create a new subscription in PayFast and link it to the existing ones in WC.
 			// The old subscriptions in PayFast will be cancelled once we handle the itn request.
-			if ( count ( $subscriptions ) > 0 && $this->_has_renewal_flag( reset( $subscriptions ) ) ) {
+			if ( count( $subscriptions ) > 0 && ( $this->_has_renewal_flag( $current ) || $this->id !== $current->get_payment_method() ) ) {
 				// 2 == ad-hoc subscription type see PayFast API docs
 				$this->data_to_send['subscription_type'] = '2';
 			}
@@ -457,7 +470,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			// Check order amount
 			if ( ! $this->amounts_equal( $data['amount_gross'], self::get_order_prop( $order, 'order_total' ) )
 				 && ! $this->order_contains_pre_order( $order_id )
-				 && ! $this->order_contains_subscription( $order_id ) ) {
+				 && ! $this->order_contains_subscription( $order_id )
+				 && ! $this->is_subscription( $order_id ) ) { // if changing payment method.
 				$payfast_error  = true;
 				$payfast_error_message = PF_ERR_AMOUNT_MISMATCH;
 			} elseif ( strcasecmp( $data['custom_str1'], self::get_order_prop( $order, 'order_key' ) ) != 0 ) {
@@ -549,6 +563,31 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 
 			$status = strtolower( $data['payment_status'] );
+
+			/**
+			 * Handle Changing Payment Method.
+			 *   - Save payfast subscription token to handle future payment
+			 *   - (for Payfast to Payfast payment method change) Cancel old token, as future payment will be handle with new token
+			 */
+			if ( $this->is_subscription( $order_id ) && floatval( 0 ) === floatval( $data['amount_gross'] ) ) {
+				$this->log( '- Change Payment Method' );
+				if ( 'complete' === $status && isset( $data['token'] ) ) {
+					$token        = sanitize_text_field( $data['token'] );
+					$subscription = wcs_get_subscription( $order_id );
+					if ( ! empty( $subscription ) && ! empty( $token ) ) {
+						$old_token = $this->_get_subscription_token( $subscription );
+						// Cancel old subscription token of subscription if we have it.
+						if ( ! empty( $old_token ) ) {
+							$this->cancel_subscription_listener( $subscription );
+						}
+
+						// Set new subscription token on subscription.
+						$this->_set_subscription_token( $token, $subscription );
+						$this->log( 'Payfast token updated on Subcription: ' . $order_id );
+					}
+				}
+				return;
+			}
 
 			$subscriptions = array();
 			if ( function_exists( 'wcs_get_subscriptions_for_renewal_order' ) && function_exists( 'wcs_get_subscriptions_for_order' ) ) {
@@ -879,6 +918,36 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	protected function _get_pre_order_token( $order ) {
 		return get_post_meta( self::get_order_prop( $order, 'id' ), '_payfast_pre_order_token', true );
+	}
+
+	/**
+	 * Wrapper for WooCommerce subscription function wc_is_subscription.
+	 *
+	 * @param WC_Order $order The order.
+	 * @return bool
+	 */
+	public function is_subscription( $order ) {
+		if ( ! function_exists( 'wcs_is_subscription' ) ) {
+			return false;
+		}
+		return wcs_is_subscription( $order );
+	}
+
+	/**
+	 * Cancel Payfast Tokenization(ad-hoc) token if subscription changed to other payment method.
+	 *
+	 * @param WC_Subscription $subscription       The subscription for which the payment method changed.
+	 * @param string          $new_payment_method New payment method name.
+	 */
+	public function maybe_cancel_subscription_token( $subscription, $new_payment_method ) {
+		$token = $this->_get_subscription_token( $subscription );
+		if ( empty( $token ) || $this->id === $new_payment_method ) {
+			return;
+		}
+		$this->cancel_subscription_listener( $subscription );
+		$this->_delete_subscription_token( $subscription );
+
+		$this->log( 'Payfast subscription token Cancelled.' );
 	}
 
 	/**
