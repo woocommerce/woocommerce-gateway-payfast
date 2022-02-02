@@ -303,8 +303,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 *
 		 * @since 1.4.21
 		 *
-		 * @param array $this->data_to_send Payment data
-		 * @param int   $order_id           Order id
+		 * @param array $this->data_to_send Payment data.
+		 * @param int   $order_id           Order id.
 		 */
 		$this->data_to_send = apply_filters( 'woocommerce_gateway_payfast_payment_data_to_send', $this->data_to_send, $order_id );
 
