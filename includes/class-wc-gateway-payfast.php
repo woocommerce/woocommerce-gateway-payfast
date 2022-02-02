@@ -296,7 +296,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			$this->data_to_send['subscription_type'] = '2';
 		}
 
-		// Allow other plugins to extend this.
+		/**
+		 * Filters Payment data which will be sent to the Payfast.
+		 *
+		 * Allow other plugins to extend Payfast payment data to send.
+		 *
+		 * @since 1.4.21
+		 *
+		 * @param array $this->data_to_send Payment data
+		 * @param int   $order_id           Order id
+		 */
 		$this->data_to_send = apply_filters( 'woocommerce_gateway_payfast_payment_data_to_send', $this->data_to_send, $order_id );
 
 		$payfast_args_array = array();
