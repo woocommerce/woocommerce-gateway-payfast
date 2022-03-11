@@ -642,6 +642,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$order->update_meta_data( 'payfast_amount_net', $data['amount_net'] );
 		$order_id = self::get_order_prop( $order, 'id' );
 
+		// Executes the action hook for getting the token
+		do_action('get_tokenization', $data, $order, $subscriptions);
+
 		// Store token for future subscription deductions.
 		if ( count( $subscriptions ) > 0 && isset( $data['token'] ) ) {
 			if ( $this->_has_renewal_flag( reset( $subscriptions ) ) ) {
