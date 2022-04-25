@@ -297,9 +297,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		/**
-		 * Filters Payment data which will be sent to the Payfast.
-		 *
-		 * Allow other plugins to extend Payfast payment data to send.
+		 * Allow others to modify payment data before that is sent to Payfast.
 		 *
 		 * @since 1.4.21
 		 *
