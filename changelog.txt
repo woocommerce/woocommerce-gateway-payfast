@@ -1,6 +1,6 @@
 *** PayFast Changelog ***
 
-= 1.4.20 - 2021-xx-xx =
+= 1.4.20 - 2022-01-18 =
  * Fix - Status toggle button not working as expected
 
 = 1.4.19 - 2021-05-04 =
