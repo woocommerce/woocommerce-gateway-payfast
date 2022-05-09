@@ -9,6 +9,8 @@
  * @category Payment Gateways
  * @author WooCommerce
  */
+
+
 class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 	/**
@@ -166,6 +168,28 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				'default' => 'no',
 			),
 		);
+	}
+
+	/**
+	 * Get the required form field keys for setup.
+	 *
+	 * @return array
+	 */
+	public function get_required_settings_keys() {
+		return array(
+			'merchant_id',
+			'merchant_key',
+			'pass_phrase'
+		);
+	}
+
+	/**
+	 * Determine if the gateway still requires setup.
+	 *
+	 * @return bool
+	 */
+	public function needs_setup() {
+		return ! $this->get_option( 'merchant_id' ) || ! $this->get_option( 'merchant_key' ) || ! $this->get_option( 'pass_phrase' );
 	}
 
 	/**
