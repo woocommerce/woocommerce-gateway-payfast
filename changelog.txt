@@ -1,5 +1,8 @@
 *** PayFast Changelog ***
 
+= 1.4.21 - 2022-05-03 =
+ * Tweak - Bump tested up to WordPress version 5.9.
+
 = 1.4.20 - 2022-01-18 =
  * Fix - Status toggle button not working as expected
 
