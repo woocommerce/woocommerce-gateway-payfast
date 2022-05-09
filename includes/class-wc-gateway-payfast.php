@@ -702,9 +702,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		/**
-		 * Fires after the handle Payment Complete ITN from Payfast.
+		 * Fires after handling the Payment Complete ITN from Payfast.
 		 *
-		 * @since 1.4.21
+		 * @since 1.4.22
 		 *
 		 * @param array             $data          ITN Payload.
 		 * @param WC_Order          $order         Order Object.
