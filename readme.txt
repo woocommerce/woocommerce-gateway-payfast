@@ -2,7 +2,7 @@
 Contributors: woocommerce, automattic, royho, akeda, mattyza, bor0, woothemes, dwainm, laurendavissmith001
 Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 4.4
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.6
 Stable tag: 1.4.21
 License: GPLv3
