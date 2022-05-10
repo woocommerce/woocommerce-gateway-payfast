@@ -1,7 +1,7 @@
 {
   "name": "woocommerce-gateway-payfast",
   "title": "WooCommerce Gateway Payfast",
-  "version": "1.4.20",
+  "version": "1.4.21",
   "license": "GPL-3.0",
   "homepage": "https://wordpress.org/plugins/woocommerce-payfast-gateway/",
   "repository": {
@@ -13,10 +13,11 @@
     "npm": ">=6.9.0"
   },
   "devDependencies": {
-    "@woocommerce/dependency-extraction-webpack-plugin": "^1.4.0",
-    "@woocommerce/eslint-plugin": "^1.1.0",
-    "@wordpress/scripts": "^13.0.2",
-    "node-wp-i18n": "~1.2.3"
+    "@woocommerce/dependency-extraction-webpack-plugin": "^1.7.0",
+    "@woocommerce/eslint-plugin": "^1.3.0",
+    "@wordpress/scripts": "^19.2.3",
+    "node-wp-i18n": "^1.2.6",
+    "prettier": "^2.5.1"
   },
   "scripts": {
     "build": "npm run makepot && npm run build:webpack",
@@ -26,7 +27,7 @@
     "postbuild": "npm run -s && npm run archive",
     "archive": "composer archive --file=$npm_package_name --format=zip",
     "postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
-    "makepot": "wpi18n makepot --domain-path languages --pot-file $npm_package_name.pot --type plugin --main-file $npm_package_name.php --exclude node_modules,tests,docs"
+    "makepot": "wpi18n makepot --domain-path languages --pot-file $npm_package_name.pot --type plugin --main-file gateway-payfast.php --exclude node_modules,tests,docs"
   },
   "config": {
     "wp_org_slug": "woocommerce-payfast-gateway"
