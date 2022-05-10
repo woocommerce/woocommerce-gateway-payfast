@@ -12,26 +12,26 @@ import { PAYMENT_METHOD_NAME } from './constants';
 import { getPayFastServerData } from './payfast-utils';
 
 const Content = () => {
-	return decodeEntities( getPayFastServerData()?.description || '' );
+	return decodeEntities(getPayFastServerData()?.description || '');
 };
 
 const Label = () => {
 	return (
 		<img
-			src={ getPayFastServerData()?.logo_url }
-			alt={ getPayFastServerData()?.title }
+			src={getPayFastServerData()?.logo_url}
+			alt={getPayFastServerData()?.title}
 		/>
 	);
 };
 
-registerPaymentMethod( {
+registerPaymentMethod({
 	name: PAYMENT_METHOD_NAME,
 	label: <Label />,
-	ariaLabel: __( 'PayFast payment method', 'woocommerce-gateway-payfast' ),
+	ariaLabel: __('PayFast payment method', 'woocommerce-gateway-payfast'),
 	canMakePayment: () => true,
 	content: <Content />,
 	edit: <Content />,
 	supports: {
 		features: getPayFastServerData()?.supports ?? [],
 	},
-} );
+});
