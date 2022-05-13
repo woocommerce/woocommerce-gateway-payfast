@@ -38,6 +38,9 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.4.22 - 2022-05-12 =
+ * Tweak - WP tested up to 6.0
+ 
 = 1.4.21 - 2022-05-03 =
  * Tweak - Bump tested up to WordPress version 5.9.
 
