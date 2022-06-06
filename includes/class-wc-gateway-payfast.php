@@ -247,7 +247,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			// Merchant details
 			'merchant_id'      => $this->merchant_id,
 			'merchant_key'     => $this->merchant_key,
-			'return_url'       => $this->get_return_url( $order ),
+			'return_url'       => esc_url_raw( add_query_arg( 'utm_nooverride', '1', $this->get_return_url( $order ) ) ),
 			'cancel_url'       => $order->get_cancel_order_url(),
 			'notify_url'       => $this->response_url,
 
@@ -710,6 +710,17 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				. 'Order Status Code: ' . self::get_order_prop( $order, 'status' );
 			wp_mail( $debug_email, $subject, $body );
 		}
+
+		/**
+		 * Fires after handling the Payment Complete ITN from Payfast.
+		 *
+		 * @since 1.4.22
+		 *
+		 * @param array             $data          ITN Payload.
+		 * @param WC_Order          $order         Order Object.
+		 * @param WC_Subscription[] $subscriptions Subscription array.
+		 */
+		do_action( 'woocommerce_payfast_handle_itn_payment_complete', $data, $order, $subscriptions );
 	}
 
 	/**
