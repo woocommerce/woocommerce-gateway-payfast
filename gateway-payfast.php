@@ -6,10 +6,11 @@
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Version: 1.4.23
- * Requires at least: 4.4
+ * Requires at least: 5.6
  * Tested up to: 6.0
  * WC tested up to: 6.6
- * WC requires at least: 2.6
+ * WC requires at least: 6.0
+ * Requires PHP: 7.0
  *
  */
 use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
