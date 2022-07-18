@@ -1151,7 +1151,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Check adhoc bank charge response
 		$results_data = json_decode( $results['body'], true )['data'];
-		if ( $command == 'adhoc' && true !== $results_data['response'] ) {
+
+		// Sandbox ENV returns true(boolean) in response, while Production ENV "true"(string) in response.
+		if ( $command == 'adhoc' && ! ( 'true' === $results_data['response'] || true === $results_data['response'] ) ) {
 			$this->log( "Error posting API request:\n" . print_r( $results_data , true ) );
 
 			$code         = is_array( $results_data['response'] ) ? $results_data['response']['code'] : $results_data['response'];
