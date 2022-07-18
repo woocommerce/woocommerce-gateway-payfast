@@ -774,6 +774,17 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				. 'Order Status Code: ' . self::get_order_prop( $order, 'status' );
 			wp_mail( $debug_email, $subject, $body );
 		}
+
+		/**
+		 * Fires after handling the Payment Complete ITN from Payfast.
+		 *
+		 * @since 1.4.22
+		 *
+		 * @param array             $data          ITN Payload.
+		 * @param WC_Order          $order         Order Object.
+		 * @param WC_Subscription[] $subscriptions Subscription array.
+		 */
+		do_action( 'woocommerce_payfast_handle_itn_payment_complete', $data, $order, $subscriptions );
 	}
 
 	/**
