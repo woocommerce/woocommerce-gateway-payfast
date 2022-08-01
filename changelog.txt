@@ -1,5 +1,8 @@
 *** PayFast Changelog ***
 
+= 1.4.24 - 2022-07-19 =
+* Fix - Subscription renewal payment failed issue in the production environment.
+
 = 1.4.23 - 2022-07-05 =
  * Add - Allow setup PayFast during onboarding.
  * Add - Added support for customer subscription payment method change.
