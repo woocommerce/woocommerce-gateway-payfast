@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 4.4
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 1.4.23
+Stable tag: 1.4.24
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,13 +38,16 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.4.24 - 2022-07-19 =
+* Fix - Subscription renewal payment failed issue in the production environment.
+
 = 1.4.23 - 2022-07-05 =
  * Add - Allow setup PayFast during onboarding.
  * Add - Added support for customer subscription payment method change.
- 
+
 = 1.4.22 - 2022-05-12 =
  * Tweak - WP tested up to 6.0
- 
+
 = 1.4.21 - 2022-05-03 =
  * Tweak - Bump tested up to WordPress version 5.9.
 
