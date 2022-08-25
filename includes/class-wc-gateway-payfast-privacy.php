@@ -79,7 +79,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 					'data'        => array(
 						array(
 							'name'  => __( 'PayFast token', 'woocommerce-gateway-payfast' ),
-							'value' => get_post_meta( $order->get_id(), '_payfast_pre_order_token', true ),
+							'value' => $order->get_meta( '_payfast_pre_order_token', true ),
 						),
 					),
 				);
@@ -140,7 +140,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 					'data'        => array(
 						array(
 							'name'  => __( 'PayFast subscription token', 'woocommerce-gateway-payfast' ),
-							'value' => get_post_meta( $subscription->get_id(), '_payfast_subscription_token', true ),
+							'value' => $subscription->get_meta( '_payfast_subscription_token', true ),
 						),
 					),
 				);
@@ -213,7 +213,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		$subscription    = current( wcs_get_subscriptions_for_order( $order->get_id() ) );
 		$subscription_id = $subscription->get_id();
 
-		$payfast_source_id = get_post_meta( $subscription_id, '_payfast_subscription_token', true );
+		$payfast_source_id = $subscription->get_meta( '_payfast_subscription_token', true );
 
 		if ( empty( $payfast_source_id ) ) {
 			return array( false, false, array() );
@@ -242,7 +242,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 	 */
 	protected function maybe_handle_order( $order ) {
 		$order_id      = $order->get_id();
-		$payfast_token = get_post_meta( $order_id, '_payfast_pre_order_token', true );
+		$payfast_token = $order->get_meta( '_payfast_pre_order_token', true );
 
 		if ( empty( $payfast_token ) ) {
 			return array( false, false, array() );

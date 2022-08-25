@@ -738,7 +738,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			&& $this->order_requires_payment_tokenization( $order_id ) ) {
 
 			$token = sanitize_text_field( $data['token'] );
-			$is_pre_order_fee_paid = get_post_meta( $order_id, '_pre_order_fee_paid', true ) === 'yes';
+			$is_pre_order_fee_paid = $order->get_meta( '_pre_order_fee_paid', true ) === 'yes';
 
 			if ( ! $is_pre_order_fee_paid ) {
 				/* translators: 1: gross amount 2: payment id */
@@ -886,7 +886,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return mixed
 	 */
 	protected function _get_subscription_token( $subscription ) {
-		return get_post_meta( self::get_order_prop( $subscription, 'id' ), '_payfast_subscription_token', true );
+		return $subscription->get_meta( '_payfast_subscription_token', true );
 	}
 
 	/**
@@ -963,7 +963,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return mixed
 	 */
 	protected function _get_pre_order_token( $order ) {
-		return get_post_meta( self::get_order_prop( $order, 'id' ), '_payfast_pre_order_token', true );
+		return $order->get_meta( '_payfast_pre_order_token', true );
 	}
 
 	/**
@@ -1015,7 +1015,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function scheduled_subscription_payment( $amount_to_charge, $renewal_order ) {
 
-		$subscription = wcs_get_subscription( get_post_meta( self::get_order_prop( $renewal_order, 'id' ), '_subscription_renewal', true ) );
+		$subscription = wcs_get_subscription( $renewal_order->get_meta( '_subscription_renewal', true ) );
 		$this->log( 'Attempting to renew subscription from renewal order ' . self::get_order_prop( $renewal_order, 'id' ) );
 
 		if ( empty( $subscription ) ) {
@@ -1544,7 +1544,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function display_order_fee( $order_id ) {
 
 		$order = wc_get_order( $order_id );
-		$fee = get_post_meta( self::get_order_prop( $order, 'id' ), 'payfast_amount_fee', TRUE);
+		$fee   = $otder->get_meta( 'payfast_amount_fee', true );
 
 		if (! $fee ) {
 			return;
@@ -1573,7 +1573,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function display_order_net( $order_id ) {
 
 		$order = wc_get_order( $order_id );
-		$net = get_post_meta( self::get_order_prop( $order, 'id' ), 'payfast_amount_net', TRUE);
+		$net   = $order->get_meta( 'payfast_amount_net', true );
 
 		if (! $net ) {
 			return;
