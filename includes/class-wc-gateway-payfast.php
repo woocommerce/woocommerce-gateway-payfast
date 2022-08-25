@@ -896,7 +896,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return mixed
 	 */
 	protected function _delete_subscription_token( $subscription ) {
-		return delete_post_meta( self::get_order_prop( $subscription, 'id' ), '_payfast_subscription_token' );
+		return $subscription->delete_meta_data( '_payfast_subscription_token' ); 
 	}
 
 	/**
