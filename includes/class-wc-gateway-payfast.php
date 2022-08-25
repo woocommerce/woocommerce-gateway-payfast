@@ -742,7 +742,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				$this->_set_pre_order_token( $token, $order );
 				// set order to pre-ordered
 				WC_Pre_Orders_Order::mark_order_as_pre_ordered( $order );
-				update_post_meta( $order_id, '_pre_order_fee_paid', 'yes' );
+				$order->update_meta_data( '_pre_order_fee_paid', 'yes' );
+				$order->save_meta_data();
 				WC()->cart->empty_cart();
 			} else {
 				/* translators: 1: gross amount 2: payment id */
@@ -872,7 +873,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Subscription $subscription
 	 */
 	protected function _set_subscription_token( $token, $subscription ) {
-		update_post_meta( self::get_order_prop( $subscription, 'id' ), '_payfast_subscription_token', $token );
+		$subscription->update_meta_data( '_payfast_subscription_token', $token );
+		$subscription->save_meta_data();
 	}
 
 	/**
@@ -937,7 +939,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Order $order
 	 */
 	protected function _set_pre_order_token( $token, $order ) {
-		update_post_meta( self::get_order_prop( $order, 'id' ), '_payfast_pre_order_token', $token );
+		$order->update_meta_data( '_payfast_pre_order_token', $token );
+		$order->save_meta_data();
 	}
 
 	/**
