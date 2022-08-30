@@ -1531,7 +1531,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function display_order_fee( $order_id ) {
 
 		$order = wc_get_order( $order_id );
-		$fee   = $otder->get_meta( 'payfast_amount_fee', true );
+		$fee   = $order->get_meta( 'payfast_amount_fee', true );
 
 		if (! $fee ) {
 			return;
