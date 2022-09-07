@@ -1,37 +1,37 @@
 {
-  "name": "woocommerce-gateway-payfast",
-  "title": "WooCommerce Gateway Payfast",
-  "version": "1.4.24",
-  "license": "GPL-3.0",
-  "homepage": "https://wordpress.org/plugins/woocommerce-payfast-gateway/",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/woocommerce/woocommerce-gateway-payfast.git"
-  },
-  "engines": {
-    "node": ">=12.0.0",
-    "npm": ">=6.9.0"
-  },
-  "devDependencies": {
-    "@woocommerce/dependency-extraction-webpack-plugin": "^1.7.0",
-    "@woocommerce/eslint-plugin": "^1.3.0",
-    "@wordpress/scripts": "^19.2.3",
-    "node-wp-i18n": "^1.2.6",
-    "prettier": "^2.5.1"
-  },
-  "scripts": {
-    "build": "npm run makepot && npm run build:webpack",
-    "build:webpack": "wp-scripts build client/blocks/index.js",
-    "start:webpack": "wp-scripts start client/blocks/index.js",
-    "lint:js": "wp-scripts lint-js",
-    "postbuild": "npm run -s && npm run archive",
-    "archive": "composer archive --file=$npm_package_name --format=zip",
-    "postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
-    "makepot": "wpi18n makepot --domain-path languages --pot-file $npm_package_name.pot --type plugin --main-file $npm_package_name.php --exclude node_modules,tests,docs",
-    "phpcs": "./vendor/bin/phpcs *.php includes -p",
-    "phpcompat": "./vendor/bin/phpcs *.php includes -p --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.0-"
-  },
-  "config": {
-    "wp_org_slug": "woocommerce-payfast-gateway"
-  }
+	"name": "woocommerce-gateway-payfast",
+	"title": "WooCommerce Gateway Payfast",
+	"version": "1.4.25",
+	"license": "GPL-3.0",
+	"homepage": "https://wordpress.org/plugins/woocommerce-payfast-gateway/",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/woocommerce/woocommerce-gateway-payfast.git"
+	},
+	"engines": {
+		"node": ">=12.0.0",
+		"npm": ">=6.9.0"
+	},
+	"devDependencies": {
+		"@woocommerce/dependency-extraction-webpack-plugin": "^1.7.0",
+		"@woocommerce/eslint-plugin": "^1.3.0",
+		"@wordpress/scripts": "^19.2.3",
+		"node-wp-i18n": "^1.2.6",
+		"prettier": "^2.5.1"
+	},
+	"scripts": {
+		"build": "npm run makepot && npm run build:webpack",
+		"build:webpack": "wp-scripts build client/blocks/index.js",
+		"start:webpack": "wp-scripts start client/blocks/index.js",
+		"lint:js": "wp-scripts lint-js",
+		"postbuild": "npm run -s && npm run archive",
+		"archive": "composer archive --file=$npm_package_name --format=zip",
+		"postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
+		"makepot": "wpi18n makepot --domain-path languages --pot-file $npm_package_name.pot --type plugin --main-file $npm_package_name.php --exclude node_modules,tests,docs",
+		"phpcs": "./vendor/bin/phpcs *.php includes -p",
+		"phpcompat": "./vendor/bin/phpcs *.php includes -p --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.0-"
+	},
+	"config": {
+		"wp_org_slug": "woocommerce-payfast-gateway"
+	}
 }

@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 4.4
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 1.4.24
+Stable tag: 1.4.25
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,9 @@ For help setting up and configuring, please refer to our [user guide](https://do
 If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
+
+= 1.4.25 - 2022-xx-xx =
+* Fix - Add support for Transaction ID.
 
 = 1.4.24 - 2022-07-19 =
 * Fix - Subscription renewal payment failed issue in the production environment.
