@@ -38,7 +38,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.4.25 - 2022-xx-xx =
+= 1.4.25 - 2022-09-07 =
 * Fix - Add support for Transaction ID.
 
 = 1.4.24 - 2022-07-19 =
