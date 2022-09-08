@@ -8,7 +8,7 @@
  * Version: 1.4.24
  * Requires at least: 5.6
  * Tested up to: 6.0
- * WC tested up to: 6.6
+ * WC tested up to: 6.8
  * WC requires at least: 6.0
  * Requires PHP: 7.0
  *
@@ -17,7 +17,7 @@ use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_GATEWAY_PAYFAST_VERSION', '1.4.24' ); // WRCS: DEFINED_VERSION.
+define( 'WC_GATEWAY_PAYFAST_VERSION', '1.4.25' ); // WRCS: DEFINED_VERSION.
 define( 'WC_GATEWAY_PAYFAST_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 define( 'WC_GATEWAY_PAYFAST_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 
