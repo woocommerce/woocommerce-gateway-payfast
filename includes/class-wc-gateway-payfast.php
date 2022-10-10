@@ -747,11 +747,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			} else {
 				/* translators: 1: gross amount 2: payment id */
 				$order->add_order_note( sprintf( __( 'PayFast pre-order product line total paid: R %1$s (%2$s)', 'woocommerce-gateway-payfast' ), $data['amount_gross'], $data['pf_payment_id'] ) );
-				$order->payment_complete();
+				$order->payment_complete( $data['pf_payment_id'] );
 				$this->cancel_pre_order_subscription( $token );
 			}
 		} else {
-			$order->payment_complete();
+			$order->payment_complete( $data['pf_payment_id'] );
 		}
 
 		$debug_email   = $this->get_option( 'debug_email', get_option( 'admin_email' ) );
