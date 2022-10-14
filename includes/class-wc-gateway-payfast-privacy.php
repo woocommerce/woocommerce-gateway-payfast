@@ -79,7 +79,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 					'data'        => array(
 						array(
 							'name'  => __( 'PayFast token', 'woocommerce-gateway-payfast' ),
-							'value' => get_post_meta( $order->get_id(), '_payfast_pre_order_token', true ),
+							'value' => $order->get_meta( '_payfast_pre_order_token', true ),
 						),
 					),
 				);
@@ -140,7 +140,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 					'data'        => array(
 						array(
 							'name'  => __( 'PayFast subscription token', 'woocommerce-gateway-payfast' ),
-							'value' => get_post_meta( $subscription->get_id(), '_payfast_subscription_token', true ),
+							'value' => $subscription->get_meta( '_payfast_subscription_token', true ),
 						),
 					),
 				);
@@ -210,10 +210,9 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 			return array( false, false, array() );
 		}
 
-		$subscription    = current( wcs_get_subscriptions_for_order( $order->get_id() ) );
-		$subscription_id = $subscription->get_id();
+		$subscription = current( wcs_get_subscriptions_for_order( $order->get_id() ) );
 
-		$payfast_source_id = get_post_meta( $subscription_id, '_payfast_subscription_token', true );
+		$payfast_source_id = $subscription->get_meta( '_payfast_subscription_token', true );
 
 		if ( empty( $payfast_source_id ) ) {
 			return array( false, false, array() );
@@ -223,13 +222,15 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 			return array( false, true, array( sprintf( __( 'Order ID %d contains an active Subscription' ), $order->get_id() ) ) );
 		}
 
-		$renewal_orders = WC_Subscriptions_Renewal_Order::get_renewal_orders( $order->get_id() );
+		$renewal_orders = WC_Subscriptions_Renewal_Order::get_renewal_orders( $order->get_id(), 'WC_Order' );
 
-		foreach ( $renewal_orders as $renewal_order_id ) {
-			delete_post_meta( $renewal_order_id, '_payfast_subscription_token' );
+		foreach ( $renewal_orders as $renewal_order ) {
+			$renewal_order->delete_meta_data( '_payfast_subscription_token' );
+			$renewal_order->save_meta_data();
 		}
 
-		delete_post_meta( $subscription_id, '_payfast_subscription_token' );
+		$subscription->delete_meta_data( '_payfast_subscription_token' );
+		$subscription->save_meta_data();
 
 		return array( true, false, array( __( 'PayFast Subscriptions Data Erased.', 'woocommerce-gateway-payfast' ) ) );
 	}
@@ -241,14 +242,14 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 	 * @return array
 	 */
 	protected function maybe_handle_order( $order ) {
-		$order_id      = $order->get_id();
-		$payfast_token = get_post_meta( $order_id, '_payfast_pre_order_token', true );
+		$payfast_token = $order->get_meta( '_payfast_pre_order_token', true );
 
 		if ( empty( $payfast_token ) ) {
 			return array( false, false, array() );
 		}
 
-		delete_post_meta( $order_id, '_payfast_pre_order_token' );
+		$order->delete_meta_data( '_payfast_pre_order_token' );
+		$order->save_meta_data();
 
 		return array( true, false, array( __( 'PayFast Order Data Erased.', 'woocommerce-gateway-payfast' ) ) );
 	}
