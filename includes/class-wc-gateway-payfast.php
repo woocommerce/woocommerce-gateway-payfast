@@ -663,11 +663,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @since 1.4.5
 	 */
 	public function log_order_details( $order ) {
-		if ( version_compare( WC_VERSION,'3.0.0', '<' ) ) {
-			$customer_id = get_post_meta( $order->get_id(), '_customer_user', true );
-		} else {
-			$customer_id = $order->get_user_id();
-		}
+		$customer_id = $order->get_user_id();
 
 		$details = "Order Details:"
 		. PHP_EOL . 'customer id:' . $customer_id
@@ -907,12 +903,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Subscription $subscription
 	 */
 	protected function _set_renewal_flag( $subscription ) {
-		if ( version_compare( WC_VERSION, '3.0', '<' ) ) {
-			update_post_meta( self::get_order_prop( $subscription, 'id' ), '_payfast_renewal_flag', 'true' );
-		} else {
-			$subscription->update_meta_data( '_payfast_renewal_flag', 'true' );
-			$subscription->save_meta_data();
-		}
+		$subscription->update_meta_data( '_payfast_renewal_flag', 'true' );
+		$subscription->save_meta_data();
 	}
 
 	/**
@@ -923,11 +915,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	protected function _has_renewal_flag( $subscription ) {
-		if ( version_compare( WC_VERSION, '3.0', '<' ) ) {
-			return 'true' === get_post_meta( self::get_order_prop( $subscription, 'id' ), '_payfast_renewal_flag', true );
-		} else {
-			return 'true' === $subscription->get_meta( '_payfast_renewal_flag', true );
-		}
+		return 'true' === $subscription->get_meta( '_payfast_renewal_flag', true );
 	}
 
 	/**
@@ -938,12 +926,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return mixed
 	 */
 	protected function _delete_renewal_flag( $subscription ) {
-		if ( version_compare( WC_VERSION, '3.0', '<' ) ) {
-			return delete_post_meta( self::get_order_prop( $subscription, 'id' ), '_payfast_renewal_flag' );
-		} else {
-			$subscription->delete_meta_data( '_payfast_renewal_flag' );
-			$subscription->save_meta_data();
-		}
+		$subscription->delete_meta_data( '_payfast_renewal_flag' );
+		$subscription->save_meta_data();
 	}
 
 	/**
