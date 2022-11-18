@@ -8,7 +8,7 @@
  * Version: 1.4.25
  * Requires at least: 5.6
  * Tested up to: 6.0
- * WC tested up to: 6.8
+ * WC tested up to: 7.0
  * WC requires at least: 6.0
  * Requires PHP: 7.0
  *
@@ -80,3 +80,15 @@ function woocommerce_payfast_woocommerce_blocks_support() {
 		);
 	}
 }
+
+/**
+ * Declares support for HPOS.
+ *
+ * @return void
+ */
+function woocommerce_payfast_declare_hpos_compatibility() {
+	if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	}
+}
+add_action( 'before_woocommerce_init', 'woocommerce_payfast_declare_hpos_compatibility' );
