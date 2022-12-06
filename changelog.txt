@@ -1,6 +1,6 @@
 *** PayFast Changelog ***
 
-= 1.5.0 - 2022-xx-xx =
+= 1.5.0 - 2022-12-06 =
 * Add – Support for High-performance Order Storage (“HPOS”) (formerly known as Custom Order Tables, “COT”).
 * Dev – Update node version from 12.0.0 to 16.13.0.
 * Dev – Update npm version from 6.9.0 to 8.0.0.

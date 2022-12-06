@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 5.6
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 1.4.25
+Stable tag: 1.5.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,7 +38,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.5.0 - 2022-xx-xx =
+= 1.5.0 - 2022-12-06 =
 * Add – Support for High-performance Order Storage (“HPOS”) (formerly known as Custom Order Tables, “COT”).
 * Dev – Update node version from 12.0.0 to 16.13.0.
 * Dev – Update npm version from 6.9.0 to 8.0.0.
