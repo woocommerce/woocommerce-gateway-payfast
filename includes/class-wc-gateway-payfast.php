@@ -252,12 +252,20 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @since 1.0.0
 	 */
 	public function admin_options() {
-		if ( in_array( get_woocommerce_currency(), $this->available_currencies ) ) {
+		if ( in_array( get_woocommerce_currency(), $this->available_currencies, true ) ) {
 			parent::admin_options();
 		} else {
-		?>
-			<h3><?php _e( 'PayFast', 'woocommerce-gateway-payfast' ); ?></h3>
-			<div class="inline error"><p><strong><?php _e( 'Gateway Disabled', 'woocommerce-gateway-payfast' ); ?></strong> <?php /* translators: 1: a href link 2: closing href */ echo sprintf( __( 'Choose South African Rands as your store currency in %1$sGeneral Settings%2$s to enable the PayFast Gateway.', 'woocommerce-gateway-payfast' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=general' ) ) . '">', '</a>' ); ?></p></div>
+			?>
+			<h3><?php esc_html_e( 'PayFast', 'woocommerce-gateway-payfast' ); ?></h3>
+			<div class="inline error">
+				<p>
+					<strong><?php esc_html_e( 'Gateway Disabled', 'woocommerce-gateway-payfast' ); ?></strong> 
+					<?php
+					/* translators: 1: a href link 2: closing href */
+					echo wp_kses_post( sprintf( __( 'Choose South African Rands as your store currency in %1$sGeneral Settings%2$s to enable the PayFast Gateway.', 'woocommerce-gateway-payfast' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=general' ) ) . '">', '</a>' ) );
+					?>
+				</p>
+			</div>
 			<?php
 		}
 	}
@@ -412,10 +420,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 *
 	 * Display text and a button to direct the user to PayFast.
 	 *
+	 * @param WC_Order $order Order object.
 	 * @since 1.0.0
 	 */
 	public function receipt_page( $order ) {
-		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with PayFast.', 'woocommerce-gateway-payfast' ) . '</p>';
+		echo '<p>' . esc_html__( 'Thank you for your order, please click the button below to pay with PayFast.', 'woocommerce-gateway-payfast' ) . '</p>';
 		echo $this->generate_payfast_form( $order );
 	}
 
@@ -425,9 +434,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @since 1.0.0
 	 */
 	public function check_itn_response() {
+		// phpcs:ignore.WordPress.Security.NonceVerification.Missing
 		$this->handle_itn_request( stripslashes_deep( $_POST ) );
 
-		// Notify PayFast that information has been received
+		// Notify PayFast that information has been received.
 		header( 'HTTP/1.0 200 OK' );
 		flush();
 	}
@@ -435,11 +445,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Check PayFast ITN validity.
 	 *
-	 * @param array $data
+	 * @param array $data Data.
 	 * @since 1.0.0
 	 */
 	public function handle_itn_request( $data ) {
-		$this->log( PHP_EOL
+		$this->log(
+			PHP_EOL
 			. '----------'
 			. PHP_EOL . 'PayFast ITN call received'
 			. PHP_EOL . '----------'
@@ -463,29 +474,29 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			$payfast_error_message = PF_ERR_BAD_ACCESS;
 		}
 
-		// Verify security signature
+		// Verify security signature.
 		if ( ! $payfast_error && ! $payfast_done ) {
 			$this->log( 'Verify security signature' );
-			$signature = md5( $this->_generate_parameter_string( $data, false, false ) ); // false not to sort data
-			// If signature different, log for debugging
+			$signature = md5( $this->_generate_parameter_string( $data, false, false ) ); // false not to sort data.
+			// If signature different, log for debugging.
 			if ( ! $this->validate_signature( $data, $signature ) ) {
 				$payfast_error         = true;
 				$payfast_error_message = PF_ERR_INVALID_SIGNATURE;
 			}
 		}
 
-		// Verify source IP (If not in debug mode)
+		// Verify source IP (If not in debug mode).
 		if ( ! $payfast_error && ! $payfast_done
-			&& $this->get_option( 'testmode' ) != 'yes' ) {
+			&& $this->get_option( 'testmode' ) !== 'yes' ) {
 			$this->log( 'Verify source IP' );
 
-			if ( ! $this->is_valid_ip( $_SERVER['REMOTE_ADDR'] ) ) {
-				$payfast_error  = true;
+			if ( isset( $_SERVER['REMOTE_ADDR'] ) && ! $this->is_valid_ip( sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) ) ) {
+				$payfast_error         = true;
 				$payfast_error_message = PF_ERR_BAD_SOURCE_IP;
 			}
 		}
 
-		// Verify data received
+		// Verify data received.
 		if ( ! $payfast_error ) {
 			$this->log( 'Verify data received' );
 			$validation_data = $data;
@@ -493,64 +504,64 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			$has_valid_response_data = $this->validate_response_data( $validation_data );
 
 			if ( ! $has_valid_response_data ) {
-				$payfast_error = true;
+				$payfast_error         = true;
 				$payfast_error_message = PF_ERR_BAD_ACCESS;
 			}
 		}
 
-		// Check data against internal order
+		// Check data against internal order.
 		if ( ! $payfast_error && ! $payfast_done ) {
 			$this->log( 'Check data against internal order' );
 
-			// Check order amount
+			// Check order amount.
 			if ( ! $this->amounts_equal( $data['amount_gross'], self::get_order_prop( $order, 'order_total' ) )
-				 && ! $this->order_contains_pre_order( $order_id )
-				 && ! $this->order_contains_subscription( $order_id )
-				 && ! $this->is_subscription( $order_id ) ) { // if changing payment method.
+				&& ! $this->order_contains_pre_order( $order_id )
+				&& ! $this->order_contains_subscription( $order_id )
+				&& ! $this->is_subscription( $order_id ) ) { // if changing payment method.
 				$payfast_error  = true;
 				$payfast_error_message = PF_ERR_AMOUNT_MISMATCH;
 			} elseif ( strcasecmp( $data['custom_str1'], self::get_order_prop( $order, 'order_key' ) ) != 0 ) {
-				// Check session ID
-				$payfast_error  = true;
+				// Check session ID.
+				$payfast_error         = true;
 				$payfast_error_message = PF_ERR_SESSIONID_MISMATCH;
 			}
 		}
 
 		// alter order object to be the renewal order if
-		// the ITN request comes as a result of a renewal submission request
+		// the ITN request comes as a result of a renewal submission request.
 		$description = json_decode( $data['item_description'] );
 
 		if ( ! empty( $description->renewal_order_id ) ) {
 			$order = wc_get_order( $description->renewal_order_id );
 		}
 
-		// Get internal order and verify it hasn't already been processed
+		// Get internal order and verify it hasn't already been processed.
 		if ( ! $payfast_error && ! $payfast_done ) {
 			$this->log_order_details( $order );
 
-			// Check if order has already been processed
+			// Check if order has already been processed.
 			if ( 'completed' === self::get_order_prop( $order, 'status' ) ) {
 				$this->log( 'Order has already been processed' );
 				$payfast_done = true;
 			}
 		}
 
-		// If an error occurred
+		// If an error occurred.
 		if ( $payfast_error ) {
 			$this->log( 'Error occurred: ' . $payfast_error_message );
 
 			if ( $this->send_debug_email ) {
 				$this->log( 'Sending email notification' );
 
-				 // Send an email
+				// Send an email.
 				$subject = 'PayFast ITN error: ' . $payfast_error_message;
-				$body =
+				$body    =
 					"Hi,\n\n" .
 					"An invalid PayFast transaction on your website requires attention\n" .
 					"------------------------------------------------------------\n" .
 					'Site: ' . esc_html( $vendor_name ) . ' (' . esc_url( $vendor_url ) . ")\n" .
-					'Remote IP Address: ' . $_SERVER['REMOTE_ADDR'] . "\n" .
-					'Remote host name: ' . gethostbyaddr( $_SERVER['REMOTE_ADDR'] ) . "\n" .
+					'Remote IP Address: ' . sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) . "\n" .
+					'Remote host name: ' . gethostbyaddr( sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) ) . "\n" .
 					'Purchase ID: ' . self::get_order_prop( $order, 'id' ) . "\n" .
 					'User ID: ' . self::get_order_prop( $order, 'user_id' ) . "\n";
 				if ( isset( $data['pf_payment_id'] ) ) {
@@ -581,7 +592,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 							. 'Value should be: ' . self::get_order_prop( $order, 'id' );
 						break;
 
-					// For all other errors there is no need to add additional information
+					// For all other errors there is no need to add additional information.
 					default:
 						break;
 				}
@@ -649,7 +660,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 		} // End if().
 
-		$this->log( PHP_EOL
+		$this->log(
+			PHP_EOL
 			. '----------'
 			. PHP_EOL . 'End ITN call'
 			. PHP_EOL . '----------'
@@ -1348,12 +1360,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Validate the IP address to make sure it's coming from PayFast.
 	 *
-	 * @param array $source_ip
+	 * @param string $source_ip Source IP.
 	 * @since 1.0.0
 	 * @return bool
 	 */
 	public function is_valid_ip( $source_ip ) {
-		// Variable initialization
+		// Variable initialization.
 		$valid_hosts = array(
 			'www.payfast.co.za',
 			'sandbox.payfast.co.za',
@@ -1371,16 +1383,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 		}
 
-		// Remove duplicates
+		// Remove duplicates.
 		$valid_ips = array_unique( $valid_ips );
 
-		// Adds support for X_Forwarded_For
+		// Adds support for X_Forwarded_For.
 		if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
 			$source_ip = (string) rest_is_ip_address( trim( current( preg_split( '/[,:]/', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ) ) ) ) ?: $source_ip;
 		}
 
 		$this->log( "Valid IPs:\n" . print_r( $valid_ips, true ) );
-		$is_valid_ip = in_array( $source_ip, $valid_ips );
+		$is_valid_ip = in_array( $source_ip, $valid_ips, true );
 		return apply_filters( 'woocommerce_gateway_payfast_is_valid_ip', $is_valid_ip, $source_ip );
 	}
 
@@ -1491,8 +1503,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	*  Show possible admin notices
-	*/
+	 * Show possible admin notices
+	 */
 	public function admin_notices() {
 
 		// Get requirement errors.
@@ -1504,21 +1516,27 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		// If the gateway isn't enabled, don't show it.
-		if ( "no" ===  $this->enabled ) {
+		if ( 'no' === $this->enabled ) {
 			return;
 		}
 
 		// Use transients to display the admin notice once after saving values.
 		if ( ! get_transient( 'wc-gateway-payfast-admin-notice-transient' ) ) {
-			set_transient( 'wc-gateway-payfast-admin-notice-transient', 1, 1);
+			set_transient( 'wc-gateway-payfast-admin-notice-transient', 1, 1 );
 
 			echo '<div class="notice notice-error is-dismissible"><p>'
-				. __( 'To use PayFast as a payment provider, you need to fix the problems below:', 'woocommerce-gateway-payfast' ) . '</p>'
+				. esc_html__( 'To use PayFast as a payment provider, you need to fix the problems below:', 'woocommerce-gateway-payfast' ) . '</p>'
 				. '<ul style="list-style-type: disc; list-style-position: inside; padding-left: 2em;">'
-				. array_reduce( $errors_to_show, function( $errors_list, $error_item ) {
-					$errors_list = $errors_list . PHP_EOL . ( '<li>' . $this->get_error_message($error_item) . '</li>' );
-					return $errors_list;
-				}, '' )
+				. wp_kses_post(
+					array_reduce(
+						$errors_to_show,
+						function( $errors_list, $error_item ) {
+							$errors_list = $errors_list . PHP_EOL . ( '<li>' . $this->get_error_message( $error_item ) . '</li>' );
+							return $errors_list;
+						},
+						''
+					)
+				)
 				. '</ul></p></div>';
 		}
 	}
@@ -1533,7 +1551,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 		$fee   = $order->get_meta( 'payfast_amount_fee', true );
 
-		if (! $fee ) {
+		if ( ! $fee ) {
 			return;
 		}
 		?>
@@ -1545,7 +1563,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			</td>
 			<td width="1%"></td>
 			<td class="total">
-				<?php echo wc_price( $fee, array( 'decimals' => 2 ));  ?>
+				<?php echo wc_price( $fee, array( 'decimals' => 2 ) ); ?>
 			</td>
 		</tr>
 
@@ -1562,7 +1580,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 		$net   = $order->get_meta( 'payfast_amount_net', true );
 
-		if (! $net ) {
+		if ( ! $net ) {
 			return;
 		}
 
