@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: WooCommerce PayFast Gateway
+ * Plugin Name: WooCommerce Payfast Gateway
  * Plugin URI: https://woocommerce.com/products/payfast-payment-gateway/
- * Description: Receive payments using the South African PayFast payments provider.
+ * Description: Receive payments using the South African Payfast payments provider.
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Version: 1.5.0

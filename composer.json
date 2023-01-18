@@ -1,6 +1,6 @@
 {
     "name": "woocommerce/woocommerce-gateway-payfast",
-    "description": "Receive payments using the South African PayFast payments provider.",
+    "description": "Receive payments using the South African Payfast payments provider.",
     "homepage": "https://woocommerce.com/products/payfast-payment-gateway/",
     "type": "wordpress-plugin",
     "license": "GPL-2.0+",
