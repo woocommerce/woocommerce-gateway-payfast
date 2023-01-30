@@ -8,7 +8,7 @@
  * Version: 1.5.0
  * Requires at least: 5.6
  * Tested up to: 6.1
- * WC tested up to: 7.1
+ * WC tested up to: 7.3.0
  * WC requires at least: 6.0
  * Requires PHP: 7.0
  */
