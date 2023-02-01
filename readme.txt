@@ -1,4 +1,4 @@
-=== WooCommerce PayFast Gateway ===
+=== WooCommerce Payfast Gateway ===
 Contributors: woocommerce, automattic, royho, akeda, mattyza, bor0, woothemes, dwainm, laurendavissmith001
 Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 5.6
@@ -8,21 +8,21 @@ Stable tag: 1.5.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-This is the official WooCommerce extension to receive payments using the South African PayFast payments provider.
+This is the official WooCommerce extension to receive payments using the South African Payfast payments provider.
 
 == Description ==
 
-The PayFast extension for WooCommerce enables you to accept payments including Subscriptions, Deposits & Pre-Orders via one of South Africa’s most popular payment gateways.
+The Payfast extension for WooCommerce enables you to accept payments including Subscriptions, Deposits & Pre-Orders via one of South Africa’s most popular payment gateways.
 
-= Why choose PayFast? =
+= Why choose Payfast? =
 
-PayFast gives your customers more flexibility including putting down deposits, ordering ahead of time or paying on a weekly, monthly or annual basis.
+Payfast gives your customers more flexibility including putting down deposits, ordering ahead of time or paying on a weekly, monthly or annual basis.
 
 == Frequently Asked Questions ==
 
-= Does this require a PayFast merchant account? =
+= Does this require a Payfast merchant account? =
 
-Yes! A PayFast merchant account, merchant key and merchant ID are required for this gateway to function.
+Yes! A Payfast merchant account, merchant key and merchant ID are required for this gateway to function.
 
 = Does this require an SSL certificate? =
 
@@ -53,7 +53,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 * Fix - Subscription renewal payment failed issue in the production environment.
 
 = 1.4.23 - 2022-07-05 =
- * Add - Allow setup PayFast during onboarding.
+ * Add - Allow setup Payfast during onboarding.
  * Add - Added support for customer subscription payment method change.
 
 = 1.4.22 - 2022-05-12 =
@@ -71,7 +71,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 = 1.4.18 - 2021-02-04 =
  * Add fees to order
- * Add signature to the request to PayFast
+ * Add signature to the request to Payfast
  * Tweak - WC 4.9.2 compatibility.
  * Tweak - WP 5.6 compatibility.
 

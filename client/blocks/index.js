@@ -27,7 +27,7 @@ const Label = () => {
 registerPaymentMethod({
 	name: PAYMENT_METHOD_NAME,
 	label: <Label />,
-	ariaLabel: __('PayFast payment method', 'woocommerce-gateway-payfast'),
+	ariaLabel: __('Payfast payment method', 'woocommerce-gateway-payfast'),
 	canMakePayment: () => true,
 	content: <Content />,
 	edit: <Content />,
