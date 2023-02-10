@@ -1,8 +1,8 @@
 <?php
 /**
- * PayFast Payment Gateway
+ * Payfast Payment Gateway
  *
- * Provides a PayFast Payment Gateway.
+ * Provides a Payfast Payment Gateway.
  *
  * @class  woocommerce_payfast
  * @package WooCommerce
@@ -32,9 +32,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function __construct() {
 		$this->version = WC_GATEWAY_PAYFAST_VERSION;
 		$this->id = 'payfast';
-		$this->method_title       = __( 'PayFast', 'woocommerce-gateway-payfast' );
+		$this->method_title       = __( 'Payfast', 'woocommerce-gateway-payfast' );
 		/* translators: 1: a href link 2: closing href */
-		$this->method_description = sprintf( __( 'PayFast works by sending the user to %1$sPayFast%2$s to enter their payment information.', 'woocommerce-gateway-payfast' ), '<a href="http://payfast.co.za/">', '</a>' );
+		$this->method_description = sprintf( __( 'Payfast works by sending the user to %1$sPayfast%2$s to enter their payment information.', 'woocommerce-gateway-payfast' ), '<a href="https://payfast.io/">', '</a>' );
 		$this->icon               = WP_PLUGIN_URL . '/' . plugin_basename( dirname( dirname( __FILE__ ) ) ) . '/assets/images/icon.png';
 		$this->debug_email        = get_option( 'admin_email' );
 		$this->available_countries  = array( 'ZA' );
@@ -108,7 +108,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$this->form_fields = array(
 			'enabled' => array(
 				'title'       => __( 'Enable/Disable', 'woocommerce-gateway-payfast' ),
-				'label'       => __( 'Enable PayFast', 'woocommerce-gateway-payfast' ),
+				'label'       => __( 'Enable Payfast', 'woocommerce-gateway-payfast' ),
 				'type'        => 'checkbox',
 				'description' => __( 'This controls whether or not this gateway is enabled within WooCommerce.', 'woocommerce-gateway-payfast' ),
 				'default'     => 'no',		// User should enter the required information before enabling the gateway.
@@ -118,7 +118,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				'title'       => __( 'Title', 'woocommerce-gateway-payfast' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-gateway-payfast' ),
-				'default'     => __( 'PayFast', 'woocommerce-gateway-payfast' ),
+				'default'     => __( 'Payfast', 'woocommerce-gateway-payfast' ),
 				'desc_tip'    => true,
 			),
 			'description' => array(
@@ -129,7 +129,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 			),
 			'testmode' => array(
-				'title'       => __( 'PayFast Sandbox', 'woocommerce-gateway-payfast' ),
+				'title'       => __( 'Payfast Sandbox', 'woocommerce-gateway-payfast' ),
 				'type'        => 'checkbox',
 				'description' => __( 'Place the payment gateway in development mode.', 'woocommerce-gateway-payfast' ),
 				'default'     => 'yes',
@@ -137,13 +137,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'merchant_id' => array(
 				'title'       => __( 'Merchant ID', 'woocommerce-gateway-payfast' ),
 				'type'        => 'text',
-				'description' => __( 'This is the merchant ID, received from PayFast.', 'woocommerce-gateway-payfast' ),
+				'description' => __( 'This is the merchant ID, received from Payfast.', 'woocommerce-gateway-payfast' ),
 				'default'     => '',
 			),
 			'merchant_key' => array(
 				'title'       => __( 'Merchant Key', 'woocommerce-gateway-payfast' ),
 				'type'        => 'text',
-				'description' => __( 'This is the merchant key, received from PayFast.', 'woocommerce-gateway-payfast' ),
+				'description' => __( 'This is the merchant key, received from Payfast.', 'woocommerce-gateway-payfast' ),
 				'default'     => '',
 			),
 			'pass_phrase' => array(
@@ -155,7 +155,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'send_debug_email' => array(
 				'title'   => __( 'Send Debug Emails', 'woocommerce-gateway-payfast' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Send debug e-mails for transactions through the PayFast gateway (sends on successful transaction as well).', 'woocommerce-gateway-payfast' ),
+				'label'   => __( 'Send debug e-mails for transactions through the Payfast gateway (sends on successful transaction as well).', 'woocommerce-gateway-payfast' ),
 				'default' => 'yes',
 			),
 			'debug_email' => array(
@@ -217,7 +217,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function check_requirements() {
 
 		$errors = [
-			// Check if the store currency is supported by PayFast
+			// Check if the store currency is supported by Payfast
 			! in_array( get_woocommerce_currency(), $this->available_currencies ) ? 'wc-gateway-payfast-error-invalid-currency' : null,
 			// Check if user entered the merchant ID
 			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'merchant_id' ) )  ? 'wc-gateway-payfast-error-missing-merchant-id' : null,
@@ -259,7 +259,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			<h3><?php esc_html_e( 'PayFast', 'woocommerce-gateway-payfast' ); ?></h3>
 			<div class="inline error">
 				<p>
-					<strong><?php esc_html_e( 'Gateway Disabled', 'woocommerce-gateway-payfast' ); ?></strong> 
+					<strong><?php esc_html_e( 'Gateway Disabled', 'woocommerce-gateway-payfast' ); ?></strong>
 					<?php
 					/* translators: 1: a href link 2: closing href */
 					echo wp_kses_post( sprintf( __( 'Choose South African Rands as your store currency in %1$sGeneral Settings%2$s to enable the PayFast Gateway.', 'woocommerce-gateway-payfast' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=general' ) ) . '">', '</a>' ) );
@@ -271,7 +271,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Generate the PayFast button link.
+	 * Generate the Payfast button link.
 	 *
 	 * @since 1.0.0
 	 */
@@ -310,13 +310,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 * We have to generate Tokenization (ad-hoc) token to charge future payments.
 		 */
 		if ( $this->is_subscription( $order_id ) ) {
-			// 2 == ad-hoc subscription type see PayFast API docs
+			// 2 == ad-hoc subscription type see Payfast API docs
 			$this->data_to_send['subscription_type'] = '2';
 		}
 
 		// add subscription parameters
 		if ( $this->order_contains_subscription( $order_id ) ) {
-			// 2 == ad-hoc subscription type see PayFast API docs
+			// 2 == ad-hoc subscription type see Payfast API docs
 			$this->data_to_send['subscription_type'] = '2';
 		}
 
@@ -325,10 +325,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			$current       = reset( $subscriptions );
 			// For renewal orders that have subscriptions with renewal flag OR
 			// For renew orders which are failed to pay by other payment gateway buy now payinh using Payfast.
-			// we will create a new subscription in PayFast and link it to the existing ones in WC.
-			// The old subscriptions in PayFast will be cancelled once we handle the itn request.
+			// we will create a new subscription in Payfast and link it to the existing ones in WC.
+			// The old subscriptions in Payfast will be cancelled once we handle the itn request.
 			if ( count( $subscriptions ) > 0 && ( $this->_has_renewal_flag( $current ) || $this->id !== $current->get_payment_method() ) ) {
-				// 2 == ad-hoc subscription type see PayFast API docs
+				// 2 == ad-hoc subscription type see Payfast API docs
 				$this->data_to_send['subscription_type'] = '2';
 			}
 		}
@@ -369,12 +369,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		return '<form action="' . esc_url( $this->url ) . '" method="post" id="payfast_payment_form">
 				' . implode( '', $payfast_args_array ) . '
-				<input type="submit" class="button-alt" id="submit_payfast_payment_form" value="' . __( 'Pay via PayFast', 'woocommerce-gateway-payfast' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-payfast' ) . '</a>
+				<input type="submit" class="button-alt" id="submit_payfast_payment_form" value="' . __( 'Pay via Payfast', 'woocommerce-gateway-payfast' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-payfast' ) . '</a>
 				<script type="text/javascript">
 					jQuery(function(){
 						jQuery("body").block(
 							{
-								message: "' . __( 'Thank you for your order. We are now redirecting you to PayFast to make payment.', 'woocommerce-gateway-payfast' ) . '",
+								message: "' . __( 'Thank you for your order. We are now redirecting you to Payfast to make payment.', 'woocommerce-gateway-payfast' ) . '",
 								overlayCSS:
 								{
 									background: "#fff",
@@ -405,7 +405,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		if ( $this->order_contains_pre_order( $order_id )
 			&& $this->order_requires_payment_tokenization( $order_id )
 			&& ! $this->cart_contains_pre_order_fee() ) {
-				throw new Exception( 'PayFast does not support transactions without any upfront costs or fees. Please select another gateway' );
+				throw new Exception( 'Payfast does not support transactions without any upfront costs or fees. Please select another gateway' );
 		}
 
 		$order = wc_get_order( $order_id );
@@ -418,7 +418,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Reciept page.
 	 *
-	 * Display text and a button to direct the user to PayFast.
+	 * Display text and a button to direct the user to Payfast.
 	 *
 	 * @param WC_Order $order Order object.
 	 * @since 1.0.0
@@ -429,7 +429,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Check PayFast ITN response.
+	 * Check Payfast ITN response.
 	 *
 	 * @since 1.0.0
 	 */
@@ -443,7 +443,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Check PayFast ITN validity.
+	 * Check Payfast ITN validity.
 	 *
 	 * @param array $data Data.
 	 * @since 1.0.0
@@ -452,11 +452,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$this->log(
 			PHP_EOL
 			. '----------'
-			. PHP_EOL . 'PayFast ITN call received'
+			. PHP_EOL . 'Payfast ITN call received'
 			. PHP_EOL . '----------'
 		);
 		$this->log( 'Get posted data' );
-		$this->log( 'PayFast Data: ' . print_r( $data, true ) );
+		$this->log( 'Payfast Data: ' . print_r( $data, true ) );
 
 		$payfast_error  = false;
 		$payfast_done   = false;
@@ -557,7 +557,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				$subject = 'PayFast ITN error: ' . $payfast_error_message;
 				$body    =
 					"Hi,\n\n" .
-					"An invalid PayFast transaction on your website requires attention\n" .
+					"An invalid Payfast transaction on your website requires attention\n" .
 					"------------------------------------------------------------\n" .
 					'Site: ' . esc_html( $vendor_name ) . ' (' . esc_url( $vendor_url ) . ")\n" .
 					'Remote IP Address: ' . sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) . "\n" .
@@ -565,10 +565,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 					'Purchase ID: ' . self::get_order_prop( $order, 'id' ) . "\n" .
 					'User ID: ' . self::get_order_prop( $order, 'user_id' ) . "\n";
 				if ( isset( $data['pf_payment_id'] ) ) {
-					$body .= 'PayFast Transaction ID: ' . esc_html( $data['pf_payment_id'] ) . "\n";
+					$body .= 'Payfast Transaction ID: ' . esc_html( $data['pf_payment_id'] ) . "\n";
 				}
 				if ( isset( $data['payment_status'] ) ) {
-					$body .= 'PayFast Payment Status: ' . esc_html( $data['payment_status'] ) . "\n";
+					$body .= 'Payfast Payment Status: ' . esc_html( $data['payment_status'] ) . "\n";
 				}
 
 				$body .= "\nError: " . $payfast_error_message . "\n";
@@ -691,7 +691,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * This function mainly responds to ITN cancel requests initiated on PayFast, but also acts
+	 * This function mainly responds to ITN cancel requests initiated on Payfast, but also acts
 	 * just in case they are not cancelled.
 	 * @version 1.4.3 Subscriptions flag
 	 *
@@ -703,7 +703,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		remove_action( 'woocommerce_subscription_status_cancelled', array( $this, 'cancel_subscription_listener' ) );
 		foreach ( $subscriptions as $subscription ) {
 			if ( 'cancelled' !== $subscription->get_status() ) {
-				$subscription->update_status( 'cancelled', __( 'Merchant cancelled subscription on PayFast.' , 'woocommerce-gateway-payfast' ) );
+				$subscription->update_status( 'cancelled', __( 'Merchant cancelled subscription on Payfast.' , 'woocommerce-gateway-payfast' ) );
 				$this->_delete_subscription_token( $subscription );
 			}
 		}
@@ -711,7 +711,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * This function handles payment complete request by PayFast.
+	 * This function handles payment complete request by Payfast.
 	 * @version 1.4.3 Subscriptions flag
 	 *
 	 * @param array $data should be from the Gatewy ITN callback.
@@ -750,7 +750,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 			if ( ! $is_pre_order_fee_paid ) {
 				/* translators: 1: gross amount 2: payment id */
-				$order->add_order_note( sprintf( __( 'PayFast pre-order fee paid: R %1$s (%2$s)', 'woocommerce-gateway-payfast' ), $data['amount_gross'], $data['pf_payment_id'] ) );
+				$order->add_order_note( sprintf( __( 'Payfast pre-order fee paid: R %1$s (%2$s)', 'woocommerce-gateway-payfast' ), $data['amount_gross'], $data['pf_payment_id'] ) );
 				$this->_set_pre_order_token( $token, $order );
 				// set order to pre-ordered
 				WC_Pre_Orders_Order::mark_order_as_pre_ordered( $order );
@@ -759,7 +759,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				WC()->cart->empty_cart();
 			} else {
 				/* translators: 1: gross amount 2: payment id */
-				$order->add_order_note( sprintf( __( 'PayFast pre-order product line total paid: R %1$s (%2$s)', 'woocommerce-gateway-payfast' ), $data['amount_gross'], $data['pf_payment_id'] ) );
+				$order->add_order_note( sprintf( __( 'Payfast pre-order product line total paid: R %1$s (%2$s)', 'woocommerce-gateway-payfast' ), $data['amount_gross'], $data['pf_payment_id'] ) );
 				$order->payment_complete( $data['pf_payment_id'] );
 				$this->cancel_pre_order_subscription( $token );
 			}
@@ -771,15 +771,15 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$vendor_name    = get_bloginfo( 'name', 'display' );
 		$vendor_url     = home_url( '/' );
 		if ( $this->send_debug_email ) {
-			$subject = 'PayFast ITN on your site';
+			$subject = 'Payfast ITN on your site';
 			$body =
 				"Hi,\n\n"
-				. "A PayFast transaction has been completed on your website\n"
+				. "A Payfast transaction has been completed on your website\n"
 				. "------------------------------------------------------------\n"
 				. 'Site: ' . esc_html( $vendor_name ) . ' (' . esc_url( $vendor_url ) . ")\n"
 				. 'Purchase ID: ' . esc_html( $data['m_payment_id'] ) . "\n"
-				. 'PayFast Transaction ID: ' . esc_html( $data['pf_payment_id'] ) . "\n"
-				. 'PayFast Payment Status: ' . esc_html( $data['payment_status'] ) . "\n"
+				. 'Payfast Transaction ID: ' . esc_html( $data['pf_payment_id'] ) . "\n"
+				. 'Payfast Payment Status: ' . esc_html( $data['payment_status'] ) . "\n"
 				. 'Order Status Code: ' . self::get_order_prop( $order, 'status' );
 			wp_mail( $debug_email, $subject, $body );
 		}
@@ -809,16 +809,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$vendor_url     = home_url( '/' );
 
 		if ( $this->send_debug_email ) {
-			$subject = 'PayFast ITN Transaction on your site';
+			$subject = 'Payfast ITN Transaction on your site';
 			$body =
 				"Hi,\n\n" .
-				"A failed PayFast transaction on your website requires attention\n" .
+				"A failed Payfast transaction on your website requires attention\n" .
 				"------------------------------------------------------------\n" .
 				'Site: ' . esc_html( $vendor_name ) . ' (' . esc_url( $vendor_url ) . ")\n" .
 				'Purchase ID: ' . self::get_order_prop( $order, 'id' ) . "\n" .
 				'User ID: ' . self::get_order_prop( $order, 'user_id' ) . "\n" .
-				'PayFast Transaction ID: ' . esc_html( $data['pf_payment_id'] ) . "\n" .
-				'PayFast Payment Status: ' . esc_html( $data['payment_status'] );
+				'Payfast Transaction ID: ' . esc_html( $data['pf_payment_id'] ) . "\n" .
+				'Payfast Payment Status: ' . esc_html( $data['payment_status'] );
 			wp_mail( $debug_email, $subject, $body );
 		}
 	}
@@ -879,7 +879,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		return false;
 	}
 	/**
-	 * Store the PayFast subscription token
+	 * Store the Payfast subscription token
 	 *
 	 * @param string $token
 	 * @param WC_Subscription $subscription
@@ -890,7 +890,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Retrieve the PayFast subscription token for a given order id.
+	 * Retrieve the Payfast subscription token for a given order id.
 	 *
 	 * @param WC_Subscription $subscription
 	 * @return mixed
@@ -900,17 +900,17 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Retrieve the PayFast subscription token for a given order id.
+	 * Retrieve the Payfast subscription token for a given order id.
 	 *
 	 * @param WC_Subscription $subscription
 	 * @return mixed
 	 */
 	protected function _delete_subscription_token( $subscription ) {
-		return $subscription->delete_meta_data( '_payfast_subscription_token' ); 
+		return $subscription->delete_meta_data( '_payfast_subscription_token' );
 	}
 
 	/**
-	 * Store the PayFast renewal flag
+	 * Store the Payfast renewal flag
 	 * @since 1.4.3
 	 *
 	 * @param string $token
@@ -922,7 +922,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Retrieve the PayFast renewal flag for a given order id.
+	 * Retrieve the Payfast renewal flag for a given order id.
 	 * @since 1.4.3
 	 *
 	 * @param WC_Subscription $subscription
@@ -933,7 +933,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Retrieve the PayFast renewal flag for a given order id.
+	 * Retrieve the Payfast renewal flag for a given order id.
 	 * @since 1.4.3
 	 *
 	 * @param WC_Subscription $subscription
@@ -945,7 +945,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Store the PayFast pre_order_token token
+	 * Store the Payfast pre_order_token token
 	 *
 	 * @param string   $token
 	 * @param WC_Order $order
@@ -956,7 +956,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Retrieve the PayFast pre-order token for a given order id.
+	 * Retrieve the Payfast pre-order token for a given order id.
 	 *
 	 * @param WC_Order $order
 	 * @return mixed
@@ -1026,10 +1026,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		if ( is_wp_error( $response ) ) {
 			/* translators: 1: error code 2: error message */
-			$renewal_order->update_status( 'failed', sprintf( __( 'PayFast Subscription renewal transaction failed (%1$s:%2$s)', 'woocommerce-gateway-payfast' ), $response->get_error_code() ,$response->get_error_message() ) );
+			$renewal_order->update_status( 'failed', sprintf( __( 'Payfast Subscription renewal transaction failed (%1$s:%2$s)', 'woocommerce-gateway-payfast' ), $response->get_error_code() ,$response->get_error_message() ) );
 		}
 		// Payment will be completion will be capture only when the ITN callback is sent to $this->handle_itn_request().
-		$renewal_order->add_order_note( __( 'PayFast Subscription renewal transaction submitted.', 'woocommerce-gateway-payfast' ) );
+		$renewal_order->add_order_note( __( 'Payfast Subscription renewal transaction submitted.', 'woocommerce-gateway-payfast' ) );
 
 	}
 
@@ -1116,7 +1116,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function api_request( $command, $token, $api_args, $method = 'POST' ) {
 		if ( empty( $token ) ) {
 			$this->log( "Error posting API request: No token supplied", true );
-			return new WP_Error( '404', __( 'Can not submit PayFast request with an empty token', 'woocommerce-gateway-payfast' ), $results );
+			return new WP_Error( '404', __( 'Can not submit Payfast request with an empty token', 'woocommerce-gateway-payfast' ), $results );
 		}
 
 		$api_endpoint  = "https://api.payfast.co.za/subscriptions/$token/$command";
@@ -1142,7 +1142,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		$results = wp_remote_request( $api_endpoint, $api_args );
 
-		// Check PayFast server response
+		// Check Payfast server response
 		if ( 200 !== $results['response']['code'] ) {
 			$this->log( "Error posting API request:\n" . print_r( $results['response'], true ) );
 			return new WP_Error( $results['response']['code'], json_decode( $results['body'] )->data->response, $results );
@@ -1157,7 +1157,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 			$code         = is_array( $results_data['response'] ) ? $results_data['response']['code'] : $results_data['response'];
 			$message      = is_array( $results_data['response'] ) ? $results_data['response']['reason'] : $results_data['message'];
-			// Use trim here to display it properly e.g. on an order note, since PayFast can include CRLF in a message.
+			// Use trim here to display it properly e.g. on an order note, since Payfast can include CRLF in a message.
 			return new WP_Error( $code, trim( $message ), $results );
 		}
 
@@ -1166,7 +1166,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		if ( ! is_null( $maybe_json ) && isset( $maybe_json['status'] ) && 'failed' === $maybe_json['status'] ) {
 			$this->log( "Error posting API request:\n" . print_r( $results['body'], true ) );
 
-			// Use trim here to display it properly e.g. on an order note, since PayFast can include CRLF in a message.
+			// Use trim here to display it properly e.g. on an order note, since Payfast can include CRLF in a message.
 			return new WP_Error( $maybe_json['code'], trim( $maybe_json['data']['message'] ), $results['body'] );
 		}
 
@@ -1260,7 +1260,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		if ( is_wp_error( $results ) ) {
 			/* translators: 1: error code 2: error message */
-			$order->update_status( 'failed', sprintf( __( 'PayFast Pre-Order payment transaction failed (%1$s:%2$s)', 'woocommerce-gateway-payfast' ), $results->get_error_code() ,$results->get_error_message() ) );
+			$order->update_status( 'failed', sprintf( __( 'Payfast Pre-Order payment transaction failed (%1$s:%2$s)', 'woocommerce-gateway-payfast' ), $results->get_error_code() ,$results->get_error_message() ) );
 			return;
 		}
 
@@ -1270,7 +1270,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Setup constants.
 	 *
-	 * Setup common values and messages used by the PayFast gateway.
+	 * Setup common values and messages used by the Payfast gateway.
 	 *
 	 * @since 1.0.0
 	 */
@@ -1278,7 +1278,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		// Create user agent string.
 		define( 'PF_SOFTWARE_NAME', 'WooCommerce' );
 		define( 'PF_SOFTWARE_VER', WC_VERSION );
-		define( 'PF_MODULE_NAME', 'WooCommerce-PayFast-Free' );
+		define( 'PF_MODULE_NAME', 'WooCommerce-Payfast-Free' );
 		define( 'PF_MODULE_VER', $this->version );
 
 		// Features
@@ -1306,7 +1306,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		define( 'PF_ERR_AMOUNT_MISMATCH', __( 'Amount mismatch', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_BAD_ACCESS', __( 'Bad access of page', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_BAD_SOURCE_IP', __( 'Bad source IP address', 'woocommerce-gateway-payfast' ) );
-		define( 'PF_ERR_CONNECT_FAILED', __( 'Failed to connect to PayFast', 'woocommerce-gateway-payfast' ) );
+		define( 'PF_ERR_CONNECT_FAILED', __( 'Failed to connect to Payfast', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_INVALID_SIGNATURE', __( 'Security signature mismatch', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_MERCHANT_ID_MISMATCH', __( 'Merchant ID mismatch', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_NO_SESSION', __( 'No saved session found for ITN transaction', 'woocommerce-gateway-payfast' ) );
@@ -1358,7 +1358,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Validate the IP address to make sure it's coming from PayFast.
+	 * Validate the IP address to make sure it's coming from Payfast.
 	 *
 	 * @param string $source_ip Source IP.
 	 * @since 1.0.0
@@ -1490,13 +1490,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function get_error_message( $key ) {
 		switch ( $key ) {
 			case 'wc-gateway-payfast-error-invalid-currency':
-				return __( 'Your store uses a currency that PayFast doesnt support yet.', 'woocommerce-gateway-payfast' );
+				return __( 'Your store uses a currency that Payfast doesnt support yet.', 'woocommerce-gateway-payfast' );
 			case 'wc-gateway-payfast-error-missing-merchant-id':
 				return __( 'You forgot to fill your merchant ID.', 'woocommerce-gateway-payfast' );
 			case 'wc-gateway-payfast-error-missing-merchant-key':
 				return __( 'You forgot to fill your merchant key.', 'woocommerce-gateway-payfast' );
 			case 'wc-gateway-payfast-error-missing-pass-phrase':
-				return __( 'PayFast requires a passphrase to work.', 'woocommerce-gateway-payfast' );
+				return __( 'Payfast requires a passphrase to work.', 'woocommerce-gateway-payfast' );
 			default:
 				return '';
 		}

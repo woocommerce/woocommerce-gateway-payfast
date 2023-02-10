@@ -1,24 +1,24 @@
-# WooCommerce PayFast Gateway
+# WooCommerce Payfast Gateway
 
-The PayFast extension for WooCommerce enables you to accept payments including Subscriptions, Deposits & Pre-Orders via one of South Africa’s most popular payment gateways.
+The Payfast extension for WooCommerce enables you to accept payments including Subscriptions, Deposits & Pre-Orders via one of South Africa’s most popular payment gateways.
 
-This is the official WooCommerce extension to receive payments using the South African PayFast payments provider.
+This is the official WooCommerce extension to receive payments using the South African Payfast payments provider.
 
 ## Dependencies
 
 - Requires at least: 5.6
-- Tested up to: 6.0
+- Tested up to: 6.1
 - Requires PHP: 7.0
 
-### Why choose PayFast?
+### Why choose Payfast?
 
-PayFast gives your customers more flexibility including putting down deposits, ordering ahead of time or paying on a weekly, monthly or annual basis.
+Payfast gives your customers more flexibility including putting down deposits, ordering ahead of time or paying on a weekly, monthly or annual basis.
 
 ## Frequently Asked Questions
 
-#### Does this require a PayFast merchant account?
+#### Does this require a Payfast merchant account?
 
-Yes! A PayFast merchant account, merchant key and merchant ID are required for this gateway to function.
+Yes! A Payfast merchant account, merchant key and merchant ID are required for this gateway to function.
 
 #### Does this require an SSL certificate?
 

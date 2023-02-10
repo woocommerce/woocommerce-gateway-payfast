@@ -2,7 +2,7 @@
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 
 /**
- * PayFast payment method integration
+ * Payfast payment method integration
  *
  * @since 1.5.0
  */
