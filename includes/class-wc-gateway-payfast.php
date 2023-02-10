@@ -256,13 +256,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			parent::admin_options();
 		} else {
 			?>
-			<h3><?php esc_html_e( 'PayFast', 'woocommerce-gateway-payfast' ); ?></h3>
+			<h3><?php esc_html_e( 'Payfast', 'woocommerce-gateway-payfast' ); ?></h3>
 			<div class="inline error">
 				<p>
 					<strong><?php esc_html_e( 'Gateway Disabled', 'woocommerce-gateway-payfast' ); ?></strong>
 					<?php
 					/* translators: 1: a href link 2: closing href */
-					echo wp_kses_post( sprintf( __( 'Choose South African Rands as your store currency in %1$sGeneral Settings%2$s to enable the PayFast Gateway.', 'woocommerce-gateway-payfast' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=general' ) ) . '">', '</a>' ) );
+					echo wp_kses_post( sprintf( __( 'Choose South African Rands as your store currency in %1$sGeneral Settings%2$s to enable the Payfast Gateway.', 'woocommerce-gateway-payfast' ), '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=general' ) ) . '">', '</a>' ) );
 					?>
 				</p>
 			</div>
@@ -424,7 +424,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @since 1.0.0
 	 */
 	public function receipt_page( $order ) {
-		echo '<p>' . esc_html__( 'Thank you for your order, please click the button below to pay with PayFast.', 'woocommerce-gateway-payfast' ) . '</p>';
+		echo '<p>' . esc_html__( 'Thank you for your order, please click the button below to pay with Payfast.', 'woocommerce-gateway-payfast' ) . '</p>';
 		echo $this->generate_payfast_form( $order );
 	}
 
@@ -437,7 +437,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		// phpcs:ignore.WordPress.Security.NonceVerification.Missing
 		$this->handle_itn_request( stripslashes_deep( $_POST ) );
 
-		// Notify PayFast that information has been received.
+		// Notify Payfast that information has been received.
 		header( 'HTTP/1.0 200 OK' );
 		flush();
 	}
@@ -554,7 +554,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				$this->log( 'Sending email notification' );
 
 				// Send an email.
-				$subject = 'PayFast ITN error: ' . $payfast_error_message;
+				$subject = 'Payfast ITN error: ' . $payfast_error_message;
 				$body    =
 					"Hi,\n\n" .
 					"An invalid Payfast transaction on your website requires attention\n" .
@@ -1525,7 +1525,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			set_transient( 'wc-gateway-payfast-admin-notice-transient', 1, 1 );
 
 			echo '<div class="notice notice-error is-dismissible"><p>'
-				. esc_html__( 'To use PayFast as a payment provider, you need to fix the problems below:', 'woocommerce-gateway-payfast' ) . '</p>'
+				. esc_html__( 'To use Payfast as a payment provider, you need to fix the problems below:', 'woocommerce-gateway-payfast' ) . '</p>'
 				. '<ul style="list-style-type: disc; list-style-position: inside; padding-left: 2em;">'
 				. wp_kses_post(
 					array_reduce(
