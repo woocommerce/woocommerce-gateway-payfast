@@ -10,7 +10,7 @@ on:
 
 jobs:
   php_compatibility:
-    name: PHP minimum 7.0
+    name: PHP minimum 7.2
     runs-on: ubuntu-latest
 
     steps:
@@ -28,4 +28,4 @@ jobs:
         run: composer install
 
       - name: Run PHP Compatibility
-        run: ./vendor/bin/phpcs *.php includes -p --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.0-
+        run: ./vendor/bin/phpcs *.php includes -p --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.2-
