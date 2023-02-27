@@ -3,7 +3,7 @@ Contributors: woocommerce, automattic, royho, akeda, mattyza, bor0, woothemes, d
 Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 5.6
 Tested up to: 6.1
-Requires PHP: 7.0
+Requires PHP: 7.2
 Stable tag: 1.5.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
