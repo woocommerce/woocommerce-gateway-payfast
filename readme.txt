@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 5.6
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,15 @@ For help setting up and configuring, please refer to our [user guide](https://do
 If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
+
+= 1.5.1 - 2023-02-28 =
+* Update – Payfast logo and text references to meet their new branding guidelines.
+* Tweak – Bump WooCommerce “Tested up to” to 7.3.
+* Tweak – Bump WooCommerce tested up to 7.3.0.
+* Dev – Bump @sideway/formula from 3.0.0 to 3.0.1.
+* Dev – Resolved linting issues.
+* Dev – Bump json5 from 1.0.1 to 1.0.2.
+* Dev – Bump loader-utils from 1.4.0 to 1.4.2.
 
 = 1.5.0 - 2022-12-06 =
 * Add – Support for High-performance Order Storage (“HPOS”) (formerly known as Custom Order Tables, “COT”).
