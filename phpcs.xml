@@ -11,6 +11,6 @@
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 
 	<!-- ensure we are using language features according to supported PHP versions -->
-	<config name="testVersion" value="7.0-"/>
+	<config name="testVersion" value="7.2-"/>
 	<rule ref="PHPCompatibility" />
 </ruleset>
