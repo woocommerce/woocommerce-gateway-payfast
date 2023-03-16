@@ -1,6 +1,6 @@
 *** PayFast Changelog ***
 
-= 1.5.2 - 2023-xx-xx =
+= 1.5.2 - 2023-03-16 =
 * Tweak - Bump PHP minimum supported version from 7.0 to 7.2.
 * Tweak - Bump WooCommerce minimum supported version from 6.0 to 6.8.
 * Tweak - Bump WooCommerce "tested up to" version 7.4.
