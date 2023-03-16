@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 5.6
 Tested up to: 6.1
 Requires PHP: 7.2
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,11 @@ For help setting up and configuring, please refer to our [user guide](https://do
 If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
+
+= 1.5.2 - 2023-xx-xx =
+* Tweak - Bump PHP minimum supported version from 7.0 to 7.2.
+* Tweak - Bump WooCommerce minimum supported version from 6.0 to 6.8.
+* Tweak - Bump WooCommerce "tested up to" version 7.4.
 
 = 1.5.1 - 2023-02-28 =
 * Update – Payfast logo and text references to meet their new branding guidelines.
