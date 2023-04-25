@@ -51,7 +51,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 	 *
 	 */
 	public function get_privacy_message() {
-		return wpautop( sprintf( __( 'By using this extension, you may be storing personal data or sharing data with an external service. <a href="%s" target="_blank">Learn more about how this works, including what you may want to include in your privacy policy.</a>', 'woocommerce-gateway-payfast' ), 'https://docs.woocommerce.com/document/privacy-payments/#woocommerce-gateway-payfast' ) );
+		return wpautop( sprintf( esc_html__( 'By using this extension, you may be storing personal data or sharing data with an external service. <a href="%s" target="_blank">Learn more about how this works, including what you may want to include in your privacy policy.</a>', 'woocommerce-gateway-payfast' ), 'https://docs.woocommerce.com/document/privacy-payments/#woocommerce-gateway-payfast' ) );
 	}
 
 	/**
@@ -74,11 +74,11 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 			foreach ( $orders as $order ) {
 				$data_to_export[] = array(
 					'group_id'    => 'woocommerce_orders',
-					'group_label' => __( 'Orders', 'woocommerce-gateway-payfast' ),
+					'group_label' => esc_attr__( 'Orders', 'woocommerce-gateway-payfast' ),
 					'item_id'     => 'order-' . $order->get_id(),
 					'data'        => array(
 						array(
-							'name'  => __( 'Payfast token', 'woocommerce-gateway-payfast' ),
+							'name'  => esc_attr__( 'Payfast token', 'woocommerce-gateway-payfast' ),
 							'value' => $order->get_meta( '_payfast_pre_order_token', true ),
 						),
 					),
@@ -135,11 +135,11 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 			foreach ( $subscriptions as $subscription ) {
 				$data_to_export[] = array(
 					'group_id'    => 'woocommerce_subscriptions',
-					'group_label' => __( 'Subscriptions', 'woocommerce-gateway-payfast' ),
+					'group_label' => esc_attr__( 'Subscriptions', 'woocommerce-gateway-payfast' ),
 					'item_id'     => 'subscription-' . $subscription->get_id(),
 					'data'        => array(
 						array(
-							'name'  => __( 'Payfast subscription token', 'woocommerce-gateway-payfast' ),
+							'name'  => esc_attr__( 'Payfast subscription token', 'woocommerce-gateway-payfast' ),
 							'value' => $subscription->get_meta( '_payfast_subscription_token', true ),
 						),
 					),
@@ -219,7 +219,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		}
 
 		if ( $subscription->has_status( apply_filters( 'wc_payfast_privacy_eraser_subs_statuses', array( 'on-hold', 'active' ) ) ) ) {
-			return array( false, true, array( sprintf( __( 'Order ID %d contains an active Subscription' ), $order->get_id() ) ) );
+			return array( false, true, array( sprintf( esc_attr__( 'Order ID %d contains an active Subscription' ), $order->get_id() ) ) );
 		}
 
 		$renewal_orders = WC_Subscriptions_Renewal_Order::get_renewal_orders( $order->get_id(), 'WC_Order' );
@@ -232,7 +232,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		$subscription->delete_meta_data( '_payfast_subscription_token' );
 		$subscription->save_meta_data();
 
-		return array( true, false, array( __( 'Payfast Subscriptions Data Erased.', 'woocommerce-gateway-payfast' ) ) );
+		return array( true, false, array( esc_attr__( 'Payfast Subscriptions Data Erased.', 'woocommerce-gateway-payfast' ) ) );
 	}
 
 	/**
@@ -251,7 +251,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		$order->delete_meta_data( '_payfast_pre_order_token' );
 		$order->save_meta_data();
 
-		return array( true, false, array( __( 'Payfast Order Data Erased.', 'woocommerce-gateway-payfast' ) ) );
+		return array( true, false, array( esc_attr__( 'Payfast Order Data Erased.', 'woocommerce-gateway-payfast' ) ) );
 	}
 }
 
