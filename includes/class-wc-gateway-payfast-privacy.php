@@ -51,7 +51,12 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 	 *
 	 */
 	public function get_privacy_message() {
-		return wpautop( sprintf( esc_html__( 'By using this extension, you may be storing personal data or sharing data with an external service. <a href="%s" target="_blank">Learn more about how this works, including what you may want to include in your privacy policy.</a>', 'woocommerce-gateway-payfast' ), 'https://docs.woocommerce.com/document/privacy-payments/#woocommerce-gateway-payfast' ) );
+		return wpautop( sprintf(
+				/* translators: 1: anchor tag 2: closing anchor tag */
+			esc_html__( 'By using this extension, you may be storing personal data or sharing data with an external service. %1$sLearn more about how this works, including what you may want to include in your privacy policy.%2$s', 'woocommerce-gateway-payfast' ),
+				'<a href="https://docs.woocommerce.com/document/privacy-payments/#woocommerce-gateway-payfast" target="_blank">',
+				'</a>'
+		) );
 	}
 
 	/**
