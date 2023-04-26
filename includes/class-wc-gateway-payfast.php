@@ -1270,8 +1270,15 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$results = $this->submit_ad_hoc_payment( $token, $total, $item_name, '' );
 
 		if ( is_wp_error( $results ) ) {
-			/* translators: 1: error code 2: error message */
-			$order->update_status( 'failed', sprintf( esc_html__( 'Payfast Pre-Order payment transaction failed (%1$s:%2$s)', 'woocommerce-gateway-payfast' ), $results->get_error_code() ,$results->get_error_message() ) );
+			$order->update_status( 
+				'failed',
+				sprintf( 
+					/* translators: 1: error code 2: error message */
+					esc_html__( 'Payfast Pre-Order payment transaction failed (%1$s:%2$s)', 'woocommerce-gateway-payfast' ),
+					$results->get_error_code(),
+					$results->get_error_message()
+				) 
+			);
 			return;
 		}
 
@@ -1501,7 +1508,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	public function get_error_message( $key ) {
 		switch ( $key ) {
 			case 'wc-gateway-payfast-error-invalid-currency':
-				return esc_html__( 'Your store uses a currency that Payfast doesnt support yet.', 'woocommerce-gateway-payfast' );
+				return esc_html__( 'Your store uses a currency that Payfast doesn\'t support yet.', 'woocommerce-gateway-payfast' );
 			case 'wc-gateway-payfast-error-missing-merchant-id':
 				return esc_html__( 'You forgot to fill your merchant ID.', 'woocommerce-gateway-payfast' );
 			case 'wc-gateway-payfast-error-missing-merchant-key':
