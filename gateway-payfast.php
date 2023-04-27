@@ -6,9 +6,9 @@
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Version: 1.5.2
- * Requires at least: 5.6
- * Tested up to: 6.1
- * WC tested up to: 7.4
+ * Requires at least: 5.8
+ * Tested up to: 6.2
+ * WC tested up to: 7.6
  * WC requires at least: 6.8
  * Requires PHP: 7.2
  */
