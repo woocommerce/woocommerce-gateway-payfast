@@ -54,7 +54,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		return wpautop( sprintf(
 				/* translators: 1: anchor tag 2: closing anchor tag */
 			esc_html__( 'By using this extension, you may be storing personal data or sharing data with an external service. %1$sLearn more about how this works, including what you may want to include in your privacy policy.%2$s', 'woocommerce-gateway-payfast' ),
-				'<a href="https://docs.woocommerce.com/document/privacy-payments/#woocommerce-gateway-payfast" target="_blank">',
+				'<a href="https://docs.woocommerce.com/document/privacy-payments/#woocommerce-gateway-payfast" target="_blank" rel="noopener noreferrer">',
 				'</a>'
 		) );
 	}
@@ -224,7 +224,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		}
 
 		if ( $subscription->has_status( apply_filters( 'wc_payfast_privacy_eraser_subs_statuses', array( 'on-hold', 'active' ) ) ) ) {
-			return array( false, true, array( sprintf( esc_attr__( 'Order ID %d contains an active Subscription' ), $order->get_id() ) ) );
+			return array( false, true, array( sprintf( esc_html__( 'Order ID %d contains an active Subscription' ), $order->get_id() ) ) );
 		}
 
 		$renewal_orders = WC_Subscriptions_Renewal_Order::get_renewal_orders( $order->get_id(), 'WC_Order' );
@@ -237,7 +237,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		$subscription->delete_meta_data( '_payfast_subscription_token' );
 		$subscription->save_meta_data();
 
-		return array( true, false, array( esc_attr__( 'Payfast Subscriptions Data Erased.', 'woocommerce-gateway-payfast' ) ) );
+		return array( true, false, array( esc_html__( 'Payfast Subscriptions Data Erased.', 'woocommerce-gateway-payfast' ) ) );
 	}
 
 	/**
@@ -256,7 +256,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		$order->delete_meta_data( '_payfast_pre_order_token' );
 		$order->save_meta_data();
 
-		return array( true, false, array( esc_attr__( 'Payfast Order Data Erased.', 'woocommerce-gateway-payfast' ) ) );
+		return array( true, false, array( esc_html__( 'Payfast Order Data Erased.', 'woocommerce-gateway-payfast' ) ) );
 	}
 }
 

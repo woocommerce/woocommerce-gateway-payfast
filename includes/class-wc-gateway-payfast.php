@@ -379,7 +379,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 					class="button cancel" 
 					href="' . esc_url( $order->get_cancel_order_url() ) . '"
 				>' .
-					 esc_attr__( 'Cancel order &amp; restore cart', 'woocommerce-gateway-payfast' ) . 
+					 esc_html__( 'Cancel order &amp; restore cart', 'woocommerce-gateway-payfast' ) . 
 				'</a>
 				<script type="text/javascript">
 					jQuery(function(){
@@ -1581,7 +1581,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			</td>
 			<td width="1%"></td>
 			<td class="total">
-				<?php esc_html_e( wc_price( $fee, array( 'decimals' => 2 ) ) ); ?>
+				<?php echo esc_html( wc_price( $fee, array( 'decimals' => 2 ) ) ); ?>
 			</td>
 		</tr>
 
@@ -1611,7 +1611,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			</td>
 			<td width="1%"></td>
 			<td class="total">
-				<?php esc_html_e( wc_price( $net, array( 'decimals' => 2 ) ) ); ?>
+				<?php echo esc_html( wc_price( $net, array( 'decimals' => 2 ) ) ); ?>
 			</td>
 		</tr>
 
