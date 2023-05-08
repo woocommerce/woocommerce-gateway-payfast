@@ -6,8 +6,8 @@ This is the official WooCommerce extension to receive payments using the South A
 
 ## Dependencies
 
-- Requires at least: 5.6
-- Tested up to: 6.1
+- Requires at least: 5.8
+- Tested up to: 6.2
 - Requires PHP: 7.2
 
 ### Why choose Payfast?
