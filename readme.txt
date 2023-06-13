@@ -38,7 +38,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.5.4 - xxxx-xx-xx =
+= 1.5.4 - 2023-06-13 =
 * Fix - Escaped strings.
 
 = 1.5.3 - 2023-05-25 =
