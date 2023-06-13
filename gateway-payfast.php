@@ -47,9 +47,9 @@ function woocommerce_payfast_plugin_links( $links ) {
 	);
 
 	$plugin_links = array(
-		'<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'woocommerce-gateway-payfast' ) . '</a>',
-		'<a href="https://www.woocommerce.com/my-account/tickets/">' . __( 'Support', 'woocommerce-gateway-payfast' ) . '</a>',
-		'<a href="https://docs.woocommerce.com/document/payfast-payment-gateway/">' . __( 'Docs', 'woocommerce-gateway-payfast' ) . '</a>',
+		'<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Settings', 'woocommerce-gateway-payfast' ) . '</a>',
+		'<a href="https://www.woocommerce.com/my-account/tickets/">' . esc_html__( 'Support', 'woocommerce-gateway-payfast' ) . '</a>',
+		'<a href="https://docs.woocommerce.com/document/payfast-payment-gateway/">' . esc_html__( 'Docs', 'woocommerce-gateway-payfast' ) . '</a>',
 	);
 
 	return array_merge( $plugin_links, $links );
