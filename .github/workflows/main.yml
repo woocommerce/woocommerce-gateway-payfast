@@ -1,4 +1,7 @@
-# On push to staging deploy the plugin to zapaymentstaging.mystagingwebsite.comon:
+name: Deploy to Staging for Testing
+
+# On push to Staging branch, the plugin will be deployed to https://zapaymentstaging.mystagingwebsite.com
+
 on:
   push:
     branches:
