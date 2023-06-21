@@ -6,7 +6,7 @@ This is the official WooCommerce extension to receive payments using the South A
 
 ## Dependencies
 
-- Requires at least: 5.8
+- Requires at least: 6.1
 - Tested up to: 6.2
 - Requires PHP: 7.2
 
