@@ -1153,6 +1153,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		$results = wp_remote_request( $api_endpoint, $api_args );
 
+		if ( is_wp_error( $results ) ) {
+			return $results;
+		}
+
 		// Check Payfast server response
 		if ( 200 !== $results['response']['code'] ) {
 			$this->log( "Error posting API request:\n" . print_r( $results['response'], true ) );
