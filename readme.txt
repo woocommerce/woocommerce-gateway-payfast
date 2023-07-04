@@ -38,6 +38,12 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.5.5 - 2023-07-04 =
+* Dev - Bump WooCommerce "tested up to" version 7.8.
+* Dev - Bump WooCommerce minimum supported version from 6.8 to 7.2.
+* Dev - Bump WordPress minimum supported version from 5.8 to 6.1.
+* Fix - Replace escaping of order total price elements on the edit order admin screen.
+
 = 1.5.4 - 2023-06-13 =
 * Fix - Escaped strings.
 
