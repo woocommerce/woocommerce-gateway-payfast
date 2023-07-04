@@ -1581,7 +1581,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			</td>
 			<td width="1%"></td>
 			<td class="total">
-				<?php echo esc_html( wc_price( $fee, array( 'decimals' => 2 ) ) ); ?>
+				<?php echo wp_kses_post( wc_price( $fee, array( 'decimals' => 2 ) ) ); ?>
 			</td>
 		</tr>
 
@@ -1611,7 +1611,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			</td>
 			<td width="1%"></td>
 			<td class="total">
-				<?php echo esc_html( wc_price( $net, array( 'decimals' => 2 ) ) ); ?>
+				<?php echo wp_kses_post( wc_price( $net, array( 'decimals' => 2 ) ) ); ?>
 			</td>
 		</tr>
 
