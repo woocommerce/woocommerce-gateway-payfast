@@ -46,11 +46,10 @@ jobs:
       - name: Download build
         uses: actions/download-artifact@v3
         with:
-          name: woocommerce-payfast-gateway
-          path: woocommerce-payfast-gateway/
+          name: woocommerce-gateway-payfast
 
       - name: Build plugin zip
-        run: zip -r woocommerce-payfast-gateway.zip woocommerce-payfast-gateway
+        run: mv woocommerce-gateway-payfast woocommerce-payfast-gateway && zip -r woocommerce-payfast-gateway.zip woocommerce-payfast-gateway
 
       - name: Set PHP version
         uses: shivammathur/setup-php@v2
