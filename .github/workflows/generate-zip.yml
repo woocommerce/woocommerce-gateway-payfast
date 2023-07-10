@@ -37,10 +37,10 @@ jobs:
               run: npm ci --no-optional
 
             - name: Generate ZIP file
-              run: npm run build && rm -rf ./woocommerce-gateway-payfast && unzip woocommerce-gateway-payfast.zip -d ./woocommerce-gateway-payfast
+              run: npm run build && rm -rf ./woocommerce-gateway-payfast && unzip woocommerce-gateway-payfast.zip -d ./woocommerce-payfast-gateway
 
             - name: Use the Upload Artifact GitHub Action
               uses: actions/upload-artifact@v3
               with:
-                  name: woocommerce-gateway-payfast
-                  path: woocommerce-gateway-payfast/
+                  name: woocommerce-payfast-gateway
+                  path: woocommerce-payfast-gateway/
