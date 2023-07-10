@@ -67,7 +67,7 @@ jobs:
       - name: Run activation test
         if: "${{ ( inputs.tests == 'default' || inputs.tests == 'activation' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit activation test') }}"
         id: run-activation-test
-        run: ./vendor/bin/qit run:activation ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > activation-result.txt
+        run: ./vendor/bin/qit run:activation woocommerce-payfast-gateway --zip=${{ github.event.repository.name }}.zip --wait > activation-result.txt
 
       - uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ failure() && steps.run-activation-test.conclusion == 'failure' }}
@@ -79,7 +79,7 @@ jobs:
       - name: Run API test
         if: "${{ ( ( inputs.tests == 'default' || inputs.tests == 'api' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit api test') ) && ( success() || failure() ) }}"
         id: run-api-test
-        run: ./vendor/bin/qit run:api ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > api-result.txt
+        run: ./vendor/bin/qit run:api woocommerce-payfast-gateway --zip=${{ github.event.repository.name }}.zip --wait > api-result.txt
 
       - uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ failure() && steps.run-api-test.conclusion == 'failure' }}
@@ -91,7 +91,7 @@ jobs:
       - name: Run E2E test
         if: "${{ ( ( inputs.tests == 'default' || inputs.tests == 'e2e' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit e2e test') ) && ( success() || failure() ) }}"
         id: run-e2e-test
-        run: ./vendor/bin/qit run:e2e ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > e2e-result.txt
+        run: ./vendor/bin/qit run:e2e woocommerce-payfast-gateway --zip=${{ github.event.repository.name }}.zip --wait > e2e-result.txt
 
       - uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ failure() && steps.run-e2e-test.conclusion == 'failure' }}
@@ -103,7 +103,7 @@ jobs:
       - name: Run PHPStan test
         if: "${{ inputs.tests == 'phpstan' || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') && ( success() || failure() ) }}"
         id: run-phpstan-test
-        run: ./vendor/bin/qit run:phpstan ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > phpstan-result.txt
+        run: ./vendor/bin/qit run:phpstan woocommerce-payfast-gateway --zip=${{ github.event.repository.name }}.zip --wait > phpstan-result.txt
 
       - uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ failure() && steps.run-phpstan-test.conclusion == 'failure' }}
@@ -115,7 +115,7 @@ jobs:
       - name: Run security test
         if: "${{ inputs.tests == 'security' || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') && ( success() || failure() ) }}"
         id: run-security-test
-        run: ./vendor/bin/qit run:security ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > security-result.txt
+        run: ./vendor/bin/qit run:security woocommerce-payfast-gateway --zip=${{ github.event.repository.name }}.zip --wait > security-result.txt
 
       - uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ failure() && steps.run-security-test.conclusion == 'failure' }}
