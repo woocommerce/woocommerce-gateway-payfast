@@ -47,6 +47,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: woocommerce-payfast-gateway
+          path: woocommerce-payfast-gateway/
 
       - name: Build plugin zip
         run: zip -r woocommerce-payfast-gateway.zip woocommerce-payfast-gateway
