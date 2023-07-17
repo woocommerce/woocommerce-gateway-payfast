@@ -5,18 +5,18 @@
  * Description: Receive payments using the South African Payfast payments provider.
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
- * Version: 1.5.2
- * Requires at least: 5.8
+ * Version: 1.5.5
+ * Requires at least: 6.1
  * Tested up to: 6.2
- * WC tested up to: 7.6
- * WC requires at least: 6.8
+ * WC tested up to: 7.8
+ * WC requires at least: 7.2
  * Requires PHP: 7.2
  */
 use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_GATEWAY_PAYFAST_VERSION', '1.5.2' ); // WRCS: DEFINED_VERSION.
+define( 'WC_GATEWAY_PAYFAST_VERSION', '1.5.5' ); // WRCS: DEFINED_VERSION.
 define( 'WC_GATEWAY_PAYFAST_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 define( 'WC_GATEWAY_PAYFAST_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 
@@ -47,9 +47,9 @@ function woocommerce_payfast_plugin_links( $links ) {
 	);
 
 	$plugin_links = array(
-		'<a href="' . esc_url( $settings_url ) . '">' . __( 'Settings', 'woocommerce-gateway-payfast' ) . '</a>',
-		'<a href="https://www.woocommerce.com/my-account/tickets/">' . __( 'Support', 'woocommerce-gateway-payfast' ) . '</a>',
-		'<a href="https://docs.woocommerce.com/document/payfast-payment-gateway/">' . __( 'Docs', 'woocommerce-gateway-payfast' ) . '</a>',
+		'<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Settings', 'woocommerce-gateway-payfast' ) . '</a>',
+		'<a href="https://www.woocommerce.com/my-account/tickets/">' . esc_html__( 'Support', 'woocommerce-gateway-payfast' ) . '</a>',
+		'<a href="https://docs.woocommerce.com/document/payfast-payment-gateway/">' . esc_html__( 'Docs', 'woocommerce-gateway-payfast' ) . '</a>',
 	);
 
 	return array_merge( $plugin_links, $links );
