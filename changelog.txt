@@ -1,6 +1,6 @@
 *** PayFast Changelog ***
 
-= 1.5.6 - 2023-xx-xx =
+= 1.5.6 - 2023-07-19 =
 * Fix - Include build directory.
 
 = 1.5.5 - 2023-07-04 =
