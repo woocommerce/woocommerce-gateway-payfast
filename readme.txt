@@ -38,6 +38,9 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.5.6 - 2023-xx-xx =
+* Fix - Include build directory.
+
 = 1.5.5 - 2023-07-04 =
 * Dev - Bump WooCommerce "tested up to" version 7.8.
 * Dev - Bump WooCommerce minimum supported version from 6.8 to 7.2.
