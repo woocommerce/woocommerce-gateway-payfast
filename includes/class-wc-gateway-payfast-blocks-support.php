@@ -18,7 +18,7 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 	 * Initializes the payment method type.
 	 */
 	public function initialize() {
-		$this->settings = get_option( 'woocommerce_payfast_settings', [] );
+		$this->settings = get_option( 'woocommerce_payfast_settings', array() );
 	}
 
 	/**
@@ -27,8 +27,8 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 	 * @return boolean
 	 */
 	public function is_active() {
-		$payment_gateways_class   = WC()->payment_gateways();
-		$payment_gateways         = $payment_gateways_class->payment_gateways();
+		$payment_gateways_class = WC()->payment_gateways();
+		$payment_gateways       = $payment_gateways_class->payment_gateways();
 
 		return $payment_gateways['payfast']->is_available();
 	}
@@ -41,7 +41,7 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 	public function get_payment_method_script_handles() {
 		$asset_path   = WC_GATEWAY_PAYFAST_PATH . '/build/index.asset.php';
 		$version      = WC_GATEWAY_PAYFAST_VERSION;
-		$dependencies = [];
+		$dependencies = array();
 		if ( file_exists( $asset_path ) ) {
 			$asset        = require $asset_path;
 			$version      = is_array( $asset ) && isset( $asset['version'] )
@@ -62,7 +62,7 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 			'wc-payfast-blocks-integration',
 			'woocommerce-gateway-payfast'
 		);
-		return [ 'wc-payfast-blocks-integration' ];
+		return array( 'wc-payfast-blocks-integration' );
 	}
 
 	/**
@@ -71,12 +71,12 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 	 * @return array
 	 */
 	public function get_payment_method_data() {
-		return [
+		return array(
 			'title'       => $this->get_setting( 'title' ),
 			'description' => $this->get_setting( 'description' ),
 			'supports'    => $this->get_supported_features(),
 			'logo_url'    => WC_GATEWAY_PAYFAST_URL . '/assets/images/icon.png',
-		];
+		);
 	}
 
 	/**
