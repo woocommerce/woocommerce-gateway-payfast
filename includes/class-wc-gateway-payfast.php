@@ -890,7 +890,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function get_pre_order_fee( $order_id ) {
 		foreach ( wc_get_order( $order_id )->get_fees() as $fee ) {
-			if ( is_array( $fee ) && 'Pre-Order Fee' == $fee['name'] ) {
+			if ( is_array( $fee ) && 'Pre-Order Fee' === $fee['name'] ) {
 				return doubleval( $fee['line_total'] ) + doubleval( $fee['line_tax'] );
 			}
 		}
@@ -939,7 +939,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param string          $token        Payfast subscription token.
 	 * @param WC_Subscription $subscription The subscription object.
 	 */
-	protected function _set_subscription_token( $token, $subscription ) {
+	protected function _set_subscription_token( $token, $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$subscription->update_meta_data( '_payfast_subscription_token', $token );
 		$subscription->save_meta_data();
 	}
@@ -950,7 +950,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Subscription $subscription The subscription object.
 	 * @return mixed Payfast subscription token.
 	 */
-	protected function _get_subscription_token( $subscription ) {
+	protected function _get_subscription_token( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		return $subscription->get_meta( '_payfast_subscription_token', true );
 	}
 
@@ -960,7 +960,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Subscription $subscription The subscription object.
 	 * @return mixed
 	 */
-	protected function _delete_subscription_token( $subscription ) {
+	protected function _delete_subscription_token( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		return $subscription->delete_meta_data( '_payfast_subscription_token' );
 	}
 
@@ -971,7 +971,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 *
 	 * @param WC_Subscription $subscription The subscription object.
 	 */
-	protected function _set_renewal_flag( $subscription ) {
+	protected function _set_renewal_flag( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$subscription->update_meta_data( '_payfast_renewal_flag', 'true' );
 		$subscription->save_meta_data();
 	}
@@ -984,7 +984,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Subscription $subscription The subscription object.
 	 * @return bool
 	 */
-	protected function _has_renewal_flag( $subscription ) {
+	protected function _has_renewal_flag( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		return 'true' === $subscription->get_meta( '_payfast_renewal_flag', true );
 	}
 
@@ -995,7 +995,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 *
 	 * @param WC_Subscription $subscription The subscription object.
 	 */
-	protected function _delete_renewal_flag( $subscription ) {
+	protected function _delete_renewal_flag( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$subscription->delete_meta_data( '_payfast_renewal_flag' );
 		$subscription->save_meta_data();
 	}
@@ -1006,7 +1006,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param string   $token Pre-order token.
 	 * @param WC_Order $order Order object.
 	 */
-	protected function _set_pre_order_token( $token, $order ) {
+	protected function _set_pre_order_token( $token, $order ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		$order->update_meta_data( '_payfast_pre_order_token', $token );
 		$order->save_meta_data();
 	}
@@ -1017,7 +1017,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Order $order Order object.
 	 * @return mixed
 	 */
-	protected function _get_pre_order_token( $order ) {
+	protected function _get_pre_order_token( $order ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 		return $order->get_meta( '_payfast_pre_order_token', true );
 	}
 
@@ -1106,12 +1106,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		foreach ( $subscription->get_related_orders( 'all', 'renewal' ) as $order ) {
 			$statuses_to_charge = array( 'on-hold', 'failed', 'pending' );
-			if ( in_array( $order->get_status(), $statuses_to_charge ) ) {
+			if ( in_array( $order->get_status(), $statuses_to_charge, true ) ) {
 				$latest_order_to_renew = $order;
 				break;
 			}
 		}
-		$item_description = json_encode( array( 'renewal_order_id' => self::get_order_prop( $latest_order_to_renew, 'id' ) ) );
+		$item_description = wp_json_encode( array( 'renewal_order_id' => self::get_order_prop( $latest_order_to_renew, 'id' ) ) );
 
 		return $this->submit_ad_hoc_payment( $token, $amount_to_charge, $item_name, $item_description );
 	}
@@ -1211,6 +1211,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Check Payfast server response.
 		if ( 200 !== $results['response']['code'] ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- used for logging.
 			$this->log( "Error posting API request:\n" . print_r( $results['response'], true ) );
 			return new WP_Error( $results['response']['code'], json_decode( $results['body'] )->data->response, $results );
 		}
@@ -1220,6 +1221,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Sandbox ENV returns true(boolean) in response, while Production ENV "true"(string) in response.
 		if ( 'adhoc' === $command && ! ( 'true' === $results_data['response'] || true === $results_data['response'] ) ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- used for logging.
 			$this->log( "Error posting API request:\n" . print_r( $results_data, true ) );
 
 			$code    = is_array( $results_data['response'] ) ? $results_data['response']['code'] : $results_data['response'];
@@ -1231,6 +1233,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$maybe_json = json_decode( $results['body'], true );
 
 		if ( ! is_null( $maybe_json ) && isset( $maybe_json['status'] ) && 'failed' === $maybe_json['status'] ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- used for logging.
 			$this->log( "Error posting API request:\n" . print_r( $results['body'], true ) );
 
 			// Use trim here to display it properly e.g. on an order note, since Payfast can include CRLF in a message.
@@ -1278,7 +1281,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 *
 	 * @return string
 	 */
-	protected function _generate_parameter_string( $api_data, $sort_data_before_merge = true, $skip_empty_values = true ) {
+	protected function _generate_parameter_string( $api_data, $sort_data_before_merge = true, $skip_empty_values = true ) {  // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 
 		// if sorting is required the passphrase should be added in before sort.
 		if ( ! empty( $this->pass_phrase ) && $sort_data_before_merge ) {
@@ -1298,6 +1301,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 
 			if ( 'signature' !== $key ) {
+				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.urlencode_urlencode -- legacy code, validation required prior to switching to rawurlencode.
 				$val               = urlencode( $val );
 				$parameter_string .= "$key=$val&";
 			}
@@ -1306,6 +1310,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		if ( $sort_data_before_merge ) {
 			$parameter_string = rtrim( $parameter_string, '&' );
 		} elseif ( ! empty( $this->pass_phrase ) ) {
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.urlencode_urlencode -- legacy code, validation required prior to switching to rawurlencode.
 			$parameter_string .= 'passphrase=' . urlencode( $this->pass_phrase );
 		} else {
 			$parameter_string = rtrim( $parameter_string, '&' );
@@ -1369,7 +1374,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$pf_features = 'PHP ' . phpversion() . ';';
 
 		// - cURL.
-		if ( in_array( 'curl', get_loaded_extensions() ) ) {
+		if ( in_array( 'curl', get_loaded_extensions(), true ) ) {
 			define( 'PF_CURL', '' );
 			$pf_version   = curl_version();
 			$pf_features .= ' curl ' . $pf_version['version'] . ';';
@@ -1481,6 +1486,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			$source_ip               = rest_is_ip_address( $x_forwarded_http_header ) ? rest_is_ip_address( $x_forwarded_http_header ) : $source_ip;
 		}
 
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- used for logging.
 		$this->log( "Valid IPs:\n" . print_r( $valid_ips, true ) );
 		$is_valid_ip = in_array( $source_ip, $valid_ips, true );
 
@@ -1506,6 +1512,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function validate_response_data( $post_data, $proxy = null ) {
 		$this->log( 'Host = ' . $this->validate_url );
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- used for logging.
 		$this->log( 'Params = ' . print_r( $post_data, true ) );
 
 		if ( ! is_array( $post_data ) ) {
@@ -1522,6 +1529,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		);
 
 		if ( is_wp_error( $response ) || empty( $response['body'] ) ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- used for logging.
 			$this->log( "Response error:\n" . print_r( $response, true ) );
 			return false;
 		}
@@ -1530,10 +1538,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		$response = $parsed_response;
 
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- used for logging.
 		$this->log( "Response:\n" . print_r( $response, true ) );
 
 		// Interpret Response.
-		if ( is_array( $response ) && in_array( 'VALID', array_keys( $response ) ) ) {
+		if ( is_array( $response ) && in_array( 'VALID', array_keys( $response ), true ) ) {
 			return true;
 		} else {
 			return false;
