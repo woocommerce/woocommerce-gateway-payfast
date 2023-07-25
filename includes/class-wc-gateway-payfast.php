@@ -2,15 +2,16 @@
 /**
  * Payfast Payment Gateway
  *
+ * @package WooCommerce Gateway Payfast
+ */
+
+/**
+ * Payfast Payment Gateway
+ *
  * Provides a Payfast Payment Gateway.
  *
  * @class  woocommerce_payfast
- * @package WooCommerce
- * @category Payment Gateways
- * @author WooCommerce
  */
-
-
 class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 	/**

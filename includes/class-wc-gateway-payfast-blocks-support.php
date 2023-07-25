@@ -1,4 +1,10 @@
 <?php
+/**
+ * Payfast Payment Gateway
+ *
+ * @package WooCommerce Gateway Payfast
+ */
+
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 
 /**

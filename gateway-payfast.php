@@ -11,7 +11,10 @@
  * WC tested up to: 7.8
  * WC requires at least: 7.2
  * Requires PHP: 7.2
+ *
+ * @package WooCommerce Gateway Payfast
  */
+
 use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
 
 defined( 'ABSPATH' ) || exit;

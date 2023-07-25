@@ -1,4 +1,10 @@
 <?php
+/**
+ * Payfast Payment Gateway
+ *
+ * @package WooCommerce Gateway Payfast
+ */
+
 if ( ! class_exists( 'WC_Abstract_Privacy' ) ) {
 	return;
 }
