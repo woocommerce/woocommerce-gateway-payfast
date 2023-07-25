@@ -1,4 +1,4 @@
-name: PHP Compatibility
+name: PHP Coding Sniffs
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   php_compatibility:
-    name: PHP minimum 7.2
+    name: PHP Compatibility (minumum 7.2)
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +29,28 @@ jobs:
 
       - name: Run PHP Compatibility
         run: ./vendor/bin/phpcs *.php includes -p --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.2-
+
+  php_linting:
+    name: PHP Coding Standards
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set PHP version
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          tools: composer:v2, cs2pr
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Run PHP Coding Standard sniffs.
+        run: ./vendor/bin/phpcs *.php includes -p --extensions=php --runtime-set testVersion 7.2- --report-full --report-checkstyle=./.github/phpcs-report.xml
+
+      - name: Show PHPCS results in PR
+        if: ${{ always() }}
+        run: cs2pr ./.github/phpcs-report.xml
