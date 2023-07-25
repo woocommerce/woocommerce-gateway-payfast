@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 6.1
 Tested up to: 6.2
 Requires PHP: 7.2
-Stable tag: 1.5.6
+Stable tag: 1.5.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,7 +38,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.5.7 - xxxx-xx-xx =
+= 1.5.7 - 2023-07-25 =
 * Fix - Handle WP_Error object when return from wp_remote_request.
 
 = 1.5.6 - 2023-07-19 =
