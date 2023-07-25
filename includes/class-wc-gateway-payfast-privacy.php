@@ -9,6 +9,9 @@ if ( ! class_exists( 'WC_Abstract_Privacy' ) ) {
 	return;
 }
 
+/**
+ * Privacy/GDPR related functionality which ties into WordPress functionality.
+ */
 class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 	/**
 	 * Constructor
@@ -28,10 +31,11 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 	/**
 	 * Returns a list of orders that are using one of Payfast's payment methods.
 	 *
-	 * @param string $email_address
-	 * @param int    $page
+	 * The list of orders is paginated to 10 orders per page.
 	 *
-	 * @return array WP_Post
+	 * @param string $email_address The user email address.
+	 * @param int    $page          Page number to query.
+	 * @return WC_Order[]|stdClass Number of pages and an array of order objects.
 	 */
 	protected function get_payfast_orders( $email_address, $page ) {
 		$user = get_user_by( 'email', $email_address ); // Check if user has an ID in the DB to load stored personal data.
@@ -135,6 +139,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		$subscription_query = array(
 			'posts_per_page' => 10,
 			'page'           => $page,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'meta_query'     => $meta_query,
 		);
 
@@ -195,7 +200,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 			$messages                          = array_merge( $messages, $msgs );
 		}
 
-		// Tell core if we have more orders to work on still
+		// Tell core if we have more orders to work on still.
 		$done = count( $orders ) < 10;
 
 		return array(
@@ -209,7 +214,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 	/**
 	 * Handle eraser of data tied to Subscriptions
 	 *
-	 * @param WC_Order $order
+	 * @param WC_Order $order Order object.
 	 * @return array
 	 */
 	protected function maybe_handle_subscription( $order ) {
@@ -229,8 +234,27 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 			return array( false, false, array() );
 		}
 
+		/**
+		 * Filter privacy eraser subscription statuses.
+		 *
+		 * Modify the subscription statuses that are considered active and should be retained.
+		 *
+		 * @since 1.4.13
+		 *
+		 * @param string[] $statuses Array of subscription statuses considered active.
+		 */
 		if ( $subscription->has_status( apply_filters( 'wc_payfast_privacy_eraser_subs_statuses', array( 'on-hold', 'active' ) ) ) ) {
-			return array( false, true, array( sprintf( esc_html__( 'Order ID %d contains an active Subscription' ), $order->get_id() ) ) );
+			return array(
+				false,
+				true,
+				array(
+					sprintf(
+						/* translators: %d: Order ID */
+						esc_html__( 'Order ID %d contains an active Subscription' ),
+						$order->get_id()
+					),
+				),
+			);
 		}
 
 		$renewal_orders = WC_Subscriptions_Renewal_Order::get_renewal_orders( $order->get_id(), 'WC_Order' );
@@ -249,7 +273,9 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 	/**
 	 * Handle eraser of data tied to Orders
 	 *
-	 * @param WC_Order $order
+	 * @since 1.4.13
+	 *
+	 * @param WC_Order $order The order object.
 	 * @return array
 	 */
 	protected function maybe_handle_order( $order ) {
