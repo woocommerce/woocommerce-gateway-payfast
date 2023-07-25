@@ -38,6 +38,9 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.5.7 - xxxx-xx-xx =
+* Fix - Handle WP_Error object when return from wp_remote_request.
+
 = 1.5.6 - 2023-07-19 =
 * Fix - Include build directory.
 
