@@ -28,7 +28,7 @@ jobs:
         run: composer install
 
       - name: Run PHP Compatibility
-        run: ./vendor/bin/phpcs *.php includes -p --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.2-
+        run: ./vendor/bin/phpcs *.php includes -ps --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.2-
 
   php_linting:
     name: PHP Coding Standards
@@ -49,7 +49,7 @@ jobs:
         run: composer install
 
       - name: Run PHP Coding Standard sniffs.
-        run: ./vendor/bin/phpcs *.php includes -p --extensions=php --runtime-set testVersion 7.2- --report-full --report-checkstyle=./.github/phpcs-report.xml
+        run: ./vendor/bin/phpcs *.php includes -ps --extensions=php --runtime-set testVersion 7.2- --report-full --report-checkstyle=./.github/phpcs-report.xml
 
       - name: Show PHPCS results in PR
         if: ${{ always() }}
