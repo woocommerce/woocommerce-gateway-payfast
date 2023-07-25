@@ -40,6 +40,14 @@ function woocommerce_payfast_init() {
 }
 add_action( 'plugins_loaded', 'woocommerce_payfast_init', 0 );
 
+/**
+ * Add links to the plugin action links.
+ *
+ * @since 1.4.13
+ *
+ * @param array $links Plugin action links.
+ * @return array Modified plugin action links.
+ */
 function woocommerce_payfast_plugin_links( $links ) {
 	$settings_url = add_query_arg(
 		array(
@@ -65,6 +73,9 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'woocommerce_p
  * Add the gateway to WooCommerce
  *
  * @since 1.0.0
+ *
+ * @param string[] $methods WooCommerce payment methods.
+ * @return string[] Modified payment methods to include Payfast.
  */
 function woocommerce_payfast_add_gateway( $methods ) {
 	$methods[] = 'WC_Gateway_PayFast';
@@ -73,6 +84,11 @@ function woocommerce_payfast_add_gateway( $methods ) {
 
 add_action( 'woocommerce_blocks_loaded', 'woocommerce_payfast_woocommerce_blocks_support' );
 
+/**
+ * Add the gateway to WooCommerce Blocks.
+ *
+ * @since 1.4.19
+ */
 function woocommerce_payfast_woocommerce_blocks_support() {
 	if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
 		require_once dirname( __FILE__ ) . '/includes/class-wc-gateway-payfast-blocks-support.php';
