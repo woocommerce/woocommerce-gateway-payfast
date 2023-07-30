@@ -939,7 +939,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param string          $token        Payfast subscription token.
 	 * @param WC_Subscription $subscription The subscription object.
 	 */
-	protected function _set_subscription_token( $token, $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _set_subscription_token( $token, $subscription ) {
 		$subscription->update_meta_data( '_payfast_subscription_token', $token );
 		$subscription->save_meta_data();
 	}
@@ -950,7 +950,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Subscription $subscription The subscription object.
 	 * @return mixed Payfast subscription token.
 	 */
-	protected function _get_subscription_token( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _get_subscription_token( $subscription ) {
 		return $subscription->get_meta( '_payfast_subscription_token', true );
 	}
 
@@ -960,7 +960,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Subscription $subscription The subscription object.
 	 * @return mixed
 	 */
-	protected function _delete_subscription_token( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _delete_subscription_token( $subscription ) {
 		return $subscription->delete_meta_data( '_payfast_subscription_token' );
 	}
 
@@ -971,7 +971,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 *
 	 * @param WC_Subscription $subscription The subscription object.
 	 */
-	protected function _set_renewal_flag( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _set_renewal_flag( $subscription ) {
 		$subscription->update_meta_data( '_payfast_renewal_flag', 'true' );
 		$subscription->save_meta_data();
 	}
@@ -984,7 +984,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Subscription $subscription The subscription object.
 	 * @return bool
 	 */
-	protected function _has_renewal_flag( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _has_renewal_flag( $subscription ) {
 		return 'true' === $subscription->get_meta( '_payfast_renewal_flag', true );
 	}
 
@@ -995,7 +995,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 *
 	 * @param WC_Subscription $subscription The subscription object.
 	 */
-	protected function _delete_renewal_flag( $subscription ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _delete_renewal_flag( $subscription ) {
 		$subscription->delete_meta_data( '_payfast_renewal_flag' );
 		$subscription->save_meta_data();
 	}
@@ -1006,7 +1006,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param string   $token Pre-order token.
 	 * @param WC_Order $order Order object.
 	 */
-	protected function _set_pre_order_token( $token, $order ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _set_pre_order_token( $token, $order ) {
 		$order->update_meta_data( '_payfast_pre_order_token', $token );
 		$order->save_meta_data();
 	}
@@ -1017,7 +1017,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Order $order Order object.
 	 * @return mixed
 	 */
-	protected function _get_pre_order_token( $order ) { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _get_pre_order_token( $order ) {
 		return $order->get_meta( '_payfast_pre_order_token', true );
 	}
 
@@ -1281,7 +1281,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 *
 	 * @return string
 	 */
-	protected function _generate_parameter_string( $api_data, $sort_data_before_merge = true, $skip_empty_values = true ) {  // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _generate_parameter_string( $api_data, $sort_data_before_merge = true, $skip_empty_values = true ) {
 
 		// if sorting is required the passphrase should be added in before sort.
 		if ( ! empty( $this->pass_phrase ) && $sort_data_before_merge ) {
