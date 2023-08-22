@@ -2,13 +2,6 @@
 
 echo "Initializing WooCommerce Gateway Payfast E2E"
 
-# Enable SOAP
-CONTAINER_ID="$(docker ps | grep _tests-wordpress_  | awk '{print $1}')"
-docker exec $CONTAINER_ID apt-get install -y libxml2-dev
-docker exec $CONTAINER_ID docker-php-ext-install soap
-docker exec $CONTAINER_ID /etc/init.d/apache2 reload
-
-
 # Enable pretty permalinks.
 wp-env run tests-wordpress chmod -c ugo+w /var/www/html
 wp-env run tests-cli wp rewrite structure '/%postname%/' --hard
