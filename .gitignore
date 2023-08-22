@@ -29,3 +29,4 @@ tests/e2e/config/local-*
 build
 
 woocommerce-gateway-payfast.zip
+tests/e2e/test-results
