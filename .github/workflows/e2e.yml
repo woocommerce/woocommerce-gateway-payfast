@@ -44,14 +44,14 @@ jobs:
         run: npm run env:start
 
       - name: Run E2E Foundational Test
-        id: snap_scan_e2e_tests
+        id: payfast_e2e_tests
         if: ${{ github.event_name == 'pull_request' }}
         run: npm run test:e2e-foundational
 
       - name: Update Success Label
         if: |
           always() &&
-          steps.snap_scan_e2e_tests.conclusion == 'success'
+          steps.payfast_e2e_tests.conclusion == 'success'
         uses: actions/github-script@v6
         continue-on-error: true
         with:
@@ -71,7 +71,7 @@ jobs:
       - name: Update Failure Label
         if: |
           always() &&
-          steps.snap_scan_e2e_tests.conclusion == 'failure'
+          steps.payfast_e2e_tests.conclusion == 'failure'
         uses: actions/github-script@v6
         continue-on-error: true
         with:
