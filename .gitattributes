@@ -20,3 +20,4 @@ phpcs.xml export-ignore
 composer.lock export-ignore
 .prettierignore export-ignore
 .nvmrc export-ignore
+.wp-env.json export-ignore
