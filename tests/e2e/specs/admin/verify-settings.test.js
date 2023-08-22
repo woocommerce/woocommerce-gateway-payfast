@@ -7,9 +7,9 @@ const {test, expect} = require( '@playwright/test' );
  * Internal dependencies
  */
 import {
-	changeCurreny,
-	gotoSnapscanSettingPage,
-	editSnapscanSetting
+	changeCurrency,
+	gotoPayfastSettingPage,
+	editPayfastSetting
 } from '../../utils';
 
 test.describe( 'Store admin can edit plugin setting - @foundational', async () => {
@@ -17,8 +17,8 @@ test.describe( 'Store admin can edit plugin setting - @foundational', async () =
 	test.use( {storageState: process.env.ADMINSTATE} );
 
 	test( 'Verify Payfast gateway disabled with non-ZAR currency', async ( {page} ) => {
-		await changeCurreny( { page, currency: 'USD'} );
-		await gotoSnapscanSettingPage( { page } );
+		await changeCurrency( { page, currency: 'USD'} );
+		await gotoPayfastSettingPage( { page } );
 
 		const errorContainerLocator = await page.locator( '.inline.error' );
 		await expect( errorContainerLocator )
@@ -26,8 +26,8 @@ test.describe( 'Store admin can edit plugin setting - @foundational', async () =
 	} );
 
 	test( 'Verify Payfast plugin compatibility with ZAR store currency', async ( {page} ) => {
-		await changeCurreny( { page, currency: 'ZAR'} );
-		await gotoSnapscanSettingPage( { page } );
+		await changeCurrency( { page, currency: 'ZAR'} );
+		await gotoPayfastSettingPage( { page } );
 
 		// Setting field: Enable/Disable
 		const togglePaymentGatewaySettingLocator = await page.getByLabel( 'Enable/Disable' );
