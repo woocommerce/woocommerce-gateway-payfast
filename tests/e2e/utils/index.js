@@ -25,7 +25,7 @@ export async function changeCurreny( {page, currency} ) {
  * @return {Promise<void>}
  */
 export async function gotoSnapscanSettingPage( {page} ) {
-	await page.goto( '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=snapscan' );
+	await page.goto( '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payfast' );
 }
 
 /**
