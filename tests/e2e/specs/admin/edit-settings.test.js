@@ -49,6 +49,8 @@ test.describe( 'Verify SnapCode setting - @foundational', async () => {
 		await checkoutBlock.goto('/checkout-block/');
 
 		const paymentMethodLocator = await checkoutBlock.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
+		await expect( await checkoutBlock.locator( 'label[for="radio-control-wc-payment-method-options-payfast"] img' ). getAttribute('alt'))
+			.toEqual('Payfast');
 		await paymentMethodLocator.click();
 		await expect(await checkoutBlock.locator( '.wc-block-components-radio-control-accordion-content' ) )
 			.toHaveText(/Pay with payfast/);
@@ -59,6 +61,7 @@ test.describe( 'Verify SnapCode setting - @foundational', async () => {
 		await checkoutPage.goto('/checkout/');
 
 		const paymentMethodLocator = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
+		await expect( paymentMethodLocator ).toHaveText(/Payfast/);
 		await paymentMethodLocator.click();
 					await expect(await checkoutPage.locator( '.payment_box.payment_method_payfast' ) )
 						.toHaveText(/Pay with payfast/);
