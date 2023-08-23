@@ -66,4 +66,25 @@ test.describe( 'Verify SnapCode setting - @foundational', async () => {
 					await expect(await checkoutPage.locator( '.payment_box.payment_method_payfast' ) )
 						.toHaveText(/Pay with payfast/);
 	});
+
+	test( 'Verify Merchant ID, Merchant Key, and Passphrase', async () => {
+		await gotoPayfastSettingPage( {page: adminPage} );
+		await editPayfastSetting( {
+			page: adminPage,
+			settings: {
+				merchant_id: '123456789',
+				merchant_key: 'abcdefghijk',
+				passphrase: '987654321',
+			}
+		});
+
+		const merchantIdSettingLocator = await adminPage.getByLabel( 'Merchant ID' , {exact: true});
+		await expect( await merchantIdSettingLocator.inputValue() ).toEqual( '123456789' );
+
+		const merchantKeySettingLocator = await adminPage.getByLabel( 'Merchant Key' , {exact: true});
+		await expect( await merchantKeySettingLocator.inputValue() ).toEqual( 'abcdefghijk' );
+
+		const passphraseSettingLocator = await adminPage.getByLabel( 'Passphrase' , {exact: true});
+		await expect( await passphraseSettingLocator.inputValue() ).toEqual( '987654321' );
+	});
 } );
