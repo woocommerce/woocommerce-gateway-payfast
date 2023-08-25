@@ -91,3 +91,24 @@ function woocommerce_payfast_declare_hpos_compatibility() {
 	}
 }
 add_action( 'before_woocommerce_init', 'woocommerce_payfast_declare_hpos_compatibility' );
+
+/**
+ * Display notice if WooCommerce is not installed.
+ *
+ * @since x.x.x
+ */
+function woocommerce_payfast_missing_wc_notice() {
+	if ( class_exists( 'WooCommerce' ) ) {
+		// Display nothing if WooCommerce is installed and activated.
+		return;
+	}
+
+	echo '<div class="error"><p><strong>';
+	echo sprintf(
+		/* translators: %s WooCommerce download URL link. */
+		esc_html__( 'WooCommerce Payfast Gateway requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-gateway-payfast' ),
+		'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
+	);
+	echo '</strong></p></div>';
+}
+add_action( 'admin_notices', 'woocommerce_payfast_missing_wc_notice' );
