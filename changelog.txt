@@ -1,6 +1,6 @@
 *** PayFast Changelog ***
 
-= 1.5.8 - xxxx-xx-xx =
+= 1.5.8 - 2023-08-29 =
 * Add - Admin notice if this extension is activated without WooCommerce.
 
 = 1.5.7 - 2023-07-25 =
