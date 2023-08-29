@@ -38,6 +38,9 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.5.8 - xxxx-xx-xx =
+* Add - Admin notice if this extension is activated without WooCommerce.
+
 = 1.5.7 - 2023-07-25 =
 * Fix - Handle WP_Error object when return from wp_remote_request.
 
