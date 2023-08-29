@@ -62,6 +62,16 @@ class WebhookDataProvider {
 		// Add the amounts.
 		$result = array_merge( $result, $this->getAmounts() );
 
+		// Add the token and billing date for subscriptions.
+		if($this->paymentGateway->is_subscription($this->order)){
+			$result['token'] = sprintf(
+				'%1$s-%2$s-%2$s-%2$s-%1$s',
+				random_bytes(8),
+				random_bytes(4)
+			);
+			$result['billing_date'] = date('Y-m-d', strtotime());
+		}
+
 		$method = $reflectionObject->getMethod( '_generate_parameter_string' );
 		$method->setAccessible( true );
 		$signature = md5($method->invoke( $this->paymentGateway, $result, false, false ));
