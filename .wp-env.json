@@ -2,7 +2,7 @@
   "plugins": [
     ".",
     "https://downloads.wordpress.org/plugin/woocommerce.zip",
-    "tests/e2e/wordpress-plugins/payfast-webhook-faker"
+    "./tests/e2e/wordpress-plugins/payfast-webhook-faker"
   ],
   "themes": ["https://downloads.wordpress.org/theme/storefront.zip"],
   "env": {
