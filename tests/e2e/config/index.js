@@ -44,4 +44,10 @@ const customer = {
 	},
 };
 
-export {admin, customer};
+const payfastSandboxCredentials = {
+	merchantId: '10000100',
+	merchantKey: '46f0cd694581a',
+	passPharse: 'jt7NOE43FZPn'
+}
+
+export {admin, customer, payfastSandboxCredentials};
