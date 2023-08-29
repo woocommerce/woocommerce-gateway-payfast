@@ -45,12 +45,12 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 		await addProductToCart( {page: checkoutBlock, productUrl:'/product/simple-product/'} );
 		await checkoutBlock.goto('/checkout-block/');
 
-		await checkoutBlock.getByLabel('First name').fill( 'John' );
-		await checkoutBlock.getByLabel('Last name').fill( 'Doe' );
-		await checkoutBlock.getByLabel('Address', {exact: true}).fill( 'addr 1' );
-		await checkoutBlock.getByLabel('City').fill( 'San Francisco' );
-		await checkoutBlock.getByLabel('Zip Code').fill( '94107' );
-		await checkoutBlock.getByLabel('Phone (optional)').fill( '9999999999' );
+		await checkoutBlock.getByLabel('First name').fill( customer.billing.firstname );
+		await checkoutBlock.getByLabel('Last name').fill( customer.billing.lastname );
+		await checkoutBlock.getByLabel('Address', {exact: true}).fill( customer.billing.addressfirstline );
+		await checkoutBlock.getByLabel('City').fill( customer.billing.city );
+		await checkoutBlock.getByLabel('Zip Code').fill( customer.billing.postcode );
+		await checkoutBlock.getByLabel('Phone (optional)').fill( customer.billing.phone );
 
 		// Check if Payfast payment method is visible & place order
 		waitForURL = checkoutBlock.waitForURL( '**/sandbox.payfast.co.za/eng/process/payment/**' );
