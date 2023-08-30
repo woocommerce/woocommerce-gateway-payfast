@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import {addProductToCart, changeCurrency, editPayfastSetting} from '../../utils';
-import {customer, payfastSandboxCredentials} from "../../config";
+import {changeCurrency, editPayfastSetting} from '../../utils';
+import {payfastSandboxCredentials} from "../../config";
 
 /**
  * WordPress dependencies
@@ -136,5 +136,54 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		const relatedOrders = await adminPage.locator( '.woocommerce_subscriptions_related_orders' );
 		await expect(relatedOrders).toContainText( 'Subscription' );
 		await expect(relatedOrders).toContainText( 'Active' );
+	} );
+
+	test( 'Verify renew subscription payment by customer', async () => {
+		let waitForURL;
+		await checkoutPage.goto( '/my-account/subscriptions/' );
+
+		// Edit first active subscription.
+		const editSubscription = await checkoutPage
+			.locator( '.order.woocommerce-orders-table__row--status-active .subscription-id a' )
+			.first();
+		await editSubscription.click();
+
+		await checkoutPage.getByRole( 'link', {name: 'Renew now'} ).click();
+
+		// Check if Payfast payment method is visible & place order
+		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
+		const payfastPaymentMethod = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
+		await payfastPaymentMethod.click();
+		await checkoutPage.getByRole( 'button', {name: 'Renew Subscription'} ).click();
+		await waitForURL;
+
+		// Pay on Payfast checkout page.
+		// Confirm on payfast checkout page whether current transaction is for subscription.
+		waitForURL = checkoutPage.waitForURL( /\/order-received\// );
+		const payfastCompletePaymentButton = await checkoutPage.locator( 'button#pay-with-wallet' );
+		await payfastCompletePaymentButton.click();
+		await waitForURL;
+
+		// Validate order status.
+		// Order should be in processing state.
+		// Subscription should be active
+		// Receipt page should have informaiton about subscription.
+		waitForURL = adminPage.waitForURL( /\/wp-admin\/post.php\?post/ );
+
+		const relatedSubscriotionOnReceiptPage = await checkoutPage.getByRole( 'heading',
+			{name: 'Related subscriptions', exact: true} );
+		await expect( relatedSubscriotionOnReceiptPage ).toBeVisible();
+
+		// Open order page
+		const orderId = await checkoutPage.url().split( 'order-received/' )[1].split( '/' )[0];
+		await adminPage.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
+		await waitForURL;
+
+		// Verify details on order page.
+		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
+		await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
+		const relatedOrders = await adminPage.locator( '.woocommerce_subscriptions_related_orders' );
+		await expect( relatedOrders ).toContainText( 'Subscription' );
+		await expect( relatedOrders ).toContainText( 'Active' );
 	} );
 } );
