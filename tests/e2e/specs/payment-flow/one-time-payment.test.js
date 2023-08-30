@@ -53,21 +53,21 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 		await checkoutBlock.getByLabel('Phone (optional)').fill( customer.billing.phone );
 
 		// Check if Payfast payment method is visible & place order
-		waitForURL = checkoutBlock.waitForURL( '**/sandbox.payfast.co.za/eng/process/payment/**' );
+		waitForURL = checkoutBlock.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
 		const payfastPaymentMethod = await checkoutBlock.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
 		await payfastPaymentMethod.click();
 		await checkoutBlock.getByRole( 'button', {name: 'Place order'} ).click();
 		await waitForURL;
 
 		// Pay on Payfast checkout page.
-		waitForURL = checkoutBlock.waitForURL( '**/order-received/**' );
+		waitForURL = checkoutBlock.waitForURL( /\/order-received\// );
 		const payfastCompletePaymentButton = await checkoutBlock.locator( 'button#pay-with-wallet' );
 		await payfastCompletePaymentButton.click();
 		await waitForURL;
 
 		// Validate order status.
 		// Order should be in processing state.
-		waitForURL = adminPage.waitForURL( '**/wp-admin/post.php**' );
+		waitForURL = adminPage.waitForURL( /\/wp-admin\/post.php\?post/ );
 		const orderId = await checkoutBlock.url().split( 'order-received/' )[1].split( '/' )[0];
 		await adminPage.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
 		await waitForURL;
@@ -90,21 +90,21 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 		await checkoutPage.getByLabel( 'Phone' ).fill( customer.billing.phone );
 
 		// Check if Payfast payment method is visible & place order
-		waitForURL = checkoutPage.waitForURL( '**/sandbox.payfast.co.za/eng/process/payment/**' );
+		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
 		const payfastPaymentMethod = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
 		await payfastPaymentMethod.click();
 		await checkoutPage.getByRole( 'button', {name: 'Place order'} ).click();
 		await waitForURL;
 
 		// Pay on Payfast checkout page.
-		waitForURL = checkoutPage.waitForURL( '**/order-received/**' );
+		waitForURL = checkoutPage.waitForURL( /\/order-received\// );
 		const payfastCompletePaymentButton = await checkoutPage.locator( 'button#pay-with-wallet' );
 		await payfastCompletePaymentButton.click();
 		await waitForURL;
 
 		// Validate order status.
 		// Order should be in processing state.
-		waitForURL = adminPage.waitForURL( '**/wp-admin/post.php**' );
+		waitForURL = adminPage.waitForURL( /\/wp-admin\/post.php\?post/ );
 		const orderId = await checkoutPage.url().split( 'order-received/' )[1].split( '/' )[0];
 		await adminPage.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
 		await waitForURL;
