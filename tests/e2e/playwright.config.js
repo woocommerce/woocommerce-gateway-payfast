@@ -8,7 +8,7 @@ module.exports = (
 	async () => {
 		// Get Base URL from wp-env.
 		const wpEnvConfig = await loadConfig( './' );
-		let baseUrl = 'http://localhost:8889';
+		let baseUrl = 'http://localhost';
 		if ( wpEnvConfig ) {
 			const port = wpEnvConfig.env.tests.port || null;
 
