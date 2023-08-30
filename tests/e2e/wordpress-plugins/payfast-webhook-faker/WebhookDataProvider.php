@@ -28,7 +28,7 @@ class WebhookDataProvider {
 	public function getData(): array {
 		ob_start();
 		$this->paymentGateway->generate_payfast_form( $this->order->get_id() );
-		$form = ob_get_clean();
+		ob_get_clean();
 
 		// Make $data_to_send property and _generate_parameter_string function accessible.
 		$reflectionObject = new ReflectionObject( $this->paymentGateway );
