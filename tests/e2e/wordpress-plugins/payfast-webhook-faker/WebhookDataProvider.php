@@ -28,7 +28,7 @@ class WebhookDataProvider {
 	public function getData(): array {
 		ob_start();
 		$this->paymentGateway->generate_payfast_form( $this->order->get_id() );
-		ob_get_clean();
+		$form = ob_get_clean();
 
 		// Make $data_to_send property and _generate_parameter_string function accessible.
 		$reflectionObject = new ReflectionObject( $this->paymentGateway );
@@ -63,18 +63,17 @@ class WebhookDataProvider {
 		$result = array_merge( $result, $this->getAmounts() );
 
 		// Add the token and billing date for subscriptions.
-		if($this->paymentGateway->is_subscription($this->order)){
-			$result['token'] = sprintf(
-				'%1$s-%2$s-%2$s-%2$s-%1$s',
-				random_bytes(8),
-				random_bytes(4)
-			);
-			$result['billing_date'] = date('Y-m-d', strtotime());
+		if (
+			$this->paymentGateway->is_subscription( $this->order )
+			|| $this->paymentGateway->order_contains_subscription( $this->order )
+		) {
+			$result['token']        = wp_generate_password(8, false );
+			$result['billing_date'] = date( 'Y-m-d' );
 		}
 
 		$method = $reflectionObject->getMethod( '_generate_parameter_string' );
 		$method->setAccessible( true );
-		$signature = md5($method->invoke( $this->paymentGateway, $result, false, false ));
+		$signature = md5( $method->invoke( $this->paymentGateway, $result, false, false ) );
 
 		// Add the signature.
 		$result['signature'] = $signature;
