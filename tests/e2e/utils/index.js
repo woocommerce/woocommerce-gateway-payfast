@@ -4,7 +4,7 @@
  * @param {string} currency
  * @return {Promise<void>}
  */
-export async function changeCurrency({page, currency} ) {
+export async function changeCurrency( {page, currency} ) {
 	const waitForURLPromise = page.waitForURL( '**/wp-admin/admin.php?page=wc-settings&tab=general' );
 	await page.goto( '/wp-admin/admin.php?page=wc-settings&tab=general' );
 	const currencySelectorLocator = await page.getByLabel( 'Currency ', {exact: true} );
@@ -24,7 +24,7 @@ export async function changeCurrency({page, currency} ) {
  * @param {Page} page
  * @return {Promise<void>}
  */
-export async function gotoPayfastSettingPage({page} ) {
+export async function gotoPayfastSettingPage( {page} ) {
 	await page.goto( '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payfast' );
 }
 
@@ -36,7 +36,7 @@ export async function gotoPayfastSettingPage({page} ) {
  *
  * TODO: Save setting only if value is different from the current value
  */
-export async function editPayfastSetting({page, settings} ) {
+export async function editPayfastSetting( {page, settings} ) {
 	await gotoPayfastSettingPage( {page} );
 
 	for ( const settingId in settings ) {
@@ -52,29 +52,29 @@ export async function editPayfastSetting({page, settings} ) {
 				break;
 
 			case 'title':
-				const titleSettingLocator = await page.getByLabel( 'Title' , {exact: true});
+				const titleSettingLocator = await page.getByLabel( 'Title', {exact: true} );
 				await titleSettingLocator.fill( settings.title );
 				break;
 
 			case 'description':
-				const descriptionSettingLocator = await page.getByLabel( 'Description' , {exact: true});
+				const descriptionSettingLocator = await page.getByLabel( 'Description', {exact: true} );
 				await descriptionSettingLocator.fill( settings.description );
 				break;
 
-				case 'merchant_id':
-					const merchantIdSettingLocator = await page.getByLabel( 'Merchant ID' , {exact: true});
-					await merchantIdSettingLocator.fill( settings.merchant_id );
-					break;
+			case 'merchant_id':
+				const merchantIdSettingLocator = await page.getByLabel( 'Merchant ID', {exact: true} );
+				await merchantIdSettingLocator.fill( settings.merchant_id );
+				break;
 
-					case 'merchant_key':
-						const merchantKeySettingLocator = await page.getByLabel( 'Merchant Key' , {exact: true});
-						await merchantKeySettingLocator.fill( settings.merchant_key );
-						break;
+			case 'merchant_key':
+				const merchantKeySettingLocator = await page.getByLabel( 'Merchant Key', {exact: true} );
+				await merchantKeySettingLocator.fill( settings.merchant_key );
+				break;
 
-						case 'passphrase':
-							const passphraseSettingLocator = await page.getByLabel( 'Passphrase' , {exact: true});
-							await passphraseSettingLocator.fill( settings.passphrase );
-							break;
+			case 'passphrase':
+				const passphraseSettingLocator = await page.getByLabel( 'Passphrase', {exact: true} );
+				await passphraseSettingLocator.fill( settings.passphrase );
+				break;
 		}
 	}
 
