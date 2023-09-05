@@ -1,7 +1,7 @@
 {
 	"name": "woocommerce-gateway-payfast",
 	"title": "WooCommerce Gateway Payfast",
-	"version": "1.5.7",
+	"version": "1.5.8",
 	"license": "GPL-3.0",
 	"homepage": "https://wordpress.org/plugins/woocommerce-payfast-gateway/",
 	"repository": {
