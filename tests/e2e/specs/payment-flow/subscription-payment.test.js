@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {changeCurrency, editPayfastSetting} from '../../utils';
-import {payfastSandboxCredentials} from "../../config";
+import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
  * WordPress dependencies
@@ -44,18 +44,19 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 
 		await checkoutBlock.goto( '/product/simple-subscription-product/' );
 		await checkoutBlock.click( 'text=Sign up now' );
-		await checkoutBlock.goto('/checkout-block/');
+		await checkoutBlock.goto( '/checkout-block/' );
 
-		await checkoutBlock.getByLabel('First name').fill( customer.billing.firstname );
-		await checkoutBlock.getByLabel('Last name').fill( customer.billing.lastname );
-		await checkoutBlock.getByLabel('Address', {exact: true}).fill( customer.billing.addressfirstline );
-		await checkoutBlock.getByLabel('City').fill( customer.billing.city );
-		await checkoutBlock.getByLabel('Zip Code').fill( customer.billing.postcode );
-		await checkoutBlock.getByLabel('Phone (optional)').fill( customer.billing.phone );
+		await checkoutBlock.getByLabel( 'First name' ).fill( customer.billing.firstname );
+		await checkoutBlock.getByLabel( 'Last name' ).fill( customer.billing.lastname );
+		await checkoutBlock.getByLabel( 'Address', {exact: true} ).fill( customer.billing.addressfirstline );
+		await checkoutBlock.getByLabel( 'City' ).fill( customer.billing.city );
+		await checkoutBlock.getByLabel( 'Zip Code' ).fill( customer.billing.postcode );
+		await checkoutBlock.getByLabel( 'Phone (optional)' ).fill( customer.billing.phone );
 
 		// Check if Payfast payment method is visible & place order
 		waitForURL = checkoutBlock.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
-		const payfastPaymentMethod = await checkoutBlock.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
+		const payfastPaymentMethod = await checkoutBlock.locator(
+			'label[for="radio-control-wc-payment-method-options-payfast"]' );
 		await payfastPaymentMethod.click();
 		await checkoutBlock.getByRole( 'button', {name: 'Place Order'} ).click();
 		await waitForURL;
@@ -65,8 +66,8 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		waitForURL = checkoutBlock.waitForURL( /\/order-received\// );
 		const payfastCompletePaymentButton = await checkoutBlock.locator( 'button#pay-with-wallet' );
 		const recurringPaymentText = await checkoutBlock.locator( '.tablewrapper-body__completing_process_text' );
-		await expect( await recurringPaymentText.evaluate( ( el ) => el.textContent ) )
-			.toBe('Completing this process will allow Test Merchant to automatically process your future payments.');
+		await expect( recurringPaymentText )
+			.toHaveText( 'Completing this process will allow Test Merchant to automatically process your future payments.' );
 		await payfastCompletePaymentButton.click();
 		await waitForURL;
 
@@ -78,11 +79,11 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		await waitForURL;
 
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
-		await expect(await orderStatus.evaluate( el => el.value )).toBe('wc-processing');
+		await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
 
 		const relatedOrders = await adminPage.locator( '.woocommerce_subscriptions_related_orders' );
-		await expect(relatedOrders).toContainText( 'Subscription' );
-		await expect(relatedOrders).toContainText( 'Active' );
+		await expect( relatedOrders ).toContainText( 'Subscription' );
+		await expect( relatedOrders ).toContainText( 'Active' );
 	} );
 
 	test( 'Checkout Page: Verify subscription payment', async () => {
@@ -111,8 +112,8 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		waitForURL = checkoutPage.waitForURL( /\/order-received\// );
 		const payfastCompletePaymentButton = await checkoutPage.locator( 'button#pay-with-wallet' );
 		const recurringPaymentText = await checkoutPage.locator( '.tablewrapper-body__completing_process_text' );
-		await expect( await recurringPaymentText.evaluate( ( el ) => el.textContent ) )
-			.toBe('Completing this process will allow Test Merchant to automatically process your future payments.');
+		await expect( recurringPaymentText )
+			.toHaveText( 'Completing this process will allow Test Merchant to automatically process your future payments.' );
 		await payfastCompletePaymentButton.click();
 		await waitForURL;
 
@@ -122,8 +123,9 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		// Receipt page should have informaiton about subscription.
 		waitForURL = adminPage.waitForURL( /\/wp-admin\/post.php\?post/ );
 
-		const relatedSubscriotionOnReceiptPage = await checkoutPage.getByRole( 'heading', {name: 'Related subscriptions' , exact: true } );
-		await expect(relatedSubscriotionOnReceiptPage).toBeVisible();
+		const relatedSubscriotionOnReceiptPage = await checkoutPage.getByRole( 'heading',
+			{name: 'Related subscriptions', exact: true} );
+		await expect( relatedSubscriotionOnReceiptPage ).toBeVisible();
 
 		// Open order page
 		const orderId = await checkoutPage.url().split( 'order-received/' )[1].split( '/' )[0];
@@ -132,10 +134,10 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 
 		// Verify details on order page.
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
-		await expect(await orderStatus.evaluate( el => el.value )).toBe('wc-processing');
+		await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
 		const relatedOrders = await adminPage.locator( '.woocommerce_subscriptions_related_orders' );
-		await expect(relatedOrders).toContainText( 'Subscription' );
-		await expect(relatedOrders).toContainText( 'Active' );
+		await expect( relatedOrders ).toContainText( 'Subscription' );
+		await expect( relatedOrders ).toContainText( 'Active' );
 	} );
 
 	test( 'Verify renew subscription payment by customer', async () => {
