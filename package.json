@@ -36,6 +36,7 @@
 		"env:clean": "wp-env clean",
 		"env:stop": "wp-env stop",
 		"env:destroy": "wp-env destroy",
+		"env:install-plugins": "bash ./tests/e2e/bin/install-plugins.sh",
 		"postenv:start": "bash ./tests/e2e/bin/initialize.sh",
 		"test:e2e": "npx playwright test --config tests/e2e/playwright.config.js",
 		"test:e2e-debug": "npx playwright test --config tests/e2e/playwright.config.js --debug",

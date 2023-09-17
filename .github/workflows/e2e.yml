@@ -5,7 +5,7 @@ on:
     branches:
       - smoke-testing
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    types: [ opened, synchronize, reopened, labeled ]
     branches:
       - trunk
 
@@ -32,13 +32,21 @@ jobs:
           key: node-${{ hashFiles('package-lock.json') }}
 
       - name: Node install
-        run: |
-          npm install
+        run: npm install
+
       - name: Build
-        run: |
-          npm run build
+        run: npm run build
+
       - name: Install Playwright Browsers
         run: npx playwright install chromium
+
+      - name: Install required WP plugins
+        run: |
+          URL_CONFIG="url.https://${{ secrets.BOT_GH_TOKEN }}:x-oauth-basic@github.com/.insteadOf git@github.com:"
+          git config --global $URL_CONFIG
+          npm run env:install-plugins
+                
+          git config --global --unset $URL_CONFIG
 
       - name: Setup WP environment
         run: npm run env:start
