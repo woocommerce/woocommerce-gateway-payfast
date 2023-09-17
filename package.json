@@ -31,7 +31,7 @@
 		"postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
 		"makepot": "wpi18n makepot --domain-path languages --pot-file $npm_package_name.pot --type plugin --main-file $npm_package_name.php --exclude node_modules,tests,docs",
 		"phpcs": "./vendor/bin/phpcs *.php includes -p",
-    "env": "wp-env",
+		"env": "wp-env",
 		"env:start": "wp-env start",
 		"env:clean": "wp-env clean",
 		"env:stop": "wp-env stop",
@@ -42,7 +42,7 @@
 		"test:e2e-debug": "npx playwright test --config tests/e2e/playwright.config.js --debug",
 		"test:e2e-codegen": "npx playwright codegen",
 		"test:e2e-report": "npx playwright show-report tests/e2e/test-results/playwright-report",
-		"test:e2e-foundational": "npx playwright test --config tests/e2e/playwright.config.js --grep @foundational"
+		"test:e2e-foundational": "npx playwright test --config tests/e2e/playwright.config.js --grep @foundational",
 		"phpcompat": "./vendor/bin/phpcs *.php includes -p --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.3-"
 	},
 	"config": {
