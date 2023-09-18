@@ -1,3 +1,6 @@
+import {customer} from "../config";
+import {expect} from "@playwright/test";
+
 /**
  * Change the currency
  *
@@ -76,6 +79,24 @@ export async function editPayfastSetting( {page, settings} ) {
 				const passphraseSettingLocator = await page.getByLabel( 'Passphrase', {exact: true} );
 				await passphraseSettingLocator.fill( settings.passphrase );
 				break;
+
+			case 'send_debug_emails':
+				const sendDebugEmailsSettingLocator = await page.getByLabel( 'Send Debug Emails' );
+				if ( settings.send_debug_emails ) {
+					await sendDebugEmailsSettingLocator.check();
+				} else {
+					await sendDebugEmailsSettingLocator.uncheck();
+				}
+				break;
+
+			case 'enable_logging':
+				const enableLoggingSettingLocator = await page.getByLabel( 'Enable Logging' );
+				if ( settings.enable_logging ) {
+					await enableLoggingSettingLocator.check();
+				} else {
+					await enableLoggingSettingLocator.uncheck();
+				}
+				break;
 		}
 	}
 
@@ -104,10 +125,9 @@ export async function addProductToCart( {page, productUrl} ) {
  * @param {Page} page
  */
 export async function clearEmailLogs( {page} ) {
-	// Send fetch request to clear email logs.
-	await page.evaluate( () => {
-		return fetch( '/wp-json/e2e-wc/v1/flush-all-emails' );
-	} );
+	const response = await fetch( `${process.env.baseURL}/wp-json/e2e-wc/v1/flush-all-emails`, {method: 'DELETE'} );
+	await expect( response.status ).toBe( 200 );
+	await expect( await response.json() ).toBeTruthy();
 }
 
 /**
@@ -116,8 +136,64 @@ export async function clearEmailLogs( {page} ) {
  * @param {Page} page
  */
 export async function clearWooCommerceLogs( {page} ) {
-	// Send fetch request to clear email logs.
-	await page.evaluate( () => {
-		return fetch( '/wp-json/e2e-wc/v1/flush-all-logs' );
-	} );
+	const response = await fetch( `${process.env.baseURL}/wp-json/e2e-wc/v1/flush-all-logs`, {method: 'DELETE'} );
+	await expect( response.status ).toBe( 200 );
+	await expect( await response.json() ).toBeTruthy();
+}
+
+/**
+ * Process one-time order with block checkout page.
+ *
+ * @param {Page} page
+ * @param {string} productUrl
+ *
+ * @return {Promise<string>} Order ID
+ */
+export async function processOneTimeOrderWithBlockCheckout( {page, productUrl} ) {
+	let waitForURL;
+
+	await addProductToCart( {page, productUrl} );
+	await page.goto( '/checkout-block/' );
+
+	await page.getByLabel( 'First name' ).fill( customer.billing.firstname );
+	await page.getByLabel( 'Last name' ).fill( customer.billing.lastname );
+	await page.getByLabel( 'Address', {exact: true} ).fill( customer.billing.addressfirstline );
+	await page.getByLabel( 'City' ).fill( customer.billing.city );
+	await page.getByLabel( 'Zip Code' ).fill( customer.billing.postcode );
+	await page.getByLabel( 'Phone (optional)' ).fill( customer.billing.phone );
+
+	// Check if Payfast payment method is visible & place order
+	waitForURL = page.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
+	const payfastPaymentMethod = await page.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
+	await payfastPaymentMethod.click();
+	await page.getByRole( 'button', {name: 'Place order'} ).click();
+	await waitForURL;
+
+	// Pay on Payfast checkout page.
+	waitForURL = page.waitForURL( /\/order-received\// );
+	const payfastCompletePaymentButton = await page.locator( 'button#pay-with-wallet' );
+	await payfastCompletePaymentButton.click();
+	await waitForURL;
+
+	return page.url().split( 'order-received/' )[1].split( '/' )[0];
+}
+
+/**
+ * Verify order status is processing.
+ *
+ * @param {Page} page
+ * @param {string} orderId
+ * @return {Promise<void>}
+ */
+export async function verifyOrderStatusIsProcessing( {page, orderId} ) {
+	let waitForURL;
+
+	// Validate order status.
+	// Order should be in processing state.
+	waitForURL = page.waitForURL( /\/wp-admin\/post.php\?post/ );
+	await page.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
+	await waitForURL;
+
+	const orderStatus = await page.locator( 'select[name="order_status"]' );
+	await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
 }
