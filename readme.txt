@@ -38,6 +38,12 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.5.9 - xxxx-xx-xx =
+* Dev - Bump WordPress "tested up to" version from 6.2 to 6.3.
+* Dev - Bump WooCommerce "tested up to" version 7.9.
+* Dev - Bump WooCommerce minimum supported version to 7.7.
+* Dev - Bump PHP minimum supported version to 7.3.
+
 = 1.5.8 - 2023-08-29 =
 * Add - Admin notice if this extension is activated without WooCommerce.
 
