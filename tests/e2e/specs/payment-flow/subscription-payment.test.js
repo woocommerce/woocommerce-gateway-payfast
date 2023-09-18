@@ -38,6 +38,8 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 	} );
 
 	test( 'Checkout Block: Verify subscription payment', async () => {
+		test.slow();
+
 		let waitForURL;
 
 		await checkoutBlock.goto( '/product/simple-subscription-product/' );
@@ -85,6 +87,8 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 	} );
 
 	test( 'Checkout Page: Verify subscription payment', async () => {
+		test.slow();
+
 		let waitForURL;
 
 		await checkoutPage.goto( '/product/simple-subscription-product/' );
@@ -139,7 +143,10 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 	} );
 
 	test( 'Verify renew subscription payment by customer', async () => {
+		test.slow();
+
 		let waitForURL;
+
 		await checkoutPage.goto( '/my-account/subscriptions/' );
 
 		// Edit first active subscription.

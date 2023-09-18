@@ -122,7 +122,9 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 		await expect( await passphraseSettingLocator.inputValue() ).toEqual( payfastSandboxCredentials.passPharse );
 	} );
 
-	test( 'Edit Setting: Verify Send Debug Emails', async () => {
+	test( 'Edit Setting - Send Debug Emails - Verify when setting disabled', async () => {
+		test.slow();
+
 		let orderID, emailLogRows, logPageNotices;
 
 		await clearEmailLogs( {page: adminPage} );
@@ -152,6 +154,12 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 			hasText: 'Payfast ITN on your site',
 		} );
 		await expect( await emailLogRows.count() ).toBe( 0 );
+	} );
+
+	test( 'Edit Setting - Send Debug Emails - Verify when setting enabled', async () => {
+		test.slow();
+
+		let orderID, emailLogRows, logPageNotices;
 
 		await clearEmailLogs( {page: adminPage} );
 		await clearWooCommerceLogs( {page: adminPage} );

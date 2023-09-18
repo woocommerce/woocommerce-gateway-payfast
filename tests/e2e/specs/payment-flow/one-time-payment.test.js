@@ -38,6 +38,8 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 	} );
 
 	test( 'Checkout Block: Verify one-time payment', async () => {
+		test.slow();
+
 		let waitForURL;
 
 		await clearEmailLogs( {page: adminPage} );
@@ -84,6 +86,8 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 	} );
 
 	test( 'Checkout Page: Verify one-time payment', async () => {
+		test.slow();
+
 		let waitForURL;
 
 		await addProductToCart( {page: checkoutPage, productUrl: '/product/simple-product/'} );

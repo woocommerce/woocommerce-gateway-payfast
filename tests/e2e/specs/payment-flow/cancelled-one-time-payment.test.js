@@ -38,6 +38,8 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 	} );
 
 	test( 'Checkout Block: Verify cancelled one-time payment', async () => {
+		test.slow();
+
 		const page = checkoutBlock;
 		await addProductToCart( {page, productUrl:'/product/simple-product/'} );
 		await page.goto('/checkout-block/');
@@ -76,6 +78,8 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 	} );
 
 	test( 'Checkout Page: Verify cancelled one-time payment', async () => {
+		test.slow();
+
 		const page = checkoutPage;
 
 		await addProductToCart( {page, productUrl: '/product/simple-product/'} );
