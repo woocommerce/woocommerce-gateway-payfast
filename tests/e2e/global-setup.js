@@ -23,6 +23,7 @@ module.exports = async ( config ) => {
 	// used throughout tests for authentication
 	process.env.ADMINSTATE = `${stateDir}adminState.json`;
 	process.env.CUSTOMERSTATE = `${stateDir}customerState.json`;
+	process.env.baseURL = baseURL;
 
 	// Clear out the previous save states
 	try {
