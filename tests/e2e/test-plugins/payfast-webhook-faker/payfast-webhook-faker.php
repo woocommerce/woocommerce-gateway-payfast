@@ -4,6 +4,11 @@
  * Description: A plugin to fake PayFast webhooks for E2E testing purposes.
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Bootstrap the plugin.
 require_once __DIR__ . '/WebhookDataProvider.php';
 
