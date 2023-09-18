@@ -68,13 +68,13 @@ module.exports = async ( config ) => {
 			console.log( 'Trying to log-in as admin...' );
 
 			// Login to admin.
-			const waitForNavigationPromise = adminPage.waitForURL('**/wp-admin/' );
-			await adminPage.goto(  '/wp-login.php', { waitUntil: 'networkidle' });
-			const usernameLocator = await adminPage.locator('input[name="log"]');
-			await usernameLocator.fill(admin.username );
-			const passwordLocator = await adminPage.locator('input[name="pwd"]');
-			await  passwordLocator.fill(admin.password );
-			const submitButtonLocator = await adminPage.locator('text=Log In');
+			const waitForNavigationPromise = adminPage.waitForURL( '**/wp-admin/' );
+			await adminPage.goto( '/wp-login.php', {waitUntil: 'networkidle'} );
+			const usernameLocator = await adminPage.locator( 'input[name="log"]' );
+			await usernameLocator.fill( admin.username );
+			const passwordLocator = await adminPage.locator( 'input[name="pwd"]' );
+			await passwordLocator.fill( admin.password );
+			const submitButtonLocator = await adminPage.locator( 'text=Log In' );
 			await submitButtonLocator.click();
 			await waitForNavigationPromise;
 
@@ -83,7 +83,7 @@ module.exports = async ( config ) => {
 			await expect( await mainHeadingLocator.evaluate( ( el ) => el.textContent ) )
 				.toBe( 'Dashboard' );
 
-			 // Save state.
+			// Save state.
 			await adminPage
 				.context()
 				.storageState( {path: process.env.ADMINSTATE} );
@@ -114,19 +114,19 @@ module.exports = async ( config ) => {
 			console.log( 'Trying to log-in as customer...' );
 
 			// Login to admin.
-			const waitForNavigationPromise = adminPage.waitForURL('**/wp-admin/' );
-			await customerPage.goto(  '/wp-admin/', {waitUntil: 'networkidle'});
-			const usernameLocator = await customerPage.locator('input[name="log"]');
-			await usernameLocator.fill(admin.username );
-			const passwordLocator = await customerPage.locator('input[name="pwd"]');
-			await  passwordLocator.fill(admin.password );
-			const submitButtonLocator = await customerPage.locator('text=Log In');
+			const waitForNavigationPromise = adminPage.waitForURL( '**/wp-admin/' );
+			await customerPage.goto( '/wp-admin/', {waitUntil: 'networkidle'} );
+			const usernameLocator = await customerPage.locator( 'input[name="log"]' );
+			await usernameLocator.fill( admin.username );
+			const passwordLocator = await customerPage.locator( 'input[name="pwd"]' );
+			await passwordLocator.fill( admin.password );
+			const submitButtonLocator = await customerPage.locator( 'text=Log In' );
 			await submitButtonLocator.click();
 			await waitForNavigationPromise;
 
 			// Check if customer logged in successfully.
-			await customerPage.goto(  '/my-account', {waitUntil: 'networkidle'});
-			const customerLogoutLocator =await customerPage
+			await customerPage.goto( '/my-account', {waitUntil: 'networkidle'} );
+			const customerLogoutLocator = await customerPage
 				.locator( '.woocommerce-MyAccount-navigation-link--customer-logout' )
 
 			// Save state.
