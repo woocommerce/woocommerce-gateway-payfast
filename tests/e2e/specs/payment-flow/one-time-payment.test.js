@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import {addProductToCart, changeCurrency, editPayfastSetting} from '../../utils';
+import {addProductToCart, changeCurrency, clearEmailLogs, editPayfastSetting} from '../../utils';
 import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
@@ -22,7 +22,7 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 		checkoutBlock = await customerContext.newPage();
 	} );
 
-	test( 'Setup: Edit setting & Add product', async () => {
+	test( 'Setup: Edit setting', async () => {
 		await changeCurrency( {page: adminPage, currency: 'ZAR'} );
 
 		await editPayfastSetting( {
@@ -39,6 +39,8 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 
 	test( 'Checkout Block: Verify one-time payment', async () => {
 		let waitForURL;
+
+		await clearEmailLogs( {page: adminPage} );
 
 		await addProductToCart( {page: checkoutBlock, productUrl:'/product/simple-product/'} );
 		await checkoutBlock.goto('/checkout-block/');
@@ -72,6 +74,13 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
 		await expect(await orderStatus.evaluate( el => el.value )).toBe('wc-processing');
+
+		// Verify: email sent.
+		await adminPage.goto( '/wp-admin/admin.php?page=email-log' );
+		const emailLogRows = await adminPage.locator( "#the-list tr", {
+			hasText: 'Your woocommerce-gateway-payfast order has been received!',
+		} );
+		await expect( await emailLogRows.count() ).not.toBe( 0 );
 	} );
 
 	test( 'Checkout Page: Verify one-time payment', async () => {

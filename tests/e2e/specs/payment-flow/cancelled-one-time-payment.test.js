@@ -22,7 +22,7 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 		checkoutBlock = await customerContext.newPage();
 	} );
 
-	test( 'Setup: Edit setting & Add product', async () => {
+	test( 'Setup: Edit setting', async () => {
 		await changeCurrency( {page: adminPage, currency: 'ZAR'} );
 
 		await editPayfastSetting( {

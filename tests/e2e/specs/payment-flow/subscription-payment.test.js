@@ -22,7 +22,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		checkoutBlock = await customerContext.newPage();
 	} );
 
-	test( 'Setup: Edit setting & Add product', async () => {
+	test( 'Setup: Edit setting', async () => {
 		await changeCurrency( {page: adminPage, currency: 'ZAR'} );
 
 		await editPayfastSetting( {
