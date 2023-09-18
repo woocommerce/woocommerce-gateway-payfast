@@ -1,6 +1,6 @@
 *** PayFast Changelog ***
 
-= 1.5.9 - xxxx-xx-xx =
+= 1.5.9 - 2023-09-18 =
 * Dev - Bump WordPress "tested up to" version from 6.2 to 6.3.
 * Dev - Bump WooCommerce "tested up to" version 7.9.
 * Dev - Bump WooCommerce minimum supported version to 7.7.
