@@ -1,6 +1,7 @@
 /**
  * Change the currency
  *
+ * @param {Page} page
  * @param {string} currency
  * @return {Promise<void>}
  */
@@ -83,7 +84,7 @@ export async function editPayfastSetting( {page, settings} ) {
 	const submitButtonLocator = await page.locator( 'text=Save changes' );
 	await submitButtonLocator.click();
 	await waitForURLPromise;
-};
+}
 
 /**
  * Add a product to cart
@@ -95,4 +96,28 @@ export async function editPayfastSetting( {page, settings} ) {
 export async function addProductToCart( {page, productUrl} ) {
 	await page.goto( productUrl );
 	await page.click( 'text=Add to cart' );
+}
+
+/**
+ * Clear email Logs
+ *
+ * @param {Page} page
+ */
+export async function clearEmailLogs( {page} ) {
+	// Send fetch request to clear email logs.
+	await page.evaluate( () => {
+		return fetch( '/wp-json/e2e-wc/v1/flush-all-emails' );
+	} );
+}
+
+/**
+ * Clear WooCommerce Logs
+ *
+ * @param {Page} page
+ */
+export async function clearWooCommerceLogs( {page} ) {
+	// Send fetch request to clear email logs.
+	await page.evaluate( () => {
+		return fetch( '/wp-json/e2e-wc/v1/flush-all-logs' );
+	} );
 }
