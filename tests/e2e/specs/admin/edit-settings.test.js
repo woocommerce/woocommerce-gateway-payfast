@@ -18,7 +18,7 @@ import {payfastSandboxCredentials} from "../../config";
  */
 const {test, expect} = require( '@playwright/test' );
 
-test.describe( 'Verify SnapCode setting - @foundational', async () => {
+test.describe( 'Verify payfast setting - @foundational', async () => {
 	let adminPage, checkoutPage, checkoutBlockPage;
 
 	test.beforeAll( async ( {browser} ) => {
@@ -31,10 +31,41 @@ test.describe( 'Verify SnapCode setting - @foundational', async () => {
 		checkoutBlockPage = await customerContext.newPage();
 	} );
 
-
-	test( 'Setup: Edit setting & Add product', async () => {
+	test( 'Setup - Edit setting: Disable payfast', async () => {
 		await changeCurrency( {page: adminPage, currency: 'ZAR'} );
 
+		await editPayfastSetting( {
+			page: adminPage,
+			settings: {
+				toggle_payment_gateway: false,
+			}
+		} );
+	} );
+
+	test( 'Checkout Block: Payment method should not available when disabled', async () => {
+		await addProductToCart( {page: checkoutBlockPage, productUrl: '/product/simple-product/'} );
+		await checkoutBlockPage.goto( '/checkout-block/' );
+
+		const paymentMethodLocator = await checkoutBlockPage.locator( 'label.wc-block-components-radio-control__option', {
+			has: checkoutBlockPage.locator( 'input[value="payfast"]' )
+		} );
+
+		await expect( await paymentMethodLocator.count() ).toBe( 0 );
+	} );
+
+	test( 'Checkout Page: Payment method should not available when disabled', async () => {
+		await addProductToCart( {page: checkoutPage, productUrl: '/product/simple-product/'} );
+		await checkoutPage.goto( '/checkout/' );
+
+		const paymentMethodLocator = await checkoutPage.locator( '.wc_payment_method', {
+			has: checkoutPage.locator( 'input[value="payfast"]' )
+		} );
+
+		await expect( await paymentMethodLocator.count() ).toBe( 0 );
+	} );
+
+
+	test( 'Setup: Edit setting', async () => {
 		await editPayfastSetting( {
 			page: adminPage,
 			settings: {
