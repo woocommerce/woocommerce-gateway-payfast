@@ -9,8 +9,6 @@ import {customer, payfastSandboxCredentials} from "../../config";
  */
 const {test, expect} = require( '@playwright/test' );
 
-test.describe.configure( {mode: 'serial'} );
-
 test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundational', async () => {
 	let adminPage, checkoutPage, checkoutBlock;
 

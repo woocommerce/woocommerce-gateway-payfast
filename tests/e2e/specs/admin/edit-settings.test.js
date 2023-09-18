@@ -18,8 +18,6 @@ import {payfastSandboxCredentials} from "../../config";
  */
 const {test, expect} = require( '@playwright/test' );
 
-test.describe.configure( {mode: 'serial'} );
-
 test.describe( 'Verify SnapCode setting - @foundational', async () => {
 	let adminPage, checkoutPage, checkoutBlockPage;
 
