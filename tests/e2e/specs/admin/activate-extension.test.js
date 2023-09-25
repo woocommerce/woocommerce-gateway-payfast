@@ -26,7 +26,7 @@ test.describe( 'Store admin can login and make sure add-on is activated - @found
 				hasText: 'WooCommerce Payfast Gateway requires WooCommerce to be installed and active'
 			} );
 
-			await expect( await adminNotices.count() ).not.toBe( 0 )
+			await expect( await adminNotices.count() ).not.toBe( 0 );
 
 			// Activate WooCommerce.
 			await page.getByRole( 'link', {name: 'Activate WooCommerce', exact: true} ).click();
