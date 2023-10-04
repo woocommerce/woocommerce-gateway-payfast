@@ -5,12 +5,13 @@
  * Description: Receive payments using the South African Payfast payments provider.
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
- * Version: 1.5.7
+ * Version: 1.5.9
  * Requires at least: 6.1
+ * Tested up to: 6.3
  * Tested up to: 6.2
- * WC tested up to: 7.8
- * WC requires at least: 7.2
- * Requires PHP: 7.2
+ * WC tested up to: 7.9
+ * WC requires at least: 7.7
+ * Requires PHP: 7.3
  *
  * @package WooCommerce Gateway Payfast
  */
@@ -19,7 +20,7 @@ use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_GATEWAY_PAYFAST_VERSION', '1.5.7' ); // WRCS: DEFINED_VERSION.
+define( 'WC_GATEWAY_PAYFAST_VERSION', '1.5.9' ); // WRCS: DEFINED_VERSION.
 define( 'WC_GATEWAY_PAYFAST_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 define( 'WC_GATEWAY_PAYFAST_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 
@@ -112,3 +113,24 @@ function woocommerce_payfast_declare_hpos_compatibility() {
 	}
 }
 add_action( 'before_woocommerce_init', 'woocommerce_payfast_declare_hpos_compatibility' );
+
+/**
+ * Display notice if WooCommerce is not installed.
+ *
+ * @since x.x.x
+ */
+function woocommerce_payfast_missing_wc_notice() {
+	if ( class_exists( 'WooCommerce' ) ) {
+		// Display nothing if WooCommerce is installed and activated.
+		return;
+	}
+
+	echo '<div class="error"><p><strong>';
+	echo sprintf(
+		/* translators: %s WooCommerce download URL link. */
+		esc_html__( 'WooCommerce Payfast Gateway requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-gateway-payfast' ),
+		'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
+	);
+	echo '</strong></p></div>';
+}
+add_action( 'admin_notices', 'woocommerce_payfast_missing_wc_notice' );

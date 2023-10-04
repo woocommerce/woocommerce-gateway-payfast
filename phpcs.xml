@@ -12,7 +12,7 @@
 	<exclude-pattern>/build/*</exclude-pattern>
 
 	<!-- ensure we are using language features according to supported PHP versions -->
-	<config name="testVersion" value="7.2-"/>
+	<config name="testVersion" value="7.3-"/>
 	<rule ref="PHPCompatibility" />
 
 	<!-- Exclude incorrectly named file that won't be renamed. -->

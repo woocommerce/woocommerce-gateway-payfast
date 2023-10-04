@@ -1,5 +1,14 @@
 *** PayFast Changelog ***
 
+= 1.5.9 - 2023-09-18 =
+* Dev - Bump WordPress "tested up to" version from 6.2 to 6.3.
+* Dev - Bump WooCommerce "tested up to" version 7.9.
+* Dev - Bump WooCommerce minimum supported version to 7.7.
+* Dev - Bump PHP minimum supported version to 7.3.
+
+= 1.5.8 - 2023-08-29 =
+* Add - Admin notice if this extension is activated without WooCommerce.
+
 = 1.5.7 - 2023-07-25 =
 * Fix - Handle WP_Error object when return from wp_remote_request.
 
