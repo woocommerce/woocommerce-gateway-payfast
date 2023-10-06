@@ -19,6 +19,9 @@ wp-env run tests-cli wp option update woocommerce_default_country "US:CA"
 
 wp-env run tests-cli wp user create customer customer@euvatnumbertestsuite.com --user_pass=password --role=customer
 
+# Install and activate WooCommerce Subscriptions.
+wp-env run tests-cli wp plugin install --activate ./wp-content/plugins/woocommerce-gateway-payfast/woocommerce-subscriptions.zip
+
 wp-env run tests-cli wp wc tax create -- --country="*" --state="*" --postcode="*" --city="*" --rate=20 --name="General Tax" --user=1
 wp-env run tests-cli wp wc product create -- --name="Simple Product" --slug="simple-product" --user=1 --regular_price=10 --virtual=true
 wp-env run tests-cli wp wc product create -- --name="Simple Subscription Product" --slug="simple-subscription-product" --user=1 --regular_price=10 --type=subscription --virtual=true --meta_data='[{"key":"_subscription_price","value":"10"},{"key":"_subscription_period","value":"month"},{"key":"_subscription_period_interval","value":"1"}]'
