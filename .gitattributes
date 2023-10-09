@@ -17,6 +17,7 @@ phpunit.xml.dist export-ignore
 .prettierrc.js export-ignore
 webpack.config.js export-ignore
 phpcs.xml export-ignore
+phpcs-compat.xml.dist export-ignore
 composer.lock export-ignore
 .prettierignore export-ignore
 .nvmrc export-ignore
