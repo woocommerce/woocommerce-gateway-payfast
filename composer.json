@@ -3,7 +3,7 @@
     "description": "Receive payments using the South African Payfast payments provider.",
     "homepage": "https://woocommerce.com/products/payfast-payment-gateway/",
     "type": "wordpress-plugin",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "archive": {
         "exclude": [
             "!/assets",
