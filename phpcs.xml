@@ -12,5 +12,9 @@
 
 	<!-- ensure we are using language features according to supported PHP versions -->
 	<config name="testVersion" value="7.3-"/>
-	<rule ref="PHPCompatibility" />
+
+	<!-- Exclude the PHPCompatibilityWP ruleset -->
+	<rule ref="PHPCompatibilityWP">
+		<exclude name="PHPCompatibilityWP"/>
+	</rule>
 </ruleset>
