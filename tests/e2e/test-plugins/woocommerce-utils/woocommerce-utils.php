@@ -16,7 +16,11 @@ add_action( 'rest_api_init', static function () {
 		'methods'             => 'DELETE',
 		'permission_callback' => '__return_true',
 		'callback'            => function () {
-			WC_Log_Handler_File::delete_logs_before_timestamp( strtotime( '+2 day' ) );
+			try {
+				WC_Log_Handler_File::delete_logs_before_timestamp( strtotime( '+2 day' ) );
+			} catch ( Exception $e ) {
+				return new WP_REST_Response( false, 500 );
+			}
 
 			return new WP_REST_Response( true, 200 );
 		},
@@ -27,7 +31,12 @@ add_action( 'rest_api_init', static function () {
 		'methods'  => 'DELETE',
 		'callback' => function () {
 			global $wpdb;
-			$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}email_log" );
+
+			try {
+				$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}email_log" );
+			} catch ( Exception $e ) {
+				return new WP_REST_Response( false, 500 );
+			}
 
 			return new WP_REST_Response( true, 200 );
 		},
