@@ -125,9 +125,12 @@ export async function addProductToCart( {page, productUrl} ) {
  * @param {Page} page
  */
 export async function clearEmailLogs( {page} ) {
-	const response = await fetch( `${process.env.baseURL}/wp-json/e2e-wc/v1/flush-all-emails`, {method: 'DELETE'} );
-	await expect( response.status ).toBe( 200 );
-	await expect( await response.json() ).toBeTruthy();
+	const result = await page.evaluate( async() => {
+		const response = await fetch( `${window.location.origin}/wp-json/e2e-wc/v1/flush-all-emails`, {method: 'DELETE'} );
+		return await response.json();
+	});
+
+	await expect( result ).toBeTruthy();
 }
 
 /**
@@ -136,9 +139,12 @@ export async function clearEmailLogs( {page} ) {
  * @param {Page} page
  */
 export async function clearWooCommerceLogs( {page} ) {
-	const response = await fetch( `${process.env.baseURL}/wp-json/e2e-wc/v1/flush-all-logs`, {method: 'DELETE'} );
-	await expect( response.status ).toBe( 200 );
-	await expect( await response.json() ).toBeTruthy();
+	const result = await page.evaluate( async() => {
+		const response = await fetch( `${window.location.origin}/wp-json/e2e-wc/v1/flush-all-logs`, {method: 'DELETE'} );
+		return await response.json();
+	});
+
+	await expect( result ).toBeTruthy();
 }
 
 /**
@@ -190,8 +196,8 @@ export async function verifyOrderStatusIsProcessing( {page, orderId} ) {
 
 	// Validate order status.
 	// Order should be in processing state.
-	waitForURL = page.waitForURL( /\/wp-admin\/post.php\?post/ );
-	await page.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
+	waitForURL = page.waitForURL( /\/wp-admin\/admin.php\?page=wc-orders&action=edit/ );
+	await page.goto( `/wp-admin/admin.php?page=wc-orders&action=edit&id=${orderId}` );
 	await waitForURL;
 
 	const orderStatus = await page.locator( 'select[name="order_status"]' );
