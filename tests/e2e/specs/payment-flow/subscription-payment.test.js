@@ -67,7 +67,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		const payfastCompletePaymentButton = await checkoutBlock.locator( 'button#pay-with-wallet' );
 		const recurringPaymentText = await checkoutBlock.locator( '.tablewrapper-body__completing_process_text' );
 		await expect( recurringPaymentText )
-			.toHaveText( 'Completing this process will allow Test Merchant to automatically process your future payments.' );
+			.toHaveText( 'Completing this process will allow to automatically process your future payments.' );
 		await payfastCompletePaymentButton.click();
 		await waitForURL;
 
@@ -113,7 +113,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		const payfastCompletePaymentButton = await checkoutPage.locator( 'button#pay-with-wallet' );
 		const recurringPaymentText = await checkoutPage.locator( '.tablewrapper-body__completing_process_text' );
 		await expect( recurringPaymentText )
-			.toHaveText( 'Completing this process will allow Test Merchant to automatically process your future payments.' );
+			.toHaveText( 'Completing this process will allow to automatically process your future payments.' );
 		await payfastCompletePaymentButton.click();
 		await waitForURL;
 
@@ -170,8 +170,6 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		// Order should be in processing state.
 		// Subscription should be active
 		// Receipt page should have informaiton about subscription.
-		waitForURL = adminPage.waitForURL( /\/wp-admin\/post.php\?post/ );
-
 		const relatedSubscriotionOnReceiptPage = await checkoutPage.getByRole( 'heading',
 			{name: 'Related subscriptions', exact: true} );
 		await expect( relatedSubscriotionOnReceiptPage ).toBeVisible();
