@@ -14,6 +14,10 @@ jobs:
     if: "${{ ( github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'needs: e2e testing') ) ||  github.event_name == 'push' }}"
     name: E2E Test
     runs-on: ubuntu-latest
+    env:
+      PAYFAST_MERCHANT_ID: ${{secrets.PAYFAST_MERCHANT_ID}}
+      PAYFAST_MERCHANT_KEY: ${{secrets.PAYFAST_MERCHANT_KEY}}
+      PAYFAST_PASSPHRASE: ${{secrets.PAYFAST_PASSPHRASE}}
 
     steps:
       - name: Checkout
