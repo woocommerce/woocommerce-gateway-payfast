@@ -42,9 +42,11 @@ jobs:
 
       - name: Install required WP plugins
         run: |
+          URL_CONFIG="url.https://${{ secrets.BOT_GH_TOKEN }}:x-oauth-basic@github.com/.insteadOf git@github.com:"
+          git config --global $URL_CONFIG
           npm run env:install-plugins
-        env:
-          BOT_GITHUB_TOKEN: ${{secrets.BOT_GITHUB_TOKEN}}
+          
+          git config --global --unset $URL_CONFIG
 
       - name: Setup WP environment
         run: npm run env:start

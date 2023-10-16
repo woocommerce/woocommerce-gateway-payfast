@@ -1,37 +1,31 @@
 #!/bin/bash
 
-if [[ -z "$BOT_GITHUB_TOKEN" ]]; then
-	echo "Set the BOT_GITHUB_TOKEN secret"
-	exit 1
-fi
+# Clone latest version of a plugin (fallback to default branch if latest version is not found)
+install_plugin_from_repo() {
+  local PLUGIN_SLUG=$1
+  local DIR=$2
 
-# Define a function to download latest release zip from a GitHub repo
-download_latest_release() {
-    local OWNER=$1
-    local REPO=$2
+  rm -rf "${DIR}"
+  git clone --quiet --depth=1 "git@github.com:woocommerce/${PLUGIN_SLUG}.git" "${DIR}"
 
-    # Get the latest release URL from GitHub API
-    local LATEST_RELEASE_URL=$(curl -s \
-      -H "Accept: application/vnd.github+json" \
-      -H "Authorization: Bearer $BOT_GITHUB_TOKEN" \
-      -H "X-GitHub-Api-Version: 2022-11-28" \
-      "https://api.github.com/repos/$OWNER/$REPO/releases/latest" \
-      | jq -r '.assets[0].url')
+  # Parse latest version from main plugin file
+  local LATEST_VERSION=$(grep -o '\* Version:.*' ${DIR}/${PLUGIN_SLUG}.php | sed 's/* Version://' | tr -d ' ')
+  echo Latest version ${LATEST_VERSION} for ${PLUGIN_SLUG}
 
-    if [ "$LATEST_RELEASE_URL" = "null" ]; then
-      echo "ERROR: Error in find release URL"
-      exit 1
-    fi;
+  # Fetch a specific tag
+  cd "${DIR}"
+  git fetch --depth 1 "git@github.com:woocommerce/${PLUGIN_SLUG}.git" tag "${LATEST_VERSION}"
 
-    # Remove file
-    rm -f "$REPO.zip"
+  # If the latest version tag is available then switch
+  if [ $(git tag -l "${LATEST_VERSION}") ]; then
+    git checkout "${LATEST_VERSION}" --quiet
+  fi
 
-    # Download ZIP
-    curl -f -O -J -L $LATEST_RELEASE_URL \
-      -H "Authorization: Bearer $BOT_GITHUB_TOKEN" \
-      -H "Accept: application/octet-stream" \
-      -H "X-GitHub-Api-Version: 2022-11-28"
+  cd -
 }
 
-# Install WooCommerce Bookings
-download_latest_release "woocommerce" "woocommerce-subscriptions"
+# Install Subscriptions.
+install_plugin_from_repo "woocommerce-subscriptions" "./tests/e2e/test-plugins/woocommerce-subscriptions"
+cd ./tests/e2e/test-plugins/woocommerce-subscriptions
+npm install && npm run build
+cd -

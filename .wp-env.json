@@ -2,9 +2,10 @@
   "plugins": [
     "https://downloads.wordpress.org/plugin/woocommerce.zip",
     "https://downloads.wordpress.org/plugin/email-log.zip",
-    ".",
     "./tests/e2e/test-plugins/payfast-webhook-faker",
-    "./tests/e2e/test-plugins/woocommerce-utils"
+    "./tests/e2e/test-plugins/woocommerce-utils",
+    "./tests/e2e/test-plugins/woocommerce-subscriptions",
+    "."
   ],
   "themes": ["https://downloads.wordpress.org/theme/storefront.zip"],
   "env": {
