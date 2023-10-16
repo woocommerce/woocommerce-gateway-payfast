@@ -196,10 +196,18 @@ export async function verifyOrderStatusIsProcessing( {page, orderId} ) {
 
 	// Validate order status.
 	// Order should be in processing state.
-	waitForURL = page.waitForURL( /\/wp-admin\/admin.php\?page=wc-orders&action=edit/ );
-	await page.goto( `/wp-admin/admin.php?page=wc-orders&action=edit&id=${orderId}` );
-	await waitForURL;
-
+	await goToOrderEditPage( {page, orderId} );
 	const orderStatus = await page.locator( 'select[name="order_status"]' );
 	await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
+}
+
+/**
+ * Goto order edit page.
+ *
+ * @param {Page} page
+ * @param {string} orderId
+ * @return {Promise<void>}
+ */
+export async function goToOrderEditPage( {page, orderId} ){
+	await page.goto( `/wp-admin/admin.php?page=wc-orders&action=edit&id=${orderId}` );
 }

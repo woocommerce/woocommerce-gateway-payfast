@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import {changeCurrency, editPayfastSetting} from '../../utils';
+import {changeCurrency, editPayfastSetting, goToOrderEditPage} from '../../utils';
 import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
@@ -73,10 +73,8 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 
 		// Validate order status.
 		// Order should be in processing state.
-		waitForURL = adminPage.waitForURL( /\/wp-admin\/post.php\?post/ );
 		const orderId = await checkoutBlock.url().split( 'order-received/' )[1].split( '/' )[0];
-		await adminPage.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
-		await waitForURL;
+		await goToOrderEditPage({page: adminPage, orderId})
 
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
 		await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
@@ -123,16 +121,13 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		// Order should be in processing state.
 		// Subscription should be active
 		// Receipt page should have informaiton about subscription.
-		waitForURL = adminPage.waitForURL( /\/wp-admin\/post.php\?post/ );
-
 		const relatedSubscriotionOnReceiptPage = await checkoutPage.getByRole( 'heading',
 			{name: 'Related subscriptions', exact: true} );
 		await expect( relatedSubscriotionOnReceiptPage ).toBeVisible();
 
 		// Open order page
 		const orderId = await checkoutPage.url().split( 'order-received/' )[1].split( '/' )[0];
-		await adminPage.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
-		await waitForURL;
+		await goToOrderEditPage({page: adminPage, orderId});
 
 		// Verify details on order page.
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
@@ -183,8 +178,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 
 		// Open order page
 		const orderId = await checkoutPage.url().split( 'order-received/' )[1].split( '/' )[0];
-		await adminPage.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
-		await waitForURL;
+		await goToOrderEditPage({page: adminPage, orderId});
 
 		// Verify details on order page.
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );

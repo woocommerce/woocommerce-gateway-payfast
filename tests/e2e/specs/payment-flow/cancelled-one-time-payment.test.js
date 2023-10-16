@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import {addProductToCart, changeCurrency, editPayfastSetting} from '../../utils';
+import {addProductToCart, changeCurrency, editPayfastSetting, goToOrderEditPage} from '../../utils';
 import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
@@ -68,10 +68,8 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 
 		// Validate order status.
 		// Order should be in cancelled state.
-		const orderEditPage = adminPage.waitForURL( /\/wp-admin\/post.php\?post/ );
 		const orderId = (new URLSearchParams(page.url())).get('order_id');
-		await adminPage.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
-		await orderEditPage;
+		await goToOrderEditPage({page: adminPage, orderId});
 
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
 		await expect(await orderStatus.evaluate( el => el.value )).toBe('wc-cancelled');
@@ -109,10 +107,8 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 
 		// Validate order status.
 		// Order should be in processing state.
-		const orderEditPage = adminPage.waitForURL( /\/wp-admin\/post.php\?post/ );
 		const orderId = (new URLSearchParams(page.url())).get('order_id');
-		await adminPage.goto( `/wp-admin/post.php?post=${orderId}&action=edit` );
-		await orderEditPage;
+		await goToOrderEditPage({page: adminPage, orderId});
 
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
 		await expect(await orderStatus.evaluate( el => el.value )).toBe('wc-cancelled');
