@@ -31,3 +31,5 @@ build
 woocommerce-gateway-payfast.zip
 tests/e2e/test-results
 tests/e2e/test-plugins/woocommerce-subscriptions/
+
+tests/e2e/config/.env
