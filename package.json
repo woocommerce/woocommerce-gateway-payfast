@@ -13,8 +13,10 @@
 		"npm": ">=8.0.0"
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.37.1",
 		"@woocommerce/dependency-extraction-webpack-plugin": "^1.7.0",
 		"@woocommerce/eslint-plugin": "^1.3.0",
+		"@wordpress/env": "^8.6.0",
 		"@wordpress/scripts": "^19.2.3",
 		"node-wp-i18n": "^1.2.6",
 		"prettier": "^2.5.1"
@@ -29,6 +31,20 @@
 		"postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
 		"makepot": "wpi18n makepot --domain-path languages --pot-file $npm_package_name.pot --type plugin --main-file $npm_package_name.php --exclude node_modules,tests,docs",
 		"phpcs": "./vendor/bin/phpcs *.php includes -p",
+		"env": "wp-env",
+		"env:start": "wp-env start",
+		"env:start-local": "npm run env:install-plugins && npm run env:start",
+		"env:clean": "wp-env clean",
+		"env:stop": "wp-env stop",
+		"env:destroy": "wp-env destroy",
+		"env:install-plugins": "bash ./tests/e2e/bin/install-plugins.sh",
+		"postenv:start": "bash ./tests/e2e/bin/initialize.sh",
+		"test:e2e": "npx playwright test --config tests/e2e/playwright.config.js",
+		"test:e2e-local": "export $(cat ./tests/e2e/config/.env | xargs) && npm run test:e2e",
+		"test:e2e-debug": "npx playwright test --config tests/e2e/playwright.config.js --debug",
+		"test:e2e-codegen": "npx playwright codegen",
+		"test:e2e-report": "npx playwright show-report tests/e2e/test-results/playwright-report",
+		"test:e2e-foundational": "npx playwright test --config tests/e2e/playwright.config.js --grep @foundational",
 		"phpcompat": "./vendor/bin/phpcs *.php includes -p --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.3-"
 	},
 	"config": {

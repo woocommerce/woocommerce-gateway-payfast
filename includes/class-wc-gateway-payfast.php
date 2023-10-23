@@ -379,7 +379,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 					class="button cancel" 
 					href="' . esc_url( $order->get_cancel_order_url() ) . '"
 				>' .
-					 esc_html__( 'Cancel order &amp; restore cart', 'woocommerce-gateway-payfast' ) . 
+					 esc_html__( 'Cancel order &amp; restore cart', 'woocommerce-gateway-payfast' ) .
 				'</a>
 				<script type="text/javascript">
 					jQuery(function(){
@@ -1274,14 +1274,14 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$results = $this->submit_ad_hoc_payment( $token, $total, $item_name, '' );
 
 		if ( is_wp_error( $results ) ) {
-			$order->update_status( 
+			$order->update_status(
 				'failed',
-				sprintf( 
+				sprintf(
 					/* translators: 1: error code 2: error message */
 					esc_html__( 'Payfast Pre-Order payment transaction failed (%1$s:%2$s)', 'woocommerce-gateway-payfast' ),
 					$results->get_error_code(),
 					$results->get_error_message()
-				) 
+				)
 			);
 			return;
 		}
