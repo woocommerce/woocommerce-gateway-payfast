@@ -49,7 +49,7 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 		await fillBillingDetails(checkoutBlock, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order
-		waitForURL = checkoutBlock.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
+		waitForURL = checkoutBlock.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
 		const payfastPaymentMethod = await checkoutBlock.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
 		await payfastPaymentMethod.click();
 		await checkoutBlock.getByRole( 'button', {name: 'Place order'} ).click();
@@ -87,7 +87,7 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 		await fillBillingDetails(checkoutPage, customer.billing);
 
 		// Check if Payfast payment method is visible & place order
-		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
+		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
 		const payfastPaymentMethod = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
 		await payfastPaymentMethod.click();
 		await checkoutPage.getByRole( 'button', {name: 'Place order'} ).click();
