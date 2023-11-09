@@ -218,30 +218,13 @@ export async function blockFillBillingDetails(page, customerDetails) {
 	if (await card.isVisible()) {
 		await card.locator('a.wc-block-components-address-card__edit').click();
 	}
-	await page.locator('#email').fill(customerDetails.email);
-	await page.locator('#billing-first_name').fill(customerDetails.firstname);
-	await page.locator('#billing-last_name').fill(customerDetails.lastname);
-	await page
-		.locator('#billing .wc-block-components-country-input input')
-		.fill(customerDetails.countryName);
-	await page
-		.locator('#billing .wc-block-components-country-input ul li')
-		.first()
-		.click();
-	await page
-		.locator('#billing-address_1')
-		.fill(customerDetails.addressfirstline);
-	await page
-		.locator('#billing-address_2')
-		.fill(customerDetails.addresssecondline);
-	await page.locator('#billing-city').fill(customerDetails.city);
-	if (customerDetails.state) {
-		await page
-			.locator('#billing-state input')
-			.fill(customerDetails.stateName);
-		await page.locator('#billing-state ul li').first().click();
-	}
-	await page.locator('#billing-postcode').fill(customerDetails.postcode);
+
+	await page.getByLabel( 'First name' ).fill( customerDetails.firstname );
+	await page.getByLabel( 'Last name' ).fill( customerDetails.lastname );
+	await page.getByLabel( 'Address', {exact: true} ).fill( customerDetails.addressfirstline );
+	await page.getByLabel( 'City' ).fill( customerDetails.city );
+	await page.getByLabel( 'Zip Code' ).fill( customerDetails.postcode );
+	await page.getByLabel( 'Phone (optional)' ).fill( customerDetails.phone );
 }
 
 /**
@@ -259,31 +242,10 @@ export async function fillBillingDetails(
 	if (isBlock) {
 		return blockFillBillingDetails(page, customerBillingDetails);
 	}
-	await page
-		.locator('#billing_first_name')
-		.fill(customerBillingDetails.firstname);
-	await page
-		.locator('#billing_last_name')
-		.fill(customerBillingDetails.lastname);
-	await page.locator('#billing_company').fill(customerBillingDetails.company);
-	await page
-		.locator('#billing_country')
-		.selectOption(customerBillingDetails.country);
-	await page
-		.locator('#billing_address_1')
-		.fill(customerBillingDetails.addressfirstline);
-	await page
-		.locator('#billing_address_2')
-		.fill(customerBillingDetails.addresssecondline);
-	await page.locator('#billing_city').fill(customerBillingDetails.city);
-	if (customerBillingDetails.state) {
-		await page
-			.locator('#billing_state')
-			.selectOption(customerBillingDetails.state);
-	}
-	await page
-		.locator('#billing_postcode')
-		.fill(customerBillingDetails.postcode);
-	await page.locator('#billing_phone').fill(customerBillingDetails.phone);
-	await page.locator('#billing_email').fill(customerBillingDetails.email);
+	await page.getByLabel( 'First name' ).fill( customerDetails.firstname );
+	await page.getByLabel( 'Last name' ).fill( customerDetails.lastname );
+	await page.getByLabel( 'Street address' ).fill( customerDetails.addressfirstline );
+	await page.getByLabel( 'Town / City' ).fill( customerDetails.city );
+	await page.getByLabel( 'Zip Code' ).fill( customerDetails.postcode );
+	await page.getByLabel( 'Phone' ).fill( customerDetails.phone );
 }
