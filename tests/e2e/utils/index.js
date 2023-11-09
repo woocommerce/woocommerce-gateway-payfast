@@ -159,14 +159,8 @@ export async function processOneTimeOrderWithBlockCheckout( {page, productUrl} )
 	let waitForURL;
 
 	await addProductToCart( {page, productUrl} );
-	await page.goto( '/checkout-block/' );
-
-	await page.getByLabel( 'First name' ).fill( customer.billing.firstname );
-	await page.getByLabel( 'Last name' ).fill( customer.billing.lastname );
-	await page.getByLabel( 'Address', {exact: true} ).fill( customer.billing.addressfirstline );
-	await page.getByLabel( 'City' ).fill( customer.billing.city );
-	await page.getByLabel( 'Zip Code' ).fill( customer.billing.postcode );
-	await page.getByLabel( 'Phone (optional)' ).fill( customer.billing.phone );
+	await page.goto( '/checkout/' );
+	await fillBillingDetails(page, customer.billing, true);
 
 	// Check if Payfast payment method is visible & place order
 	waitForURL = page.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
@@ -210,4 +204,86 @@ export async function verifyOrderStatusIsProcessing( {page, orderId} ) {
  */
 export async function goToOrderEditPage( {page, orderId} ){
 	await page.goto( `/wp-admin/admin.php?page=wc-orders&action=edit&id=${orderId}` );
+}
+
+
+/**
+ * Fill Billing details on block checkout page
+ *
+ * @param {Page}   page            Playwright page object
+ * @param {Object} customerDetails Customer billing details
+ */
+export async function blockFillBillingDetails(page, customerDetails) {
+	const card = await page.locator('.wc-block-components-address-card');
+	if (await card.isVisible()) {
+		await card.locator('a.wc-block-components-address-card__edit').click();
+	}
+	await page.locator('#email').fill(customerDetails.email);
+	await page.locator('#billing-first_name').fill(customerDetails.firstname);
+	await page.locator('#billing-last_name').fill(customerDetails.lastname);
+	await page
+		.locator('#billing .wc-block-components-country-input input')
+		.fill(customerDetails.countryName);
+	await page
+		.locator('#billing .wc-block-components-country-input ul li')
+		.first()
+		.click();
+	await page
+		.locator('#billing-address_1')
+		.fill(customerDetails.addressfirstline);
+	await page
+		.locator('#billing-address_2')
+		.fill(customerDetails.addresssecondline);
+	await page.locator('#billing-city').fill(customerDetails.city);
+	if (customerDetails.state) {
+		await page
+			.locator('#billing-state input')
+			.fill(customerDetails.stateName);
+		await page.locator('#billing-state ul li').first().click();
+	}
+	await page.locator('#billing-postcode').fill(customerDetails.postcode);
+}
+
+/**
+ * Fill billing details on checkout page
+ *
+ * @param {Page}    page                   Playwright page object
+ * @param {Object}  customerBillingDetails Customer billing details
+ * @param {boolean} isBlock                Is block checkout
+ */
+export async function fillBillingDetails(
+	page,
+	customerBillingDetails,
+	isBlock = false
+) {
+	if (isBlock) {
+		return blockFillBillingDetails(page, customerBillingDetails);
+	}
+	await page
+		.locator('#billing_first_name')
+		.fill(customerBillingDetails.firstname);
+	await page
+		.locator('#billing_last_name')
+		.fill(customerBillingDetails.lastname);
+	await page.locator('#billing_company').fill(customerBillingDetails.company);
+	await page
+		.locator('#billing_country')
+		.selectOption(customerBillingDetails.country);
+	await page
+		.locator('#billing_address_1')
+		.fill(customerBillingDetails.addressfirstline);
+	await page
+		.locator('#billing_address_2')
+		.fill(customerBillingDetails.addresssecondline);
+	await page.locator('#billing_city').fill(customerBillingDetails.city);
+	if (customerBillingDetails.state) {
+		await page
+			.locator('#billing_state')
+			.selectOption(customerBillingDetails.state);
+	}
+	await page
+		.locator('#billing_postcode')
+		.fill(customerBillingDetails.postcode);
+	await page.locator('#billing_phone').fill(customerBillingDetails.phone);
+	await page.locator('#billing_email').fill(customerBillingDetails.email);
 }

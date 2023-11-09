@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import {changeCurrency, editPayfastSetting, goToOrderEditPage} from '../../utils';
+import {changeCurrency, editPayfastSetting, fillBillingDetails, goToOrderEditPage} from '../../utils';
 import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
@@ -44,14 +44,8 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 
 		await checkoutBlock.goto( '/product/simple-subscription-product/' );
 		await checkoutBlock.click( 'text=Sign up now' );
-		await checkoutBlock.goto( '/checkout-block/' );
-
-		await checkoutBlock.getByLabel( 'First name' ).fill( customer.billing.firstname );
-		await checkoutBlock.getByLabel( 'Last name' ).fill( customer.billing.lastname );
-		await checkoutBlock.getByLabel( 'Address', {exact: true} ).fill( customer.billing.addressfirstline );
-		await checkoutBlock.getByLabel( 'City' ).fill( customer.billing.city );
-		await checkoutBlock.getByLabel( 'Zip Code' ).fill( customer.billing.postcode );
-		await checkoutBlock.getByLabel( 'Phone (optional)' ).fill( customer.billing.phone );
+		await checkoutBlock.goto( '/checkout/' );
+		await fillBillingDetails(page, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order
 		waitForURL = checkoutBlock.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
@@ -91,14 +85,8 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 
 		await checkoutPage.goto( '/product/simple-subscription-product/' );
 		await checkoutPage.click( 'text=Sign up now' );
-		await checkoutPage.goto( '/checkout/' );
-
-		await checkoutPage.getByLabel( 'First name' ).fill( customer.billing.firstname );
-		await checkoutPage.getByLabel( 'Last name' ).fill( customer.billing.lastname );
-		await checkoutPage.getByLabel( 'Street address' ).fill( customer.billing.addressfirstline );
-		await checkoutPage.getByLabel( 'Town / City' ).fill( customer.billing.city );
-		await checkoutPage.getByLabel( 'Zip Code' ).fill( customer.billing.postcode );
-		await checkoutPage.getByLabel( 'Phone' ).fill( customer.billing.phone );
+		await checkoutPage.goto( '/shortcode-checkout/' );
+		await fillBillingDetails(page, customer.billing);
 
 		// Check if Payfast payment method is visible & place order
 		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );

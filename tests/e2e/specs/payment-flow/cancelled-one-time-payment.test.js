@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import {addProductToCart, changeCurrency, editPayfastSetting, goToOrderEditPage} from '../../utils';
+import {addProductToCart, changeCurrency, editPayfastSetting, fillBillingDetails, goToOrderEditPage} from '../../utils';
 import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
@@ -42,14 +42,8 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 
 		const page = checkoutBlock;
 		await addProductToCart( {page, productUrl:'/product/simple-product/'} );
-		await page.goto('/checkout-block/');
-
-		await page.getByLabel('First name').fill( customer.billing.firstname );
-		await page.getByLabel('Last name').fill( customer.billing.lastname );
-		await page.getByLabel('Address', {exact: true}).fill( customer.billing.addressfirstline );
-		await page.getByLabel('City').fill( customer.billing.city );
-		await page.getByLabel('Zip Code').fill( customer.billing.postcode );
-		await page.getByLabel('Phone (optional)').fill( customer.billing.phone );
+		await page.goto('/checkout/');
+		await fillBillingDetails(page, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order
 		const payfastCheckoutPage = page.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
@@ -81,14 +75,8 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 		const page = checkoutPage;
 
 		await addProductToCart( {page, productUrl: '/product/simple-product/'} );
-		await page.goto( '/checkout/' );
-
-		await page.getByLabel( 'First name' ).fill( customer.billing.firstname );
-		await page.getByLabel( 'Last name' ).fill( customer.billing.lastname );
-		await page.getByLabel( 'Street address' ).fill( customer.billing.addressfirstline );
-		await page.getByLabel( 'Town / City' ).fill( customer.billing.city );
-		await page.getByLabel( 'Zip Code' ).fill( customer.billing.postcode );
-		await page.getByLabel( 'Phone' ).fill( customer.billing.phone );
+		await page.goto( '/shortcode-checkout/' );
+		await fillBillingDetails(page, customer.billing);
 
 		// Check if Payfast payment method is visible & place order
 		const payfastCheckoutPage = page.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
