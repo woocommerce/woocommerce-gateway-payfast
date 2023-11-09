@@ -242,10 +242,10 @@ export async function fillBillingDetails(
 	if (isBlock) {
 		return blockFillBillingDetails(page, customerBillingDetails);
 	}
-	await page.getByLabel( 'First name' ).fill( customerDetails.firstname );
-	await page.getByLabel( 'Last name' ).fill( customerDetails.lastname );
-	await page.getByLabel( 'Street address' ).fill( customerDetails.addressfirstline );
-	await page.getByLabel( 'Town / City' ).fill( customerDetails.city );
-	await page.getByLabel( 'Zip Code' ).fill( customerDetails.postcode );
-	await page.getByLabel( 'Phone' ).fill( customerDetails.phone );
+	await page.getByLabel( 'First name' ).fill( customerBillingDetails.firstname );
+	await page.getByLabel( 'Last name' ).fill( customerBillingDetails.lastname );
+	await page.getByLabel( 'Street address' ).fill( customerBillingDetails.addressfirstline );
+	await page.getByLabel( 'Town / City' ).fill( customerBillingDetails.city );
+	await page.getByLabel( 'Zip Code' ).fill( customerBillingDetails.postcode );
+	await page.getByLabel( 'Phone' ).fill( customerBillingDetails.phone );
 }
