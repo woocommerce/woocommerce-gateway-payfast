@@ -46,7 +46,7 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 
 		await addProductToCart( {page: checkoutBlock, productUrl:'/product/simple-product/'} );
 		await checkoutBlock.goto('/checkout/');
-		await fillBillingDetails(page, customer.billing, true);
+		await fillBillingDetails(checkoutBlock, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order
 		waitForURL = checkoutBlock.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
@@ -84,7 +84,7 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 
 		await addProductToCart( {page: checkoutPage, productUrl: '/product/simple-product/'} );
 		await checkoutPage.goto( '/shortcode-checkout/' );
-		await fillBillingDetails(page, customer.billing);
+		await fillBillingDetails(checkoutPage, customer.billing);
 
 		// Check if Payfast payment method is visible & place order
 		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );

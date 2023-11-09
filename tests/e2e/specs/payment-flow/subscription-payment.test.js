@@ -45,7 +45,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		await checkoutBlock.goto( '/product/simple-subscription-product/' );
 		await checkoutBlock.click( 'text=Sign up now' );
 		await checkoutBlock.goto( '/checkout/' );
-		await fillBillingDetails(page, customer.billing, true);
+		await fillBillingDetails(checkoutBlock, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order
 		waitForURL = checkoutBlock.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
@@ -86,7 +86,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		await checkoutPage.goto( '/product/simple-subscription-product/' );
 		await checkoutPage.click( 'text=Sign up now' );
 		await checkoutPage.goto( '/shortcode-checkout/' );
-		await fillBillingDetails(page, customer.billing);
+		await fillBillingDetails(checkoutPage, customer.billing);
 
 		// Check if Payfast payment method is visible & place order
 		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
@@ -141,6 +141,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		await checkoutPage.getByRole( 'link', {name: 'Renew now'} ).click();
 
 		// Check if Payfast payment method is visible & place order
+		await checkoutPage.goto( '/shortcode-checkout/' );
 		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
 		const payfastPaymentMethod = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
 		await payfastPaymentMethod.click();
