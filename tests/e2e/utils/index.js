@@ -173,11 +173,10 @@ export async function processOneTimeOrderWithBlockCheckout( {page, productUrl} )
 	await fillBillingDetails(page, customer.billing, true);
 
 	// Check if Payfast payment method is visible & place order
-	waitForURL = page.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
 	const payfastPaymentMethod = await page.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
 	await payfastPaymentMethod.click();
 	await page.getByRole( 'button', {name: 'Place order'} ).click();
-	await waitForURL;
+	await page.waitForLoadState({state: 'domcontentloaded'});
 
 	// Pay on Payfast checkout page.
 	waitForURL = page.waitForURL( /\/order-received\// );
