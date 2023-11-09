@@ -176,7 +176,7 @@ export async function processOneTimeOrderWithBlockCheckout( {page, productUrl} )
 	const payfastPaymentMethod = await page.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
 	await payfastPaymentMethod.click();
 	await page.getByRole( 'button', {name: 'Place order'} ).click();
-	await page.waitForLoadState({state: 'domcontentloaded'});
+	await page.waitForLoadState('domcontentloaded');
 
 	// Pay on Payfast checkout page.
 	waitForURL = page.waitForURL( /\/order-received\// );
