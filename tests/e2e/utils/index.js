@@ -125,10 +125,15 @@ export async function addProductToCart( {page, productUrl} ) {
  * @param {Page} page
  */
 export async function clearEmailLogs( {page} ) {
-	const result = await page.evaluate( async() => {
-		const response = await fetch( `${window.location.origin}/wp-json/e2e-wc/v1/flush-all-emails`, {method: 'DELETE'} );
-		return await response.json();
-	});
+	const pageUrl = process.env.baseURL;
+	const result = await page.evaluate(
+		async ( pageUrl ) => {
+			const response = await fetch(
+				`${pageUrl}/wp-json/e2e-wc/v1/flush-all-emails`,
+				{method: 'DELETE'}
+			);
+			return await response.json();
+		}, pageUrl );
 
 	await expect( result ).toBeTruthy();
 }
@@ -139,10 +144,15 @@ export async function clearEmailLogs( {page} ) {
  * @param {Page} page
  */
 export async function clearWooCommerceLogs( {page} ) {
-	const result = await page.evaluate( async() => {
-		const response = await fetch( `${window.location.origin}/wp-json/e2e-wc/v1/flush-all-logs`, {method: 'DELETE'} );
-		return await response.json();
-	});
+	const pageUrl = process.env.baseURL;
+	const result = await page.evaluate(
+		async ( pageUrl ) => {
+			const response = await fetch(
+				`${pageUrl}/wp-json/e2e-wc/v1/flush-all-logs`,
+				{method: 'DELETE'}
+			);
+			return await response.json();
+		}, pageUrl );
 
 	await expect( result ).toBeTruthy();
 }
