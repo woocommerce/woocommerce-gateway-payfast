@@ -125,10 +125,15 @@ export async function addProductToCart( {page, productUrl} ) {
  * @param {Page} page
  */
 export async function clearEmailLogs( {page} ) {
-	const result = await page.evaluate( async() => {
-		const response = await fetch( `${window.location.origin}/wp-json/e2e-wc/v1/flush-all-emails`, {method: 'DELETE'} );
-		return await response.json();
-	});
+	const pageUrl = process.env.baseURL;
+	const result = await page.evaluate(
+		async ( pageUrl ) => {
+			const response = await fetch(
+				`${pageUrl}/wp-json/e2e-wc/v1/flush-all-emails`,
+				{method: 'DELETE'}
+			);
+			return await response.json();
+		}, pageUrl );
 
 	await expect( result ).toBeTruthy();
 }
@@ -139,10 +144,15 @@ export async function clearEmailLogs( {page} ) {
  * @param {Page} page
  */
 export async function clearWooCommerceLogs( {page} ) {
-	const result = await page.evaluate( async() => {
-		const response = await fetch( `${window.location.origin}/wp-json/e2e-wc/v1/flush-all-logs`, {method: 'DELETE'} );
-		return await response.json();
-	});
+	const pageUrl = process.env.baseURL;
+	const result = await page.evaluate(
+		async ( pageUrl ) => {
+			const response = await fetch(
+				`${pageUrl}/wp-json/e2e-wc/v1/flush-all-logs`,
+				{method: 'DELETE'}
+			);
+			return await response.json();
+		}, pageUrl );
 
 	await expect( result ).toBeTruthy();
 }
@@ -159,21 +169,14 @@ export async function processOneTimeOrderWithBlockCheckout( {page, productUrl} )
 	let waitForURL;
 
 	await addProductToCart( {page, productUrl} );
-	await page.goto( '/checkout-block/' );
-
-	await page.getByLabel( 'First name' ).fill( customer.billing.firstname );
-	await page.getByLabel( 'Last name' ).fill( customer.billing.lastname );
-	await page.getByLabel( 'Address', {exact: true} ).fill( customer.billing.addressfirstline );
-	await page.getByLabel( 'City' ).fill( customer.billing.city );
-	await page.getByLabel( 'Zip Code' ).fill( customer.billing.postcode );
-	await page.getByLabel( 'Phone (optional)' ).fill( customer.billing.phone );
+	await page.goto( '/checkout/' );
+	await fillBillingDetails(page, customer.billing, true);
 
 	// Check if Payfast payment method is visible & place order
-	waitForURL = page.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
 	const payfastPaymentMethod = await page.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
 	await payfastPaymentMethod.click();
 	await page.getByRole( 'button', {name: 'Place order'} ).click();
-	await waitForURL;
+	await page.waitForLoadState('domcontentloaded');
 
 	// Pay on Payfast checkout page.
 	waitForURL = page.waitForURL( /\/order-received\// );
@@ -210,4 +213,48 @@ export async function verifyOrderStatusIsProcessing( {page, orderId} ) {
  */
 export async function goToOrderEditPage( {page, orderId} ){
 	await page.goto( `/wp-admin/admin.php?page=wc-orders&action=edit&id=${orderId}` );
+}
+
+
+/**
+ * Fill Billing details on block checkout page
+ *
+ * @param {Page}   page            Playwright page object
+ * @param {Object} customerDetails Customer billing details
+ */
+export async function blockFillBillingDetails(page, customerDetails) {
+	const card = await page.locator('.wc-block-components-address-card');
+	if (await card.isVisible()) {
+		await card.locator('a.wc-block-components-address-card__edit').click();
+	}
+
+	await page.getByLabel( 'First name' ).fill( customerDetails.firstname );
+	await page.getByLabel( 'Last name' ).fill( customerDetails.lastname );
+	await page.getByLabel( 'Address', {exact: true} ).fill( customerDetails.addressfirstline );
+	await page.getByLabel( 'City' ).fill( customerDetails.city );
+	await page.getByLabel( 'Zip Code' ).fill( customerDetails.postcode );
+	await page.getByLabel( 'Phone (optional)' ).fill( customerDetails.phone );
+}
+
+/**
+ * Fill billing details on checkout page
+ *
+ * @param {Page}    page                   Playwright page object
+ * @param {Object}  customerBillingDetails Customer billing details
+ * @param {boolean} isBlock                Is block checkout
+ */
+export async function fillBillingDetails(
+	page,
+	customerBillingDetails,
+	isBlock = false
+) {
+	if (isBlock) {
+		return blockFillBillingDetails(page, customerBillingDetails);
+	}
+	await page.getByLabel( 'First name' ).fill( customerBillingDetails.firstname );
+	await page.getByLabel( 'Last name' ).fill( customerBillingDetails.lastname );
+	await page.getByLabel( 'Street address' ).fill( customerBillingDetails.addressfirstline );
+	await page.getByLabel( 'Town / City' ).fill( customerBillingDetails.city );
+	await page.getByLabel( 'Zip Code' ).fill( customerBillingDetails.postcode );
+	await page.getByLabel( 'Phone' ).fill( customerBillingDetails.phone );
 }

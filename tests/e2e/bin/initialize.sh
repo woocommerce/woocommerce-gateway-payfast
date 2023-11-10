@@ -22,4 +22,6 @@ wp-env run tests-cli wp user create customer customer@euvatnumbertestsuite.com -
 wp-env run tests-cli wp wc tax create -- --country="*" --state="*" --postcode="*" --city="*" --rate=20 --name="General Tax" --user=1
 wp-env run tests-cli wp wc product create -- --name="Simple Product" --slug="simple-product" --user=1 --regular_price=10 --virtual=true
 wp-env run tests-cli wp wc product create -- --name="Simple Subscription Product" --slug="simple-subscription-product" --user=1 --regular_price=10 --type=subscription --virtual=true --meta_data='[{"key":"_subscription_price","value":"10"},{"key":"_subscription_period","value":"month"},{"key":"_subscription_period_interval","value":"1"}]'
-wp-env run tests-cli wp post create ./wp-content/plugins/woocommerce-gateway-payfast/tests/e2e/config/checkout-block-page.txt --post_title='Checkout Block' --post_type=page --post_status=publish --post_author=1
+
+# Add Shortcode checkout page.
+wp-env run tests-cli wp post create --post_title='Shortcode Checkout' --post_type=page --post_status=publish --post_author=1 --post_content='<!-- wp:shortcode -->[woocommerce_checkout]<!-- /wp:shortcode -->'
