@@ -44,7 +44,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 
 	test( 'Checkout Block: Payment method should not available when disabled', async () => {
 		await addProductToCart( {page: checkoutBlockPage, productUrl: '/product/simple-product/'} );
-		await checkoutBlockPage.goto( '/checkout-block/' );
+		await checkoutBlockPage.goto( '/checkout/' );
 
 		const paymentMethodLocator = await checkoutBlockPage.locator( 'label.wc-block-components-radio-control__option', {
 			has: checkoutBlockPage.locator( 'input[value="payfast"]' )
@@ -55,7 +55,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 
 	test( 'Checkout Page: Payment method should not available when disabled', async () => {
 		await addProductToCart( {page: checkoutPage, productUrl: '/product/simple-product/'} );
-		await checkoutPage.goto( '/checkout/' );
+		await checkoutPage.goto( '/shortcode-checkout/' );
 
 		const paymentMethodLocator = await checkoutPage.locator( '.wc_payment_method', {
 			has: checkoutPage.locator( 'input[value="payfast"]' )
@@ -78,7 +78,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 
 	test( 'Checkout Block: Verify method title & description', async () => {
 		await addProductToCart( {page: checkoutBlockPage, productUrl: '/product/simple-product/'} );
-		await checkoutBlockPage.goto( '/checkout-block/' );
+		await checkoutBlockPage.goto( '/checkout/' );
 
 		const paymentMethodLocator = await checkoutBlockPage.locator(
 			'label[for="radio-control-wc-payment-method-options-payfast"]' );
@@ -92,7 +92,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 
 	test( 'Checkout Page: Verify method title & description', async () => {
 		await addProductToCart( {page: checkoutPage, productUrl: '/product/simple-product/'} );
-		await checkoutPage.goto( '/checkout/' );
+		await checkoutPage.goto( '/shortcode-checkout/' );
 
 		const paymentMethodLocator = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
 		await expect( paymentMethodLocator ).toHaveText( /Payfast/ );

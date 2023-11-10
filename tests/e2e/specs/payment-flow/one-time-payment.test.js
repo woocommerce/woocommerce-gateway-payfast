@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import {addProductToCart, changeCurrency, clearEmailLogs, editPayfastSetting, goToOrderEditPage} from '../../utils';
+import {addProductToCart, changeCurrency, clearEmailLogs, editPayfastSetting, fillBillingDetails, goToOrderEditPage} from '../../utils';
 import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
@@ -45,17 +45,11 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 		await clearEmailLogs( {page: adminPage} );
 
 		await addProductToCart( {page: checkoutBlock, productUrl:'/product/simple-product/'} );
-		await checkoutBlock.goto('/checkout-block/');
-
-		await checkoutBlock.getByLabel('First name').fill( customer.billing.firstname );
-		await checkoutBlock.getByLabel('Last name').fill( customer.billing.lastname );
-		await checkoutBlock.getByLabel('Address', {exact: true}).fill( customer.billing.addressfirstline );
-		await checkoutBlock.getByLabel('City').fill( customer.billing.city );
-		await checkoutBlock.getByLabel('Zip Code').fill( customer.billing.postcode );
-		await checkoutBlock.getByLabel('Phone (optional)').fill( customer.billing.phone );
+		await checkoutBlock.goto('/checkout/');
+		await fillBillingDetails(checkoutBlock, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order
-		waitForURL = checkoutBlock.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
+		waitForURL = checkoutBlock.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
 		const payfastPaymentMethod = await checkoutBlock.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
 		await payfastPaymentMethod.click();
 		await checkoutBlock.getByRole( 'button', {name: 'Place order'} ).click();
@@ -89,17 +83,11 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 		let waitForURL;
 
 		await addProductToCart( {page: checkoutPage, productUrl: '/product/simple-product/'} );
-		await checkoutPage.goto( '/checkout/' );
-
-		await checkoutPage.getByLabel( 'First name' ).fill( customer.billing.firstname );
-		await checkoutPage.getByLabel( 'Last name' ).fill( customer.billing.lastname );
-		await checkoutPage.getByLabel( 'Street address' ).fill( customer.billing.addressfirstline );
-		await checkoutPage.getByLabel( 'Town / City' ).fill( customer.billing.city );
-		await checkoutPage.getByLabel( 'Zip Code' ).fill( customer.billing.postcode );
-		await checkoutPage.getByLabel( 'Phone' ).fill( customer.billing.phone );
+		await checkoutPage.goto( '/shortcode-checkout/' );
+		await fillBillingDetails(checkoutPage, customer.billing);
 
 		// Check if Payfast payment method is visible & place order
-		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng\/process\/payment/ );
+		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
 		const payfastPaymentMethod = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
 		await payfastPaymentMethod.click();
 		await checkoutPage.getByRole( 'button', {name: 'Place order'} ).click();
