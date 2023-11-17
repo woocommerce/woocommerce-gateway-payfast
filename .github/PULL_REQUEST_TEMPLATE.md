@@ -1,36 +1,31 @@
-<!-- Source of this Pull Request. Remove any that are not applicable. -->
+### All Submissions:
 
-**Issue**: #
-
-**Ticket**:
-
-**Slack Thread**:
+<!-- Mark completed items with an [x] -->
+* [ ] Does your code follow the [WooCommerce Sniffs](https://github.com/woocommerce/woocommerce-sniffs/) variant of WordPress coding standards?
+* [ ] Have you written new tests for your changes, as applicable?
+* [ ] Have you successfully run tests with your changes locally?
+* [ ] Will this change require new documentation or changes to existing documentation?
 
 ---
 
-### Description
-
-<!-- Describe the changes made in this Pull Request and the reason for these changes. -->
-
-### Steps to Test
-
-<!-- Describe the steps to replicate the issue and confirm the fix. -->
-<!-- Include as many details as possible. -->
-
-1. Go to '…'
-2. Click on '…'
-3. Scroll down to …'
-
-### Documentation
-
-<!-- Will this change require new documentation or changes to existing documentation? -->
-<!-- A good way to answer it is to ask: will more than one customer ever need to know about this? -->
-- [ ] This PR needs documentation (has the "Documentation" label).
-<!-- For an extra 💯 include further details about which change requires documentation. -->
-
-### Changelog Entry
-
-> Enter a summary of all changes on this Pull Request. This will appear in the changelog if accepted.
+### Changes proposed in this Pull Request:
+<!-- Describe the changes made to this Pull Request and the reason for such changes. -->
 
 Closes # .
 
+### Steps to test the changes in this Pull Request:
+<!-- Describe the steps to replicate the issue and confirm the fix -->
+<!-- Try to include as many details as possible. -->
+
+1.
+1.
+1.
+
+### Changelog entry
+<!-- 
+Each line should start with change type prefix`(Add|Fix|Dev) - `.
+If you remove the "Changelog entry" header, the Pull Request title will be used as the changelog entry.
+Add the `changelog: none` label if no changelog entry is needed.
+-->
+
+> Add - Enter a summary of all changes on this Pull Request. This will appear in the changelog if accepted.
