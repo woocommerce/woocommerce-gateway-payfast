@@ -45,7 +45,7 @@
 		"test:e2e-codegen": "npx playwright codegen",
 		"test:e2e-report": "npx playwright show-report tests/e2e/test-results/playwright-report",
 		"test:e2e-foundational": "npx playwright test --config tests/e2e/playwright.config.js --grep @foundational",
-		"phpcompat": "./vendor/bin/phpcs *.php includes -p --standard=PHPCompatibilityWP --extensions=php --runtime-set testVersion 7.3-"
+		"phpcompat": "./vendor/bin/phpcs --standard=phpcs-compat.xml.dist -p ."
 	},
 	"config": {
 		"wp_org_slug": "woocommerce-payfast-gateway"
