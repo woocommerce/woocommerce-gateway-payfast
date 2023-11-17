@@ -95,7 +95,7 @@ add_action( 'before_woocommerce_init', 'woocommerce_payfast_declare_hpos_compati
 /**
  * Display notice if WooCommerce is not installed.
  *
- * @since x.x.x
+ * @since 1.5.8
  */
 function woocommerce_payfast_missing_wc_notice() {
 	if ( class_exists( 'WooCommerce' ) ) {
