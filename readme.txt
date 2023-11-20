@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 6.2
 Tested up to: 6.4
 Requires PHP: 7.3
-Stable tag: 1.5.9
+Stable tag: 1.6.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,16 @@ For help setting up and configuring, please refer to our [user guide](https://do
 If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
+
+= 1.6.0 - 2023-11-20 =
+* Dev - Add Playwright end-to-end tests.
+* Dev - Update default behavior to use a block-based cart and checkout in E2E tests.
+* Dev - Bump WooCommerce "tested up to" version 8.3.
+* Dev - Bump WooCommerce minimum supported version to 8.1.
+* Dev - Bump WordPress minimum supported version to 6.2.
+* Dev - Bump WordPress "tested up to" version 6.4.
+* Dev - Bump WordPress minimum supported version to 6.2.
+* Dev - Update PHPCS and PHPCompatibility GitHub Actions.
 
 = 1.5.9 - 2023-09-18 =
 * Dev - Bump WordPress "tested up to" version from 6.2 to 6.3.
