@@ -38,7 +38,7 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.6.0 - 2023-11-20 =
+= 1.6.0 - xxxx-xx-xx =
 * Dev - Add Playwright end-to-end tests.
 * Dev - Update default behavior to use a block-based cart and checkout in E2E tests.
 * Dev - Bump WooCommerce "tested up to" version 8.3.
