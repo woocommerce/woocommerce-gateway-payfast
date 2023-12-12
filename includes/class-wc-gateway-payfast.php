@@ -37,7 +37,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$this->method_title = __( 'Payfast', 'woocommerce-gateway-payfast' );
 		/* translators: 1: a href link 2: closing href */
 		$this->method_description  = sprintf( __( 'Payfast works by sending the user to %1$sPayfast%2$s to enter their payment information.', 'woocommerce-gateway-payfast' ), '<a href="https://payfast.io/">', '</a>' );
-		$this->icon                = WP_PLUGIN_URL . '/' . plugin_basename( dirname( dirname( __FILE__ ) ) ) . '/assets/images/icon.png';
+		$this->icon                = WP_PLUGIN_URL . '/' . plugin_basename( dirname( __DIR__ ) ) . '/assets/images/icon.png';
 		$this->debug_email         = get_option( 'admin_email' );
 		$this->available_countries = array( 'ZA' );
 
