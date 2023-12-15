@@ -15,8 +15,6 @@
  * @package WooCommerce Gateway Payfast
  */
 
-use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
-
 defined( 'ABSPATH' ) || exit;
 
 define( 'WC_GATEWAY_PAYFAST_VERSION', '1.6.0' ); // WRCS: DEFINED_VERSION.
