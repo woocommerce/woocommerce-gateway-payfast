@@ -13,6 +13,16 @@
 	<exclude-pattern>*/build/*</exclude-pattern>
 	<exclude-pattern>*/client/*</exclude-pattern>
 
+	<!-- Exclude incorrectly named file that won't be renamed. -->
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>/includes/class-wc-gateway-payfast-blocks-support\.php</exclude-pattern>
+	</rule>
+
+	<!-- Exclude methods with underscore prefix that won't be renamed. -->
+	<rule ref="PSR2.Methods.MethodDeclaration.Underscore">
+		<exclude-pattern>/includes/class-wc-gateway-payfast\.php</exclude-pattern>
+	</rule>
+
 	<!-- ensure we are using language features according to supported PHP versions -->
 	<config name="testVersion" value="7.3-"/>
 
