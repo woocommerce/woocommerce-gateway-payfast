@@ -4,7 +4,7 @@
  * Plugin URI: https://woocommerce.com/products/payfast-payment-gateway/
  * Description: Receive payments using the South African Payfast payments provider.
  * Author: WooCommerce
- * Author URI: http://woocommerce.com/
+ * Author URI: https://woocommerce.com/
  * Version: 1.6.0
  * Requires at least: 6.2
  * Tested up to: 6.4
