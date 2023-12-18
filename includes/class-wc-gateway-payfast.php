@@ -106,6 +106,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	protected $available_currencies;
 
 	/**
+	 * Logger instance.
+	 *
+	 * @var WC_Logger $logger
+	 */
+	protected $logger;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
