@@ -29,6 +29,83 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	protected $data_to_send = array();
 
 	/**
+	 * Merchant ID.
+	 *
+	 * @var string $merchant_id
+	 */
+	protected $merchant_id;
+
+	/**
+	 * Merchant Key.
+	 *
+	 * @var string $merchant_key
+	 */
+	protected $merchant_key;
+
+	/**
+	 * Pass Phrase.
+	 *
+	 * @var string $pass_phrase
+	 */
+	protected $pass_phrase;
+
+	/**
+	 * Payfast URL.
+	 *
+	 * @var string $url
+	 */
+	protected $url;
+
+	/**
+	 * Payfast Validate URL.
+	 *
+	 * @var string $validate_url
+	 */
+	protected $validate_url;
+
+	/**
+	 * Response URL.
+	 *
+	 * @var string $response_url
+	 */
+	protected $response_url;
+
+	/**
+	 * Send debug email.
+	 *
+	 * @var bool $send_debug_email
+	 */
+	protected $send_debug_email;
+
+	/**
+	 * Debug email.
+	 *
+	 * @var string $debug_email
+	 */
+	protected $debug_email;
+
+	/**
+	 * Enable logging.
+	 *
+	 * @var bool $enable_logging
+	 */
+	protected $enable_logging;
+
+	/**
+	 * Available countries.
+	 *
+	 * @var array $available_countries
+	 */
+	protected $available_countries;
+
+	/**
+	 * Available currencies.
+	 *
+	 * @var array $available_currencies
+	 */
+	protected $available_currencies;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
