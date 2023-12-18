@@ -91,10 +91,10 @@ add_action( 'woocommerce_blocks_loaded', 'woocommerce_payfast_woocommerce_blocks
  */
 function woocommerce_payfast_woocommerce_blocks_support() {
 	if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
-		require_once dirname( __FILE__ ) . '/includes/class-wc-gateway-payfast-blocks-support.php';
+		require_once WC_GATEWAY_PAYFAST_PATH . '/includes/class-wc-gateway-payfast-blocks-support.php';
 		add_action(
 			'woocommerce_blocks_payment_method_type_registration',
-			function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
+			function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
 				$payment_method_registry->register( new WC_PayFast_Blocks_Support() );
 			}
 		);
@@ -125,7 +125,7 @@ function woocommerce_payfast_missing_wc_notice() {
 	}
 
 	echo '<div class="error"><p><strong>';
-	echo sprintf(
+	printf(
 		/* translators: %s WooCommerce download URL link. */
 		esc_html__( 'WooCommerce Payfast Gateway requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-gateway-payfast' ),
 		'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
