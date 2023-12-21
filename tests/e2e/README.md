@@ -20,7 +20,7 @@ PAYFAST_PASSPHRASE=********
 4. Add environment variables to the `/tests/e2e/config/.env` file (as mentioned above).
 5. Run `npm run test:e2e-local`.
 
-### Dependencies for Github testing
+### Dependencies for Github Action testing
 - Add bot token to Github,
 ```
 gh secret set BOT_GITHUB_TOKEN --app actions --repo=woocommerce/woocommerce-gateway-payfast
