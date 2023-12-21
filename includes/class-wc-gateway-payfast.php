@@ -483,6 +483,25 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				'</a>
 				<script type="text/javascript">
 					jQuery(function(){
+						// Feature detect.
+						if (
+							typeof PerformanceNavigationTiming !== "undefined" &&
+							typeof window.performance !== "undefined" &&
+							typeof performance.getEntriesByType === "function"
+						) {
+							var isBackForward = false;
+							var entries = performance.getEntriesByType("navigation");
+							entries.forEach((entry) => {
+								if (entry.type === "back_forward") {
+									isBackForward = true;
+								}
+							});
+							if (isBackForward) {
+								// Do not submit form on back or forward.
+								return;
+							}
+						}
+
 						jQuery("body").block(
 							{
 								message: "' . esc_html__( 'Thank you for your order. We are now redirecting you to Payfast to make payment.', 'woocommerce-gateway-payfast' ) . '",
