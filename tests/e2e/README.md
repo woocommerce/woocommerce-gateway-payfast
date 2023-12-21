@@ -13,7 +13,12 @@ PAYFAST_MERCHANT_KEY=********
 PAYFAST_PASSPHRASE=********
 ```
 
-**Note**: Use `npm run test:e2e-local` to run tests locally.
+### Run E2E tests in local
+1. Run `npm install`.
+2. Run `npx playwright install`.
+3. Run `npm run env:start-local`  (Note: Please start Docker before executing this command).
+4. Add environment variables to the `/tests/e2e/config/.env` file (as mentioned above).
+5. Run `npm run test:e2e-local`.
 
 ### Dependencies for Github testing
 - Add bot token to Github,
