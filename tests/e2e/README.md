@@ -27,4 +27,10 @@ gh secret set PAYFAST_MERCHANT_KEY --app actions --repo=woocommerce/woocommerce-
 gh secret set PAYFAST_PASSPHRASE --app actions --repo=woocommerce/woocommerce-gateway-payfast
 ```
 
-**Note**: Add `needs: e2e testing` to pull request to run e2e tests. 
+**Note**:
+- Add the GitHub secret only if it doesn't already exist. Utilize the following command to check if the secret exists:
+```
+gh secret list --app actions --repo=woocommerce/woocommerce-gateway-payfast
+```
+- Add `needs: e2e testing` to pull request to run e2e tests. 
+
