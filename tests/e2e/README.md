@@ -37,5 +37,7 @@ gh secret set PAYFAST_PASSPHRASE --app actions --repo=woocommerce/woocommerce-ga
 ```
 gh secret list --app actions --repo=woocommerce/woocommerce-gateway-payfast
 ```
-- Add `needs: e2e testing` to pull request to run e2e tests. 
+### Run E2E tests in the pull request
+
+- Add the `needs: e2e testing` label to the pull request; it will initiate the E2E test GitHub action to run tests against the PR.
 
