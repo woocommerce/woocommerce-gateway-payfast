@@ -32,6 +32,11 @@ For help setting up and configuring, please refer to our [user guide](https://do
 
 If you get stuck, you can ask for help in the Plugin Forum.
 
+### Compatibility
+
+This extension is compatible with:
+- [WooCommerce Blocks](https://woo.com/products/woocommerce-gutenberg-products-block/)
+
 ## License
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
 
