@@ -8,7 +8,7 @@ This is the official WooCommerce extension to receive payments using the South A
 
 - Requires at least: 6.2
 - Tested up to: 6.4
-- Requires PHP: 7.3
+- Requires PHP: 7.4
 
 ### Why choose Payfast?
 
@@ -31,6 +31,11 @@ For help setting up and configuring, please refer to our [user guide](https://do
 #### Where can I get support or talk to other users?
 
 If you get stuck, you can ask for help in the Plugin Forum.
+
+### Compatibility
+
+This extension is compatible with:
+- [WooCommerce Blocks](https://woo.com/products/woocommerce-gutenberg-products-block/)
 
 ## License
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)

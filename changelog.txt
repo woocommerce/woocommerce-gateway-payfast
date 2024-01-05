@@ -1,5 +1,8 @@
 *** PayFast Changelog ***
 
+= 1.6.1 - TBD =
+* Dev - Declare compatibility with WooCommerce Blocks
+
 = 1.6.0 - 2023-11-22 =
 * Dev - Add Playwright end-to-end tests.
 * Dev - Update default behavior to use a block-based cart and checkout in E2E tests.

@@ -8,14 +8,13 @@
  * Version: 1.6.0
  * Requires at least: 6.2
  * Tested up to: 6.4
- * WC tested up to: 8.3
- * WC requires at least: 8.1
- * Requires PHP: 7.3
+ * WC requires at least: 8.2
+ * WC tested up to: 8.4
+ * Requires PHP: 7.4
+ * PHP tested up to: 8.3
  *
  * @package WooCommerce Gateway Payfast
  */
-
-use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -68,7 +67,6 @@ function woocommerce_payfast_plugin_links( $links ) {
 }
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'woocommerce_payfast_plugin_links' );
 
-
 /**
  * Add the gateway to WooCommerce
  *
@@ -102,16 +100,29 @@ function woocommerce_payfast_woocommerce_blocks_support() {
 }
 
 /**
- * Declares support for HPOS.
+ * Declares compatibility with Woocommerce features.
  *
+ * List of features:
+ * - custom_order_tables
+ * - product_block_editor
+ *
+ * @since x.x.x Rename function
  * @return void
  */
-function woocommerce_payfast_declare_hpos_compatibility() {
-	if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+function woocommerce_payfast_declare_feature_compatibility() {
+	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+			'custom_order_tables',
+			__FILE__
+		);
+
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+			'product_block_editor',
+			__FILE__
+		);
 	}
 }
-add_action( 'before_woocommerce_init', 'woocommerce_payfast_declare_hpos_compatibility' );
+add_action( 'before_woocommerce_init', 'woocommerce_payfast_declare_feature_compatibility' );
 
 /**
  * Display notice if WooCommerce is not installed.

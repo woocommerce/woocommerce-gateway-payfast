@@ -3,7 +3,7 @@ Contributors: woocommerce, automattic, royho, akeda, mattyza, bor0, woothemes, d
 Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 6.2
 Tested up to: 6.4
-Requires PHP: 7.3
+Requires PHP: 7.4
 Stable tag: 1.6.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -37,6 +37,9 @@ For help setting up and configuring, please refer to our [user guide](https://do
 If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
+
+= 1.6.1 - TBD =
+* Dev - Declare compatibility with WooCommerce Blocks
 
 = 1.6.0 - 2023-11-22 =
 * Dev - Add Playwright end-to-end tests.
