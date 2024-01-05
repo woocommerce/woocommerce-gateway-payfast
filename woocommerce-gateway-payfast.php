@@ -106,7 +106,7 @@ function woocommerce_payfast_woocommerce_blocks_support() {
  * - custom_order_tables
  * - product_block_editor
  *
- * @since x.x.x Rename function
+ * @since 1.6.1 Rename function
  * @return void
  */
 function woocommerce_payfast_declare_feature_compatibility() {
