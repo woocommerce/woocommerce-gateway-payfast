@@ -8,9 +8,10 @@
  * Version: 1.6.0
  * Requires at least: 6.2
  * Tested up to: 6.4
- * WC tested up to: 8.3
  * WC requires at least: 8.1
+ * WC tested up to: 8.3
  * Requires PHP: 7.3
+ * PHP tested up to: 8.3
  *
  * @package WooCommerce Gateway Payfast
  */
