@@ -38,8 +38,16 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
-= 1.6.1 - TBD =
-* Dev - Declare compatibility with WooCommerce Blocks
+= 1.6.1 - 2024-01-08 =
+* Add - Readme.md file for e2e tests.
+* Dev - Declare compatibility with WooCommerce Blocks.
+* Dev - Declare compatibility with Product Editor.
+* Dev - Updated the main file of the plugin to match the plugin's slug.
+* Dev - Bump PHP minimum supported version to 7.4.
+* Dev - Bump WooCommerce "tested up to" version 8.4.
+* Dev - Bump WooCommerce minimum supported version to 8.2.
+* Dev - Resolve coding standards issues.
+* Tweak - Bump PHP "tested up to" version 8.3.
 
 = 1.6.0 - 2023-11-22 =
 * Dev - Add Playwright end-to-end tests.
