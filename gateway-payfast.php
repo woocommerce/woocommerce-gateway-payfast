@@ -16,8 +16,6 @@
  * @package WooCommerce Gateway Payfast
  */
 
-use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
-
 defined( 'ABSPATH' ) || exit;
 
 define( 'WC_GATEWAY_PAYFAST_VERSION', '1.6.0' ); // WRCS: DEFINED_VERSION.
@@ -103,16 +101,29 @@ function woocommerce_payfast_woocommerce_blocks_support() {
 }
 
 /**
- * Declares support for HPOS.
+ * Declares compatibility with Woocommerce features.
  *
+ * List of features:
+ * - custom_order_tables
+ * - product_block_editor
+ *
+ * @since x.x.x Rename function
  * @return void
  */
-function woocommerce_payfast_declare_hpos_compatibility() {
-	if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+function woocommerce_payfast_declare_feature_compatibility() {
+	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+			'custom_order_tables',
+			__FILE__
+		);
+
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+			'product_block_editor',
+			__FILE__
+		);
 	}
 }
-add_action( 'before_woocommerce_init', 'woocommerce_payfast_declare_hpos_compatibility' );
+add_action( 'before_woocommerce_init', 'woocommerce_payfast_declare_feature_compatibility' );
 
 /**
  * Display notice if WooCommerce is not installed.
