@@ -5,7 +5,7 @@
  * Description: Receive payments using the South African Payfast payments provider.
  * Author: WooCommerce
  * Author URI: https://woocommerce.com/
- * Version: 1.6.0
+ * Version: 1.6.1
  * Requires at least: 6.2
  * Tested up to: 6.4
  * WC requires at least: 8.2
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_GATEWAY_PAYFAST_VERSION', '1.6.0' ); // WRCS: DEFINED_VERSION.
+define( 'WC_GATEWAY_PAYFAST_VERSION', '1.6.1' ); // WRCS: DEFINED_VERSION.
 define( 'WC_GATEWAY_PAYFAST_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 define( 'WC_GATEWAY_PAYFAST_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 
@@ -106,7 +106,7 @@ function woocommerce_payfast_woocommerce_blocks_support() {
  * - custom_order_tables
  * - product_block_editor
  *
- * @since x.x.x Rename function
+ * @since 1.6.1 Rename function
  * @return void
  */
 function woocommerce_payfast_declare_feature_compatibility() {

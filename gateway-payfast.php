@@ -2,7 +2,7 @@
 /**
  * Backwards compat.
  *
- * @since x.x.x
+ * @since 1.6.1
  * @package WooCommerce Gateway Payfast
  */
 
