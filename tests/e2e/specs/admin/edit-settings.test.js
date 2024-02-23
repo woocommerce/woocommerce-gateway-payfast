@@ -191,7 +191,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 
 		// Verify: log create.
 		await adminPage.goto( '/wp-admin/admin.php?page=wc-status&tab=logs' );
-		const woocommerceLogFiles = await adminPage.locator( 'select[name="log_file"] option', {
+		const woocommerceLogFiles = await adminPage.locator( 'table.log-files a.row-title', {
 			hasText: 'payfast',
 		} );
 		await expect( await woocommerceLogFiles.count() ).not.toBe( 0 );
