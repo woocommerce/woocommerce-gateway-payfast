@@ -1819,20 +1819,18 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Check if the currency is set in the URL.
 		if ( isset( $_GET['currency'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$currency_code = array(
-				sanitize_text_field(
-					wp_unslash( $_GET['currency'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				),
+			$currency_code = sanitize_text_field(
+				wp_unslash( $_GET['currency'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			);
 			// Check if the currency is set in the session (for logged-out users).
 		} elseif ( 0 === $user_id && WC()->session ) {
 			$currency_code = WC()->session->get( \WCPay\MultiCurrency\MultiCurrency::CURRENCY_SESSION_KEY );
 			// Check if the currency is set in the user meta (for logged-in users).
 		} elseif ( $user_id ) {
-			$currency_code = get_user_meta( $user_id, \WCPay\MultiCurrency\MultiCurrency::CURRENCY_META_KEY );
+			$currency_code = get_user_meta( $user_id, \WCPay\MultiCurrency\MultiCurrency::CURRENCY_META_KEY, true );
 		}
 
-		if ( is_array( $currency_code ) && in_array( 'ZAR', $currency_code, true ) ) {
+		if ( is_string( $currency_code ) && 'ZAR' === $currency_code ) {
 			return 'ZAR';
 		}
 
