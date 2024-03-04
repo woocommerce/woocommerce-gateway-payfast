@@ -191,6 +191,29 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Change Payment Method actions.
 		add_action( 'woocommerce_subscription_payment_method_updated_from_' . $this->id, array( $this, 'maybe_cancel_subscription_token' ), 10, 2 );
+
+		add_filter( 'nocache_headers', array( $this, 'no_store_cache_headers' ) );
+	}
+
+	/**
+	 * Use the no-store, private cache directive on the order-pay endpoint.
+	 *
+	 * This prevents the browser caching the page even when the visitor has clicked
+	 * the back button. This is required to determine if a user has pressed back while
+	 * in the payfast gateway.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string[] $headers Array of caching headers.
+	 * @return string[] Modified caching headers.
+	 */
+	public function no_store_cache_headers( $headers ) {
+		if ( ! is_wc_endpoint_url( 'order-pay' ) ) {
+			return $headers;
+		}
+
+		$headers['Cache-Control'] = 'no-cache, must-revalidate, max-age=0, no-store, private';
+		return $headers;
 	}
 
 	/**
@@ -497,7 +520,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 								}
 							});
 							if (isBackForward) {
-								// Do not submit form on back or forward.
+								/*
+								 * Do not submit form on back or forward.
+								 * Ensure that the body is unblocked/not showing the redirect message.
+								 */
+								jQuery("body").unblock();
 								return;
 							}
 						}
