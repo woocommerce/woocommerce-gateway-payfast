@@ -1,10 +1,10 @@
 === WooCommerce Payfast Gateway ===
 Contributors: woocommerce, automattic, royho, akeda, mattyza, bor0, woothemes, dwainm, laurendavissmith001
 Tags: credit card, payfast, payment request, woocommerce, automattic
-Requires at least: 6.1
-Tested up to: 6.3
-Requires PHP: 7.3
-Stable tag: 1.5.9
+Requires at least: 6.3
+Tested up to: 6.4
+Requires PHP: 7.4
+Stable tag: 1.6.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,27 @@ For help setting up and configuring, please refer to our [user guide](https://do
 If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
+
+= 1.6.1 - 2024-01-08 =
+* Add - Readme.md file for e2e tests.
+* Dev - Declare compatibility with WooCommerce Blocks.
+* Dev - Declare compatibility with Product Editor.
+* Dev - Updated the main file of the plugin to match the plugin's slug.
+* Dev - Bump PHP minimum supported version to 7.4.
+* Dev - Bump WooCommerce "tested up to" version 8.4.
+* Dev - Bump WooCommerce minimum supported version to 8.2.
+* Dev - Resolve coding standards issues.
+* Tweak - Bump PHP "tested up to" version 8.3.
+
+= 1.6.0 - 2023-11-22 =
+* Dev - Add Playwright end-to-end tests.
+* Dev - Update default behavior to use a block-based cart and checkout in E2E tests.
+* Dev - Bump WooCommerce "tested up to" version 8.3.
+* Dev - Bump WooCommerce minimum supported version to 8.1.
+* Dev - Bump WordPress minimum supported version to 6.2.
+* Dev - Bump WordPress "tested up to" version 6.4.
+* Dev - Bump WordPress minimum supported version to 6.2.
+* Dev - Update PHPCS and PHPCompatibility GitHub Actions.
 
 = 1.5.9 - 2023-09-18 =
 * Dev - Bump WordPress "tested up to" version from 6.2 to 6.3.
