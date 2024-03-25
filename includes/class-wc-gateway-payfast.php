@@ -191,6 +191,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Change Payment Method actions.
 		add_action( 'woocommerce_subscription_payment_method_updated_from_' . $this->id, array( $this, 'maybe_cancel_subscription_token' ), 10, 2 );
+
+		// Add support for WooPayments multi-currency.
+		add_filter( 'woocommerce_currency', array( $this, 'filter_currency' ) );
 	}
 
 	/**
@@ -786,7 +789,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			. PHP_EOL . 'End ITN call'
 			. PHP_EOL . '----------'
 		);
-
 	}
 
 	/**
@@ -1174,7 +1176,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 		// Payment will be completion will be capture only when the ITN callback is sent to $this->handle_itn_request().
 		$renewal_order->add_order_note( esc_html__( 'Payfast Subscription renewal transaction submitted.', 'woocommerce-gateway-payfast' ) );
-
 	}
 
 	/**
@@ -1727,7 +1728,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				. wp_kses_post(
 					array_reduce(
 						$errors_to_show,
-						function( $errors_list, $error_item ) {
+						function ( $errors_list, $error_item ) {
 							$errors_list = $errors_list . PHP_EOL . ( '<li>' . $this->get_error_message( $error_item ) . '</li>' );
 							return $errors_list;
 						},
@@ -1795,5 +1796,44 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		</tr>
 
 		<?php
+	}
+
+	/**
+	 * Filters the currency to 'ZAR' if set via WooPayments multi-currency feature.
+	 *
+	 * @param string $currency The currency code.
+	 * @return string
+	 */
+	public function filter_currency( $currency ) {
+		// Do nothing if WooPayments is not activated.
+		if ( ! class_exists( '\WCPay\MultiCurrency\MultiCurrency' ) ) {
+			return $currency;
+		}
+
+		// Do nothing if the page is admin screen.
+		if ( is_admin() ) {
+			return $currency;
+		}
+
+		$user_id = get_current_user_id();
+
+		// Check if the currency is set in the URL.
+		if ( isset( $_GET['currency'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$currency_code = sanitize_text_field(
+				wp_unslash( $_GET['currency'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			);
+			// Check if the currency is set in the session (for logged-out users).
+		} elseif ( 0 === $user_id && WC()->session ) {
+			$currency_code = WC()->session->get( \WCPay\MultiCurrency\MultiCurrency::CURRENCY_SESSION_KEY );
+			// Check if the currency is set in the user meta (for logged-in users).
+		} elseif ( $user_id ) {
+			$currency_code = get_user_meta( $user_id, \WCPay\MultiCurrency\MultiCurrency::CURRENCY_META_KEY, true );
+		}
+
+		if ( is_string( $currency_code ) && 'ZAR' === $currency_code ) {
+			return 'ZAR';
+		}
+
+		return $currency;
 	}
 }
