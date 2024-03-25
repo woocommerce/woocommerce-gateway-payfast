@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 6.3
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,13 @@ For help setting up and configuring, please refer to our [user guide](https://do
 If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
+
+= 1.6.2 - 2024-03-25 =
+* Dev - Bump WooCommerce "tested up to" version 8.6.
+* Dev - Bump WooCommerce minimum supported version to 8.4.
+* Dev - Bump WordPress minimum supported version to 6.3.
+* Fix - Payfast gateway not visible on Checkout when ZAR currency is set via WooPayments multi-currency feature.
+* Fix - Allow navigation back from PayFast gateway payment page.
 
 = 1.6.1 - 2024-01-08 =
 * Add - Readme.md file for e2e tests.
