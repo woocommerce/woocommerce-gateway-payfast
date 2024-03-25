@@ -205,7 +205,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * the back button. This is required to determine if a user has pressed back while
 	 * in the payfast gateway.
 	 *
-	 * @since x.x.x
+	 * @since 1.6.2
 	 *
 	 * @param string[] $headers Array of caching headers.
 	 * @return string[] Modified caching headers.
