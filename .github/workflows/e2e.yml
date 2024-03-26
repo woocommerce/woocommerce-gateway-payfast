@@ -44,12 +44,17 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install chromium
 
+      - name: Set the core version
+        if: "${{ contains(github.event.pull_request.labels.*.name, 'needs: WP RC test') }}"
+        id: run-rc-test
+        run: ./tests/e2e/bin/set-core-version.js WordPress/WordPress#master
+
       - name: Install required WP plugins
         run: |
           URL_CONFIG="url.https://${{ secrets.BOT_GITHUB_TOKEN }}:x-oauth-basic@github.com/.insteadOf git@github.com:"
           git config --global $URL_CONFIG
           npm run env:install-plugins
-          
+
           git config --global --unset $URL_CONFIG
 
       - name: Setup WP environment
