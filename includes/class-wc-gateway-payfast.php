@@ -425,6 +425,14 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'source'           => 'WooCommerce-Free-Plugin',
 		);
 
+		// Add Change subscription payment method parameters.
+		if ( isset( $_GET['change_pay_method'] ) ) {
+			$subscription_id = absint( wp_unslash( $_GET['change_pay_method'] ) );
+			if ( $this->is_subscription( $subscription_id ) && $order_id === $subscription_id && floatval( 0 ) === floatval( $order->get_total() ) ) {
+				$this->data_to_send['custom_str4'] = 'change_pay_method';
+			}
+		}
+
 		/*
 		 * Check If changing payment method.
 		 * We have to generate Tokenization (ad-hoc) token to charge future payments.
@@ -576,10 +584,20 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				throw new Exception( 'Payfast does not support transactions without any upfront costs or fees. Please select another gateway' );
 		}
 
-		$order = wc_get_order( $order_id );
+		$order    = wc_get_order( $order_id );
+		$redirect = $order->get_checkout_payment_url( true );
+
+		// Check if the payment is for changing payment method.
+		if ( isset( $_GET['change_payment_method'] ) ) {
+			$sub_id = absint( wp_unslash( $_GET['change_payment_method'] ) );
+			if ( $this->is_subscription( $sub_id ) && floatval( 0 ) === floatval( $order->get_total() ) ) {
+				$redirect = add_query_arg( 'change_pay_method', $sub_id, $redirect );
+			}
+		}
+
 		return array(
 			'result'   => 'success',
-			'redirect' => $order->get_checkout_payment_url( true ),
+			'redirect' => $redirect,
 		);
 	}
 
@@ -678,6 +696,44 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 		}
 
+		/**
+		 * Handle Changing Payment Method.
+		 *   - Save payfast subscription token to handle future payment
+		 *   - (for Payfast to Payfast payment method change) Cancel old token, as future payment will be handle with new token
+		 *
+		 * Note: The change payment method is handled before the amount mismatch check, as it doesn't involve an actual payment (0.00) and only token updates are handled here.
+		 */
+		if ( 
+			isset( $data['custom_str4'] ) && 
+			'change_pay_method' === wc_clean( $data['custom_str4'] ) &&
+			$this->is_subscription( $order_id ) &&
+			floatval( 0 ) === floatval( $data['amount_gross'] )
+		) {
+			if ( self::get_order_prop( $order, 'order_key' ) !== $order_key ) {
+				$this->log( 'Order key does not match' );
+				exit;
+			}
+
+			$this->log( '- Change Payment Method' );
+			$status = strtolower( $data['payment_status'] );
+			if ( 'complete' === $status && isset( $data['token'] ) ) {
+				$token        = sanitize_text_field( $data['token'] );
+				$subscription = wcs_get_subscription( $order_id );
+				if ( ! empty( $subscription ) && ! empty( $token ) ) {
+					$old_token = $this->_get_subscription_token( $subscription );
+					// Cancel old subscription token of subscription if we have it.
+					if ( ! empty( $old_token ) ) {
+						$this->cancel_subscription_listener( $subscription );
+					}
+
+					// Set new subscription token on subscription.
+					$this->_set_subscription_token( $token, $subscription );
+					$this->log( 'Payfast token updated on Subcription: ' . $order_id );
+				}
+			}
+			return;
+		}
+
 		// Check data against internal order.
 		if ( ! $payfast_error && ! $payfast_done ) {
 			$this->log( 'Check data against internal order' );
@@ -686,7 +742,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			if ( ! $this->amounts_equal( $data['amount_gross'], self::get_order_prop( $order, 'order_total' ) )
 				&& ! $this->order_contains_pre_order( $order_id )
 				&& ! $this->order_contains_subscription( $order_id )
-				&& ! $this->is_subscription( $order_id ) ) { // if changing payment method.
+			) {
 				$payfast_error         = true;
 				$payfast_error_message = PF_ERR_AMOUNT_MISMATCH;
 			} elseif ( strcasecmp( $data['custom_str1'], self::get_order_prop( $order, 'order_key' ) ) !== 0 ) {
@@ -778,31 +834,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 
 			$status = strtolower( $data['payment_status'] );
-
-			/**
-			 * Handle Changing Payment Method.
-			 *   - Save payfast subscription token to handle future payment
-			 *   - (for Payfast to Payfast payment method change) Cancel old token, as future payment will be handle with new token
-			 */
-			if ( $this->is_subscription( $order_id ) && floatval( 0 ) === floatval( $data['amount_gross'] ) ) {
-				$this->log( '- Change Payment Method' );
-				if ( 'complete' === $status && isset( $data['token'] ) ) {
-					$token        = sanitize_text_field( $data['token'] );
-					$subscription = wcs_get_subscription( $order_id );
-					if ( ! empty( $subscription ) && ! empty( $token ) ) {
-						$old_token = $this->_get_subscription_token( $subscription );
-						// Cancel old subscription token of subscription if we have it.
-						if ( ! empty( $old_token ) ) {
-							$this->cancel_subscription_listener( $subscription );
-						}
-
-						// Set new subscription token on subscription.
-						$this->_set_subscription_token( $token, $subscription );
-						$this->log( 'Payfast token updated on Subcription: ' . $order_id );
-					}
-				}
-				return;
-			}
 
 			$subscriptions = array();
 			if ( function_exists( 'wcs_get_subscriptions_for_renewal_order' ) && function_exists( 'wcs_get_subscriptions_for_order' ) ) {
@@ -1156,7 +1187,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Wrapper for WooCommerce subscription function wc_is_subscription.
 	 *
-	 * @param WC_Order $order The order.
+	 * @param WC_Order|int $order The order.
 	 * @return bool
 	 */
 	public function is_subscription( $order ) {
