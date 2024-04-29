@@ -137,7 +137,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		// Supported functionality.
 		$this->supports = array(
 			'products',
-			'pre-orders',
 			'subscriptions',
 			'subscription_cancellation',
 			'subscription_suspension',
@@ -182,7 +181,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		add_action( 'woocommerce_receipt_payfast', array( $this, 'receipt_page' ) );
 		add_action( 'woocommerce_scheduled_subscription_payment_' . $this->id, array( $this, 'scheduled_subscription_payment' ), 10, 2 );
 		add_action( 'woocommerce_subscription_status_cancelled', array( $this, 'cancel_subscription_listener' ) );
-		add_action( 'wc_pre_orders_process_pre_order_completion_payment_' . $this->id, array( $this, 'process_pre_order_payments' ) );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 
 		// Add fees to order.
@@ -461,17 +459,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 		}
 
-		// pre-order: add the subscription type for pre order that require tokenization
-		// at this point we assume that the order pre order fee and that
-		// we should only charge that on the order. The rest will be charged later.
-		if (
-				$this->order_contains_pre_order( $order_id )
-				&& $this->order_requires_payment_tokenization( $order_id )
-			) {
-			$this->data_to_send['amount']            = $this->get_pre_order_fee( $order_id );
-			$this->data_to_send['subscription_type'] = '2';
-		}
-
 		/**
 		 * Allow others to modify payment data before that is sent to Payfast.
 		 *
@@ -578,10 +565,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function process_payment( $order_id ) {
 
-		if ( $this->order_contains_pre_order( $order_id )
-			&& $this->order_requires_payment_tokenization( $order_id )
-			&& ! $this->cart_contains_pre_order_fee() ) {
-				throw new Exception( 'Payfast does not support transactions without any upfront costs or fees. Please select another gateway' );
+		if ( $this->order_contains_pre_order( $order_id ) && $this->order_requires_payment_tokenization( $order_id ) ) {
+			throw new Exception( 'Payfast does not support transactions without any upfront costs or fees. Please select another gateway' );
 		}
 
 		$order    = wc_get_order( $order_id );
@@ -740,7 +725,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 			// Check order amount.
 			if ( ! $this->amounts_equal( $data['amount_gross'], self::get_order_prop( $order, 'order_total' ) )
-				&& ! $this->order_contains_pre_order( $order_id )
 				&& ! $this->order_contains_subscription( $order_id )
 			) {
 				$payfast_error         = true;
@@ -946,31 +930,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 		}
 
-		// The same mechanism (adhoc token) is used to capture payment later.
-		if ( $this->order_contains_pre_order( $order_id )
-			&& $this->order_requires_payment_tokenization( $order_id ) ) {
-
-			$token                 = sanitize_text_field( $data['token'] );
-			$is_pre_order_fee_paid = $order->get_meta( '_pre_order_fee_paid', true ) === 'yes';
-
-			if ( ! $is_pre_order_fee_paid ) {
-				/* translators: 1: gross amount 2: payment id */
-				$order->add_order_note( sprintf( esc_html__( 'Payfast pre-order fee paid: R %1$s (%2$s)', 'woocommerce-gateway-payfast' ), $data['amount_gross'], $data['pf_payment_id'] ) );
-				$this->_set_pre_order_token( $token, $order );
-				// Set order to pre-ordered.
-				WC_Pre_Orders_Order::mark_order_as_pre_ordered( $order );
-				$order->update_meta_data( '_pre_order_fee_paid', 'yes' );
-				$order->save_meta_data();
-				WC()->cart->empty_cart();
-			} else {
-				/* translators: 1: gross amount 2: payment id */
-				$order->add_order_note( sprintf( esc_html__( 'Payfast pre-order product line total paid: R %1$s (%2$s)', 'woocommerce-gateway-payfast' ), $data['amount_gross'], $data['pf_payment_id'] ) );
-				$order->payment_complete( $data['pf_payment_id'] );
-				$this->cancel_pre_order_subscription( $token );
-			}
-		} else {
-			$order->payment_complete( $data['pf_payment_id'] );
-		}
+		// Mark payment as complete.
+		$order->payment_complete( $data['pf_payment_id'] );
 
 		$debug_email = $this->get_option( 'debug_email', get_option( 'admin_email' ) );
 		$vendor_name = get_bloginfo( 'name', 'display' );
@@ -1161,27 +1122,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	protected function _delete_renewal_flag( $subscription ) {
 		$subscription->delete_meta_data( '_payfast_renewal_flag' );
 		$subscription->save_meta_data();
-	}
-
-	/**
-	 * Store the Payfast pre_order_token token
-	 *
-	 * @param string   $token Pre-order token.
-	 * @param WC_Order $order Order object.
-	 */
-	protected function _set_pre_order_token( $token, $order ) {
-		$order->update_meta_data( '_payfast_pre_order_token', $token );
-		$order->save_meta_data();
-	}
-
-	/**
-	 * Retrieve the Payfast pre-order token for a given order id.
-	 *
-	 * @param WC_Order $order Order object.
-	 * @return mixed
-	 */
-	protected function _get_pre_order_token( $order ) {
-		return $order->get_meta( '_payfast_pre_order_token', true );
 	}
 
 	/**
@@ -1489,32 +1429,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Order $order Order object.
 	 */
 	public function process_pre_order_payments( $order ) {
-
-		// The total amount to charge is the the order's total.
-		$total = $order->get_total() - $this->get_pre_order_fee( self::get_order_prop( $order, 'id' ) );
-		$token = $this->_get_pre_order_token( $order );
-
-		if ( ! $token ) {
-			return;
-		}
-		// Get the payment token and attempt to charge the transaction.
-		$item_name = 'pre-order';
-		$results   = $this->submit_ad_hoc_payment( $token, $total, $item_name, '' );
-
-		if ( is_wp_error( $results ) ) {
-			$order->update_status(
-				'failed',
-				sprintf(
-					/* translators: 1: error code 2: error message */
-					esc_html__( 'Payfast Pre-Order payment transaction failed (%1$s:%2$s)', 'woocommerce-gateway-payfast' ),
-					$results->get_error_code(),
-					$results->get_error_message()
-				)
-			);
-			return;
-		}
-
-		// Payment completion will be handled by ITN callback.
+		wc_deprecated_function( 'process_pre_order_payments', 'x.x.x' );
 	}
 
 	/**
