@@ -564,11 +564,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * }
 	 */
 	public function process_payment( $order_id ) {
-
-		if ( $this->order_contains_pre_order( $order_id ) && $this->order_requires_payment_tokenization( $order_id ) ) {
-			throw new Exception( 'Payfast does not support transactions without any upfront costs or fees. Please select another gateway' );
-		}
-
 		$order    = wc_get_order( $order_id );
 		$redirect = $order->get_checkout_payment_url( true );
 
