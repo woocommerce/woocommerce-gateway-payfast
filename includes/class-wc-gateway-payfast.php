@@ -683,7 +683,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 *
 		 * Note: The change payment method is handled before the amount mismatch check, as it doesn't involve an actual payment (0.00) and only token updates are handled here.
 		 */
-		if ( 
+		if (
+			! $payfast_error &&
 			isset( $data['custom_str4'] ) && 
 			'change_pay_method' === wc_clean( $data['custom_str4'] ) &&
 			$this->is_subscription( $order_id ) &&
@@ -718,25 +719,26 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		if ( ! $payfast_error && ! $payfast_done ) {
 			$this->log( 'Check data against internal order' );
 
+			// alter order object to be the renewal order if
+			// the ITN request comes as a result of a renewal submission request.
+			$description = json_decode( $data['item_description'] );
+
+			if ( ! empty( $description->renewal_order_id ) ) {
+				$renewal_order = wc_get_order( $description->renewal_order_id );
+				if ( ! empty( $renewal_order ) && function_exists( 'wcs_order_contains_renewal' ) && wcs_order_contains_renewal( $renewal_order ) ) {
+					$order = $renewal_order;
+				}
+			}
+
 			// Check order amount.
-			if ( ! $this->amounts_equal( $data['amount_gross'], self::get_order_prop( $order, 'order_total' ) )
-				&& ! $this->order_contains_subscription( $order_id )
-			) {
+			if ( ! $this->amounts_equal( $data['amount_gross'], self::get_order_prop( $order, 'order_total' ) ) ) {
 				$payfast_error         = true;
 				$payfast_error_message = PF_ERR_AMOUNT_MISMATCH;
-			} elseif ( strcasecmp( $data['custom_str1'], self::get_order_prop( $order, 'order_key' ) ) !== 0 ) {
+			} elseif ( strcasecmp( $data['custom_str1'], self::get_order_prop( $original_order, 'order_key' ) ) !== 0 ) {
 				// Check session ID.
 				$payfast_error         = true;
 				$payfast_error_message = PF_ERR_SESSIONID_MISMATCH;
 			}
-		}
-
-		// alter order object to be the renewal order if
-		// the ITN request comes as a result of a renewal submission request.
-		$description = json_decode( $data['item_description'] );
-
-		if ( ! empty( $description->renewal_order_id ) ) {
-			$order = wc_get_order( $description->renewal_order_id );
 		}
 
 		// Get internal order and verify it hasn't already been processed.
