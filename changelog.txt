@@ -1,5 +1,12 @@
 *** PayFast Changelog ***
 
+= 1.6.3 - 2024-05-02 =
+* Dev - Bump WooCommerce "tested up to" version 8.7.
+* Dev - Bump WooCommerce minimum supported version to 8.5.
+* Dev - Bump WordPress "tested up to" version 6.5.
+* Dev - Bump WordPress minimum supported version to 6.3.
+* Fix - Enforce amount match check for all payments in the Payfast ITN handler.
+
 = 1.6.2 - 2024-03-25 =
 * Dev - Bump WooCommerce "tested up to" version 8.6.
 * Dev - Bump WooCommerce minimum supported version to 8.4.
