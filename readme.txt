@@ -38,6 +38,11 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.6.4 - 2024-05-07 =
+* Fix - Resolved signature mismatch error caused by HTML entity encoding in site/blog name.
+* Dev - Bump WooCommerce "tested up to" version 8.8.
+* Dev - Bump WooCommerce minimum supported version to 8.6.
+
 = 1.6.3 - 2024-05-02 =
 * Fix - Enforce amount match check for all payments in the Payfast ITN handler.
 * Dev - Bump WooCommerce "tested up to" version 8.7.
