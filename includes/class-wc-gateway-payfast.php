@@ -394,7 +394,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function generate_payfast_form( $order_id ) {
-		$order = wc_get_order( $order_id );
+		$order     = wc_get_order( $order_id );
+		$site_name = html_entity_decode( get_bloginfo( 'name' ), ENT_QUOTES, get_bloginfo( 'charset' ) );
 		// Construct variables for post.
 		$this->data_to_send = array(
 			// Merchant details.
@@ -412,9 +413,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			// Item details.
 			'm_payment_id'     => ltrim( $order->get_order_number(), _x( '#', 'hash before order number', 'woocommerce-gateway-payfast' ) ),
 			'amount'           => $order->get_total(),
-			'item_name'        => get_bloginfo( 'name' ) . ' - ' . $order->get_order_number(),
+			'item_name'        => $site_name . ' - ' . $order->get_order_number(),
 			/* translators: 1: blog info name */
-			'item_description' => sprintf( esc_html__( 'New order from %s', 'woocommerce-gateway-payfast' ), get_bloginfo( 'name' ) ),
+			'item_description' => sprintf( esc_html__( 'New order from %s', 'woocommerce-gateway-payfast' ), $site_name ),
 
 			// Custom strings.
 			'custom_str1'      => self::get_order_prop( $order, 'order_key' ),
