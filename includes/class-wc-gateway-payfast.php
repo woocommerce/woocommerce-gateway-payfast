@@ -419,7 +419,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 			// Custom strings.
 			'custom_str1'      => self::get_order_prop( $order, 'order_key' ),
-			'custom_str2'      => 'WooCommerce/' . WC_VERSION . '; ' . get_site_url(),
+			'custom_str2'      => 'WooCommerce/' . WC_VERSION . '; ' . rawurlencode( get_site_url() ),
 			'custom_str3'      => self::get_order_prop( $order, 'id' ),
 			'source'           => 'WooCommerce-Free-Plugin',
 		);
