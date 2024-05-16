@@ -23,8 +23,8 @@
 	},
 	"scripts": {
 		"build": "npm run makepot && npm run build:webpack",
-		"build:webpack": "wp-scripts build client/blocks/index.js",
-		"start:webpack": "wp-scripts start client/blocks/index.js",
+		"build:webpack": "wp-scripts build",
+		"start:webpack": "wp-scripts start",
 		"lint:js": "wp-scripts lint-js",
 		"postbuild": "npm run -s && npm run archive",
 		"archive": "composer archive --file=$npm_package_name --format=zip",
