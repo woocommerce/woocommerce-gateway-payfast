@@ -1,15 +1,16 @@
 <?php
 /**
  * Plugin Name: WooCommerce Payfast Gateway
+ * Requires Plugins: woocommerce
  * Plugin URI: https://woocommerce.com/products/payfast-payment-gateway/
  * Description: Receive payments using the South African Payfast payments provider.
  * Author: WooCommerce
  * Author URI: https://woocommerce.com/
- * Version: 1.6.1
+ * Version: 1.6.5
  * Requires at least: 6.3
- * Tested up to: 6.4
- * WC requires at least: 8.3
- * WC tested up to: 8.5
+ * Tested up to: 6.5
+ * WC requires at least: 8.6
+ * WC tested up to: 8.8
  * Requires PHP: 7.4
  * PHP tested up to: 8.3
  *
@@ -18,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_GATEWAY_PAYFAST_VERSION', '1.6.1' ); // WRCS: DEFINED_VERSION.
+define( 'WC_GATEWAY_PAYFAST_VERSION', '1.6.5' ); // WRCS: DEFINED_VERSION.
 define( 'WC_GATEWAY_PAYFAST_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 define( 'WC_GATEWAY_PAYFAST_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 

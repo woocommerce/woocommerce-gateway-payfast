@@ -52,7 +52,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		const payfastPaymentMethod = await checkoutBlock.locator(
 			'label[for="radio-control-wc-payment-method-options-payfast"]' );
 		await payfastPaymentMethod.click();
-		await checkoutBlock.getByRole( 'button', {name: 'Place Order'} ).click();
+		await checkoutBlock.locator( 'button.wc-block-components-checkout-place-order-button' ).click();
 		await waitForURL;
 
 		// Pay on Payfast checkout page.
