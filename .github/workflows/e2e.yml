@@ -64,7 +64,7 @@ jobs:
         id: payfast_e2e_tests
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          rm -rf ./tests/e2e/test-plugins/woocommerce-subscriptions
+          rm -rf ./tests/e2e/test-plugins/woocommerce-subscriptions/tests
           npm run test:e2e-foundational
 
       - name: Update Success Label
