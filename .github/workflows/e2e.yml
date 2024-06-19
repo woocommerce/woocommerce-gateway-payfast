@@ -21,14 +21,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
       - name: Node cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
@@ -36,7 +36,7 @@ jobs:
           key: node-${{ hashFiles('package-lock.json') }}
 
       - name: Node install
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run build
