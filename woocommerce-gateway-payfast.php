@@ -20,7 +20,7 @@
 defined( 'ABSPATH' ) || exit;
 
 define( 'WC_GATEWAY_PAYFAST_VERSION', '1.6.5' ); // WRCS: DEFINED_VERSION.
-define( 'WC_GATEWAY_PAYFAST_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
+define( 'WC_GATEWAY_PAYFAST_URL', untrailingslashit( plugins_url( '/', __FILE__ ) ) );
 define( 'WC_GATEWAY_PAYFAST_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 
 /**
