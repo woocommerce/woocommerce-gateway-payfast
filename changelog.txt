@@ -1,5 +1,27 @@
 *** PayFast Changelog ***
 
+= 1.6.5 - 2024-05-14 =
+* Fix - Use `rawurlencode` around the call to `get_site_url` to ensure things are encoded properly.
+
+= 1.6.4 - 2024-05-07 =
+* Fix - Resolved signature mismatch error caused by HTML entity encoding in site/blog name.
+* Dev - Bump WooCommerce "tested up to" version 8.8.
+* Dev - Bump WooCommerce minimum supported version to 8.6.
+
+= 1.6.3 - 2024-05-02 =
+* Fix - Enforce amount match check for all payments in the Payfast ITN handler.
+* Dev - Bump WooCommerce "tested up to" version 8.7.
+* Dev - Bump WooCommerce minimum supported version to 8.5.
+* Dev - Bump WordPress "tested up to" version 6.5.
+* Dev - Bump WordPress minimum supported version to 6.3.
+
+= 1.6.2 - 2024-03-25 =
+* Dev - Bump WooCommerce "tested up to" version 8.6.
+* Dev - Bump WooCommerce minimum supported version to 8.4.
+* Dev - Bump WordPress minimum supported version to 6.3.
+* Fix - Payfast gateway not visible on Checkout when ZAR currency is set via WooPayments multi-currency feature.
+* Fix - Allow navigation back from PayFast gateway payment page.
+
 = 1.6.1 - 2024-01-08 =
 * Add - Readme.md file for e2e tests.
 * Dev - Declare compatibility with WooCommerce Blocks.
