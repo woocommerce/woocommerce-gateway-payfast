@@ -26,11 +26,11 @@ permissions:
 
 jobs:
   build:
-    if: "${{ ( inputs.test != '' && inputs.test != 'none' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit activation test') || contains(github.event.pull_request.labels.*.name, 'needs: qit api test') || contains(github.event.pull_request.labels.*.name, 'needs: qit e2e test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') }}"
-    uses: woocommerce/woocommerce-gateway-payfast/.github/workflows/generate-zip.yml@trunk
+    if: "${{ ( inputs.test != '' && inputs.test != 'none' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit activation test') || contains(github.event.pull_request.labels.*.name, 'needs: qit api test') || contains(github.event.pull_request.labels.*.name, 'needs: qit e2e test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpcompat test') || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') || contains(github.event.pull_request.labels.*.name, 'needs: qit malware test') }}"
+    uses: woocommerce/woocommerce-gateway-payfast/.github/workflows/generate-zip.yml@fix/236
 
   test:
-    if: "${{ ( inputs.test != '' && inputs.test != 'none' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit activation test') || contains(github.event.pull_request.labels.*.name, 'needs: qit api test') || contains(github.event.pull_request.labels.*.name, 'needs: qit e2e test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') }}"
+    if: "${{ ( inputs.test != '' && inputs.test != 'none' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit activation test') || contains(github.event.pull_request.labels.*.name, 'needs: qit api test') || contains(github.event.pull_request.labels.*.name, 'needs: qit e2e test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpcompat test') || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') || contains(github.event.pull_request.labels.*.name, 'needs: qit malware test') }}"
     needs: build
     name: run
     runs-on: ubuntu-latest
@@ -105,6 +105,18 @@ jobs:
         id: run-phpstan-test
         run: ./vendor/bin/qit run:phpstan woocommerce-payfast-gateway --zip=woocommerce-payfast-gateway.zip --wait > phpstan-result.txt
 
+      - name: Run PHPCompat test
+        if: "${{ inputs.tests == 'phpcompat' || contains(github.event.pull_request.labels.*.name, 'needs: qit phpcompat test') && ( success() || failure() ) }}"
+        id: run-phpcompat-test
+        run: ./vendor/bin/qit run:phpcompatibility ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > phpcompat-result.txt
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ failure() && steps.run-phpcompat-test.conclusion == 'failure' }}
+        with:
+          header: QIT PHPCompat result
+          recreate: true
+          path: phpcompat-result.txt
+
       - uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ failure() && steps.run-phpstan-test.conclusion == 'failure' }}
         with:
@@ -123,3 +135,15 @@ jobs:
           header: QIT security result
           recreate: true
           path: security-result.txt
+
+      - name: Run malware test
+        if: "${{ inputs.tests == 'malware' || contains(github.event.pull_request.labels.*.name, 'needs: qit malware test') && ( success() || failure() ) }}"
+        id: run-malware-test
+        run: ./vendor/bin/qit run:malware ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > malware-result.txt
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ failure() && steps.run-malware-test.conclusion == 'failure' }}
+        with:
+          header: QIT malware result
+          recreate: true
+          path: malware-result.txt
