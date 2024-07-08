@@ -104,11 +104,18 @@ jobs:
         if: "${{ inputs.tests == 'phpstan' || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') && ( success() || failure() ) }}"
         id: run-phpstan-test
         run: ./vendor/bin/qit run:phpstan woocommerce-payfast-gateway --zip=woocommerce-payfast-gateway.zip --wait > phpstan-result.txt
+        
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ failure() && steps.run-phpstan-test.conclusion == 'failure' }}
+        with:
+          header: QIT PHPStan result
+          recreate: true
+          path: phpstan-result.txt
 
       - name: Run PHPCompat test
         if: "${{ inputs.tests == 'phpcompat' || contains(github.event.pull_request.labels.*.name, 'needs: qit phpcompat test') && ( success() || failure() ) }}"
         id: run-phpcompat-test
-        run: ./vendor/bin/qit run:phpcompatibility ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > phpcompat-result.txt
+        run: ./vendor/bin/qit run:phpcompatibility woocommerce-payfast-gateway --zip=woocommerce-payfast-gateway.zip --wait > phpcompat-result.txt
 
       - uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ failure() && steps.run-phpcompat-test.conclusion == 'failure' }}
@@ -116,13 +123,6 @@ jobs:
           header: QIT PHPCompat result
           recreate: true
           path: phpcompat-result.txt
-
-      - uses: marocchino/sticky-pull-request-comment@v2
-        if: ${{ failure() && steps.run-phpstan-test.conclusion == 'failure' }}
-        with:
-          header: QIT PHPStan result
-          recreate: true
-          path: phpstan-result.txt
 
       - name: Run security test
         if: "${{ inputs.tests == 'security' || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') && ( success() || failure() ) }}"
@@ -139,7 +139,7 @@ jobs:
       - name: Run malware test
         if: "${{ inputs.tests == 'malware' || contains(github.event.pull_request.labels.*.name, 'needs: qit malware test') && ( success() || failure() ) }}"
         id: run-malware-test
-        run: ./vendor/bin/qit run:malware ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > malware-result.txt
+        run: ./vendor/bin/qit run:malware woocommerce-payfast-gateway --zip=woocommerce-payfast-gateway.zip --wait > malware-result.txt
 
       - uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ failure() && steps.run-malware-test.conclusion == 'failure' }}
