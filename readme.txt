@@ -38,6 +38,16 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.6.6 - 2024-07-29 =
+* Dev - Bump WooCommerce "tested up to" version 9.1.
+* Dev - Bump WooCommerce minimum supported version to 8.9.
+* Dev - Bump WordPress "tested up to" version 6.6.
+* Dev - Bump WordPress minimum supported version to 6.4.
+* Dev - Update NPM packages and node version to v20 to modernize developer experience.
+* Dev - Exclude the Woo Comment Hook `@since` sniff.
+* Dev - Fix QIT E2E tests and add support for a few new test types.
+* Tweak - Update WordPress.org plugin assets.
+
 = 1.6.5 - 2024-05-14 =
 * Fix - Use `rawurlencode` around the call to `get_site_url` to ensure things are encoded properly.
 
