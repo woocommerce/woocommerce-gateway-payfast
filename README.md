@@ -4,6 +4,11 @@ The Payfast extension for WooCommerce enables you to accept payments including S
 
 This is the official WooCommerce extension to receive payments using the South African Payfast payments provider.
 
+## Requirements
+
+- Minimum node version 20.x.
+- Minimum NPM version 10.
+
 ## Dependencies
 
 - Requires at least: 6.4
