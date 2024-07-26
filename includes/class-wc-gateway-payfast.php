@@ -686,7 +686,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 */
 		if (
 			! $payfast_error &&
-			isset( $data['custom_str4'] ) && 
+			isset( $data['custom_str4'] ) &&
 			'change_pay_method' === wc_clean( $data['custom_str4'] ) &&
 			$this->is_subscription( $order_id ) &&
 			floatval( 0 ) === floatval( $data['amount_gross'] )
@@ -1427,7 +1427,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @param WC_Order $order Order object.
 	 */
 	public function process_pre_order_payments( $order ) {
-		wc_deprecated_function( 'process_pre_order_payments', 'x.x.x' );
+		wc_deprecated_function( 'process_pre_order_payments', '1.6.3' );
 	}
 
 	/**
