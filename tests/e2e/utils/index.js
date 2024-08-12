@@ -101,7 +101,7 @@ export async function editPayfastSetting( {page, settings} ) {
 	}
 
 	const submitButtonLocator = await page.locator( 'text=Save changes' );
-	if ( submitButtonLocator.isEnabled() ) {
+	if ( await submitButtonLocator.isEnabled() ) {
 		const waitForURLPromise = page.waitForURL(
 			'**/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payfast' );
 		await submitButtonLocator.click();
