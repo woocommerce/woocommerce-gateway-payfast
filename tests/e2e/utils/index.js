@@ -171,7 +171,7 @@ export async function processOneTimeOrderWithBlockCheckout( {page, productUrl} )
 	let waitForURL;
 
 	await addProductToCart( {page, productUrl} );
-	await page.goto( '/checkout/' );
+	await page.goto( '/checkout/' , { waitUntil: 'networkidle' });
 	await fillBillingDetails(page, customer.billing, true);
 
 	// Check if Payfast payment method is visible & place order
