@@ -38,6 +38,11 @@ If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
 
+= 1.6.7 - 2024-09-09 =
+* Dev - Bump WooCommerce "tested up to" version 9.3.
+* Dev - Bump WooCommerce minimum supported version to 9.1.
+* Dev - Update E2E tests to accommodate changes in WooCommerce.
+
 = 1.6.6 - 2024-07-29 =
 * Dev - Bump WooCommerce "tested up to" version 9.1.
 * Dev - Bump WooCommerce minimum supported version to 8.9.
