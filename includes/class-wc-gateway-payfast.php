@@ -196,7 +196,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		add_filter( 'nocache_headers', array( $this, 'no_store_cache_headers' ) );
 
 		// Validate the gateway credentials.
-		add_filter( 'update_option_woocommerce_payfast_settings', array( $this, 'validate_payfast_credentials' ) , 10, 2 );
+		add_filter( 'update_option_woocommerce_payfast_settings', array( $this, 'validate_payfast_credentials' ), 10, 2 );
 	}
 
 	/**
@@ -1880,13 +1880,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Check Payfast server response if the response code is not 200 then show an error message.
 		if ( 200 !== wp_remote_retrieve_response_code( $results ) ) {
-			add_action( 'admin_notices', function () {
-				?>
-				<div class="notice notice-error is-dismissible">
-					<p><?php esc_html_e( 'Invalid Payfast credentials. Please verify and enter the correct details.', 'woocommerce-gateway-payfast' ); ?></p>
-				</div>
-				<?php
-			});
+			add_action(
+				'admin_notices',
+				function () {
+					?>
+					<div class="notice notice-error is-dismissible">
+						<p><?php esc_html_e( 'Invalid Payfast credentials. Please verify and enter the correct details.', 'woocommerce-gateway-payfast' ); ?></p>
+					</div>
+					<?php
+				}
+			);
 		}
 	}
 }
