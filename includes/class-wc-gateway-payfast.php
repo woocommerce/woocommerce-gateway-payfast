@@ -194,6 +194,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		add_filter( 'woocommerce_currency', array( $this, 'filter_currency' ) );
 
 		add_filter( 'nocache_headers', array( $this, 'no_store_cache_headers' ) );
+
+		// Validate the gateway credentials.
+		add_filter( 'update_option_woocommerce_payfast_settings', array( $this, 'validate_payfast_credentials' ) , 10, 2 );
 	}
 
 	/**
@@ -330,16 +333,15 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function check_requirements() {
-
 		$errors = array(
 			// Check if the store currency is supported by Payfast.
 			! in_array( get_woocommerce_currency(), $this->available_currencies, true ) ? 'wc-gateway-payfast-error-invalid-currency' : null,
 			// Check if user entered the merchant ID.
-			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'merchant_id' ) ) ? 'wc-gateway-payfast-error-missing-merchant-id' : null,
+			empty( $this->get_option( 'merchant_id' ) ) ? 'wc-gateway-payfast-error-missing-merchant-id' : null,
 			// Check if user entered the merchant key.
-			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'merchant_key' ) ) ? 'wc-gateway-payfast-error-missing-merchant-key' : null,
+			empty( $this->get_option( 'merchant_key' ) ) ? 'wc-gateway-payfast-error-missing-merchant-key' : null,
 			// Check if user entered a pass phrase.
-			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'pass_phrase' ) ) ? 'wc-gateway-payfast-error-missing-pass-phrase' : null,
+			empty( $this->get_option( 'pass_phrase' ) ) ? 'wc-gateway-payfast-error-missing-pass-phrase' : null,
 		);
 
 		return array_filter( $errors );
@@ -1825,5 +1827,66 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		return $currency;
+	}
+
+	/**
+	 * Validate the Payfast credentials.
+	 * This function is used to validate the Payfast credentials.
+	 *
+	 * @param array $old_settings Old Payfast settings.
+	 * @param array $settings     Payfast settings.
+	 */
+	public function validate_payfast_credentials( $old_settings, $settings ) {
+		$merchant_id     = $settings['merchant_id'] ?? '';
+		$pass_phrase     = $settings['pass_phrase'] ?? '';
+		$test_mode       = $settings['testmode'] ?? 'no';
+		$old_merchant_id = $old_settings['merchant_id'] ?? '';
+		$old_pass_phrase = $old_settings['pass_phrase'] ?? '';
+		$old_test_mode   = $old_settings['testmode'] ?? 'no';
+
+		// Bail if no merchant ID or passphrase is set.
+		if ( empty( $merchant_id ) || empty( $pass_phrase ) ) {
+			return;
+		}
+
+		// Bail if the merchant ID and passphrase are the same as the old settings, no need to validate again.
+		if ( $old_merchant_id === $merchant_id && $old_pass_phrase === $pass_phrase && $old_test_mode === $test_mode ) {
+			return;
+		}
+
+		$api_endpoint  = 'https://api.payfast.co.za/ping';
+		$api_endpoint .= 'yes' === $test_mode ? '?testing=true' : '';
+
+		$timestamp           = current_time( rtrim( DateTime::ATOM, 'P' ) ) . '+02:00';
+		$api_args['timeout'] = 45;
+		$api_args['headers'] = array(
+			'merchant-id' => $merchant_id,
+			'timestamp'   => $timestamp,
+			'version'     => 'v1',
+		);
+
+		// Generate signature.
+		$all_api_variables                = $api_args['headers'];
+		$this->pass_phrase                = $pass_phrase;
+		$api_args['headers']['signature'] = md5( $this->_generate_parameter_string( $all_api_variables ) );
+		$api_args['method']               = strtoupper( 'GET' );
+
+		$results = wp_remote_request( $api_endpoint, $api_args );
+
+		// Bail if there is an error in the request.
+		if ( is_wp_error( $results ) ) {
+			return;
+		}
+
+		// Check Payfast server response if the response code is not 200 then show an error message.
+		if ( 200 !== wp_remote_retrieve_response_code( $results ) ) {
+			add_action( 'admin_notices', function () {
+				?>
+				<div class="notice notice-error is-dismissible">
+					<p><?php esc_html_e( 'Invalid Payfast credentials. Please verify and enter the correct details.', 'woocommerce-gateway-payfast' ); ?></p>
+				</div>
+				<?php
+			});
+		}
 	}
 }
