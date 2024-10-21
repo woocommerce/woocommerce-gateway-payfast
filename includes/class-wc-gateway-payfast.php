@@ -194,6 +194,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		add_filter( 'woocommerce_currency', array( $this, 'filter_currency' ) );
 
 		add_filter( 'nocache_headers', array( $this, 'no_store_cache_headers' ) );
+
+		// Validate the gateway credentials.
+		add_action( 'update_option_woocommerce_payfast_settings', array( $this, 'validate_payfast_credentials' ), 10, 2 );
 	}
 
 	/**
@@ -330,16 +333,17 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function check_requirements() {
-
 		$errors = array(
 			// Check if the store currency is supported by Payfast.
 			! in_array( get_woocommerce_currency(), $this->available_currencies, true ) ? 'wc-gateway-payfast-error-invalid-currency' : null,
 			// Check if user entered the merchant ID.
-			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'merchant_id' ) ) ? 'wc-gateway-payfast-error-missing-merchant-id' : null,
+			empty( $this->get_option( 'merchant_id' ) ) ? 'wc-gateway-payfast-error-missing-merchant-id' : null,
 			// Check if user entered the merchant key.
-			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'merchant_key' ) ) ? 'wc-gateway-payfast-error-missing-merchant-key' : null,
+			empty( $this->get_option( 'merchant_key' ) ) ? 'wc-gateway-payfast-error-missing-merchant-key' : null,
 			// Check if user entered a pass phrase.
-			'yes' !== $this->get_option( 'testmode' ) && empty( $this->get_option( 'pass_phrase' ) ) ? 'wc-gateway-payfast-error-missing-pass-phrase' : null,
+			empty( $this->get_option( 'pass_phrase' ) ) ? 'wc-gateway-payfast-error-missing-pass-phrase' : null,
+			// Check if payfast credentials are valid.
+			( 'yes' === get_option( 'woocommerce_payfast_invalid_credentials' ) ) ? 'wc-gateway-payfast-error-invalid-credentials' : null,
 		);
 
 		return array_filter( $errors );
@@ -1685,6 +1689,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				return esc_html__( 'You forgot to fill your merchant key.', 'woocommerce-gateway-payfast' );
 			case 'wc-gateway-payfast-error-missing-pass-phrase':
 				return esc_html__( 'Payfast requires a passphrase to work.', 'woocommerce-gateway-payfast' );
+			case 'wc-gateway-payfast-error-invalid-credentials':
+				return esc_html__( 'Invalid Payfast credentials. Please verify and enter the correct details.', 'woocommerce-gateway-payfast' );
 			default:
 				return '';
 		}
@@ -1825,5 +1831,63 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		return $currency;
+	}
+
+	/**
+	 * Validate the Payfast credentials.
+	 * This function is used to validate the Payfast credentials.
+	 *
+	 * @param array $old_settings Old Payfast settings.
+	 * @param array $settings     Payfast settings.
+	 */
+	public function validate_payfast_credentials( $old_settings, $settings ) {
+		$merchant_id     = $settings['merchant_id'] ?? '';
+		$pass_phrase     = $settings['pass_phrase'] ?? '';
+		$test_mode       = $settings['testmode'] ?? 'no';
+		$old_merchant_id = $old_settings['merchant_id'] ?? '';
+		$old_pass_phrase = $old_settings['pass_phrase'] ?? '';
+		$old_test_mode   = $old_settings['testmode'] ?? 'no';
+
+		// Clear the invalid credentials notice.
+		delete_option( 'woocommerce_payfast_invalid_credentials' );
+
+		// Bail if no merchant ID or passphrase is set.
+		if ( empty( $merchant_id ) || empty( $pass_phrase ) ) {
+			return;
+		}
+
+		// Bail if the merchant ID and passphrase are the same as the old settings, no need to validate again.
+		if ( $old_merchant_id === $merchant_id && $old_pass_phrase === $pass_phrase && $old_test_mode === $test_mode ) {
+			return;
+		}
+
+		$api_endpoint  = 'https://api.payfast.co.za/ping';
+		$api_endpoint .= 'yes' === $test_mode ? '?testing=true' : '';
+
+		$timestamp           = current_time( rtrim( DateTime::ATOM, 'P' ) ) . '+02:00';
+		$api_args['timeout'] = 45;
+		$api_args['headers'] = array(
+			'merchant-id' => $merchant_id,
+			'timestamp'   => $timestamp,
+			'version'     => 'v1',
+		);
+
+		// Generate signature.
+		$all_api_variables                = $api_args['headers'];
+		$this->pass_phrase                = $pass_phrase;
+		$api_args['headers']['signature'] = md5( $this->_generate_parameter_string( $all_api_variables ) );
+		$api_args['method']               = strtoupper( 'GET' );
+
+		$results = wp_remote_request( $api_endpoint, $api_args );
+
+		// Bail if there is an error in the request.
+		if ( is_wp_error( $results ) ) {
+			return;
+		}
+
+		// Check Payfast server response if the response code is not 200 then show an error message.
+		if ( 200 !== wp_remote_retrieve_response_code( $results ) ) {
+			update_option( 'woocommerce_payfast_invalid_credentials', 'yes' );
+		}
 	}
 }
