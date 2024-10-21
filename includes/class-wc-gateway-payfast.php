@@ -196,7 +196,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		add_filter( 'nocache_headers', array( $this, 'no_store_cache_headers' ) );
 
 		// Validate the gateway credentials.
-		add_filter( 'update_option_woocommerce_payfast_settings', array( $this, 'validate_payfast_credentials' ), 10, 2 );
+		add_action( 'update_option_woocommerce_payfast_settings', array( $this, 'validate_payfast_credentials' ), 10, 2 );
 	}
 
 	/**
@@ -342,6 +342,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			empty( $this->get_option( 'merchant_key' ) ) ? 'wc-gateway-payfast-error-missing-merchant-key' : null,
 			// Check if user entered a pass phrase.
 			empty( $this->get_option( 'pass_phrase' ) ) ? 'wc-gateway-payfast-error-missing-pass-phrase' : null,
+			// Check if payfast credentials are valid.
+			( 'yes' === get_option( 'woocommerce_payfast_invalid_credentials' ) ) ? 'wc-gateway-payfast-error-invalid-credentials' : null,
 		);
 
 		return array_filter( $errors );
@@ -1687,6 +1689,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				return esc_html__( 'You forgot to fill your merchant key.', 'woocommerce-gateway-payfast' );
 			case 'wc-gateway-payfast-error-missing-pass-phrase':
 				return esc_html__( 'Payfast requires a passphrase to work.', 'woocommerce-gateway-payfast' );
+			case 'wc-gateway-payfast-error-invalid-credentials':
+				return esc_html__( 'Invalid Payfast credentials. Please verify and enter the correct details.', 'woocommerce-gateway-payfast' );
 			default:
 				return '';
 		}
@@ -1844,6 +1848,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$old_pass_phrase = $old_settings['pass_phrase'] ?? '';
 		$old_test_mode   = $old_settings['testmode'] ?? 'no';
 
+		// Clear the invalid credentials notice.
+		delete_option( 'woocommerce_payfast_invalid_credentials' );
+
 		// Bail if no merchant ID or passphrase is set.
 		if ( empty( $merchant_id ) || empty( $pass_phrase ) ) {
 			return;
@@ -1880,16 +1887,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Check Payfast server response if the response code is not 200 then show an error message.
 		if ( 200 !== wp_remote_retrieve_response_code( $results ) ) {
-			add_action(
-				'admin_notices',
-				function () {
-					?>
-					<div class="notice notice-error is-dismissible">
-						<p><?php esc_html_e( 'Invalid Payfast credentials. Please verify and enter the correct details.', 'woocommerce-gateway-payfast' ); ?></p>
-					</div>
-					<?php
-				}
-			);
+			update_option( 'woocommerce_payfast_invalid_credentials', 'yes' );
 		}
 	}
 }
