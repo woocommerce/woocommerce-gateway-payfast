@@ -44,7 +44,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 
 	test( 'Checkout Block: Payment method should not available when disabled', async () => {
 		await addProductToCart( {page: checkoutBlockPage, productUrl: '/product/simple-product/'} );
-		await checkoutBlockPage.goto( '/checkout/' );
+		await checkoutBlockPage.goto( '/checkout/' , { waitUntil: 'networkidle' });
 
 		const paymentMethodLocator = await checkoutBlockPage.locator( 'label.wc-block-components-radio-control__option', {
 			has: checkoutBlockPage.locator( 'input[value="payfast"]' )
@@ -78,7 +78,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 
 	test( 'Checkout Block: Verify method title & description', async () => {
 		await addProductToCart( {page: checkoutBlockPage, productUrl: '/product/simple-product/'} );
-		await checkoutBlockPage.goto( '/checkout/' );
+		await checkoutBlockPage.goto( '/checkout/' , { waitUntil: 'networkidle' });
 
 		const paymentMethodLocator = await checkoutBlockPage.locator(
 			'label[for="radio-control-wc-payment-method-options-payfast"]' );

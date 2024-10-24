@@ -1,7 +1,7 @@
 {
 	"name": "woocommerce-gateway-payfast",
 	"title": "WooCommerce Gateway Payfast",
-	"version": "1.6.5",
+	"version": "1.6.7",
 	"license": "GPL-3.0",
 	"homepage": "https://wordpress.org/plugins/woocommerce-payfast-gateway/",
 	"repository": {
@@ -16,7 +16,7 @@
 		"@playwright/test": "^1.37.1",
 		"@woocommerce/dependency-extraction-webpack-plugin": "^3.0.1",
 		"@woocommerce/eslint-plugin": "^2.2.0",
-		"@wordpress/env": "^8.6.0",
+		"@wordpress/env": "^9.10.0",
 		"@wordpress/scripts": "^27.5.0",
 		"node-wp-i18n": "^1.2.7",
 		"prettier": "^3.2.5"

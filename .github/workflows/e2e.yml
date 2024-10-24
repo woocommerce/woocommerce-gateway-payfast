@@ -63,7 +63,9 @@ jobs:
       - name: Run E2E Foundational Test
         id: payfast_e2e_tests
         if: ${{ github.event_name == 'pull_request' }}
-        run: npm run test:e2e-foundational
+        run: |
+          rm -rf ./tests/e2e/test-plugins/woocommerce-subscriptions/tests
+          npm run test:e2e-foundational
 
       - name: Update Success Label
         if: |
@@ -109,7 +111,7 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         run: npm run test:e2e
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report

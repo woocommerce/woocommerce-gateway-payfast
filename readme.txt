@@ -1,10 +1,10 @@
 === WooCommerce Payfast Gateway ===
 Contributors: woocommerce, automattic
 Tags: credit card, payfast, payment request, woocommerce, automattic
-Requires at least: 6.3
-Tested up to: 6.5
+Requires at least: 6.5
+Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.6.5
+Stable tag: 1.6.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,6 +37,21 @@ For help setting up and configuring, please refer to our [user guide](https://do
 If you get stuck, you can ask for help in the Plugin Forum.
 
 == Changelog ==
+
+= 1.6.7 - 2024-09-09 =
+* Dev - Bump WooCommerce "tested up to" version 9.3.
+* Dev - Bump WooCommerce minimum supported version to 9.1.
+* Dev - Update E2E tests to accommodate changes in WooCommerce.
+
+= 1.6.6 - 2024-07-29 =
+* Dev - Bump WooCommerce "tested up to" version 9.1.
+* Dev - Bump WooCommerce minimum supported version to 8.9.
+* Dev - Bump WordPress "tested up to" version 6.6.
+* Dev - Bump WordPress minimum supported version to 6.4.
+* Dev - Update NPM packages and node version to v20 to modernize developer experience.
+* Dev - Exclude the Woo Comment Hook `@since` sniff.
+* Dev - Fix QIT E2E tests and add support for a few new test types.
+* Tweak - Update WordPress.org plugin assets.
 
 = 1.6.5 - 2024-05-14 =
 * Fix - Use `rawurlencode` around the call to `get_site_url` to ensure things are encoded properly.

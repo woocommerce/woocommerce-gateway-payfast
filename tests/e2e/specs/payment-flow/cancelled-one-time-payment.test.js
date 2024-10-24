@@ -42,7 +42,7 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 
 		const page = checkoutBlock;
 		await addProductToCart( {page, productUrl:'/product/simple-product/'} );
-		await page.goto('/checkout/');
+		await page.goto('/checkout/', { waitUntil: 'networkidle' });
 		await fillBillingDetails(page, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order

@@ -100,11 +100,13 @@ export async function editPayfastSetting( {page, settings} ) {
 		}
 	}
 
-	const waitForURLPromise = page.waitForURL(
-		'**/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payfast' );
 	const submitButtonLocator = await page.locator( 'text=Save changes' );
-	await submitButtonLocator.click();
-	await waitForURLPromise;
+	if ( await submitButtonLocator.isEnabled() ) {
+		const waitForURLPromise = page.waitForURL(
+			'**/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payfast' );
+		await submitButtonLocator.click();
+		await waitForURLPromise;
+	}
 }
 
 /**
@@ -169,7 +171,7 @@ export async function processOneTimeOrderWithBlockCheckout( {page, productUrl} )
 	let waitForURL;
 
 	await addProductToCart( {page, productUrl} );
-	await page.goto( '/checkout/' );
+	await page.goto( '/checkout/' , { waitUntil: 'networkidle' });
 	await fillBillingDetails(page, customer.billing, true);
 
 	// Check if Payfast payment method is visible & place order
@@ -225,7 +227,7 @@ export async function goToOrderEditPage( {page, orderId} ){
 export async function blockFillBillingDetails(page, customerDetails) {
 	const card = await page.locator('.wc-block-components-address-card');
 	if (await card.isVisible()) {
-		await card.locator('a.wc-block-components-address-card__edit').click();
+		await card.locator('.wc-block-components-address-card__edit').click();
 	}
 
 	await page.getByLabel( 'First name' ).fill( customerDetails.firstname );
