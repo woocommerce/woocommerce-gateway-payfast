@@ -29,7 +29,7 @@ export async function changeCurrency( {page, currency} ) {
  * @return {Promise<void>}
  */
 export async function gotoPayfastSettingPage( {page} ) {
-	await page.goto( '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payfast' );
+	await page.goto( '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payfast', {waitUntil: 'networkidle'} );
 }
 
 /**

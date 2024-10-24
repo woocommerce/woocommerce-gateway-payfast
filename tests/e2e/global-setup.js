@@ -74,7 +74,7 @@ module.exports = async ( config ) => {
 			await usernameLocator.fill( admin.username );
 			const passwordLocator = await adminPage.locator( 'input[name="pwd"]' );
 			await passwordLocator.fill( admin.password );
-			const submitButtonLocator = await adminPage.locator( 'text=Log In' );
+			const submitButtonLocator = await adminPage.locator( '#wp-submit' );
 			await submitButtonLocator.click();
 			await waitForNavigationPromise;
 
@@ -120,7 +120,7 @@ module.exports = async ( config ) => {
 			await usernameLocator.fill( admin.username );
 			const passwordLocator = await customerPage.locator( 'input[name="pwd"]' );
 			await passwordLocator.fill( admin.password );
-			const submitButtonLocator = await customerPage.locator( 'text=Log In' );
+			const submitButtonLocator = await customerPage.locator( '#wp-submit' );
 			await submitButtonLocator.click();
 			await waitForNavigationPromise;
 
