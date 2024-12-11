@@ -44,7 +44,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 
 	test( 'Checkout Block: Payment method should not available when disabled', async () => {
 		await addProductToCart( {page: checkoutBlockPage, productUrl: '/product/simple-product/'} );
-		await checkoutBlockPage.goto( '/checkout/' );
+		await checkoutBlockPage.goto( '/checkout/' , { waitUntil: 'networkidle' });
 
 		const paymentMethodLocator = await checkoutBlockPage.locator( 'label.wc-block-components-radio-control__option', {
 			has: checkoutBlockPage.locator( 'input[value="payfast"]' )
@@ -76,29 +76,36 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 		} );
 	} );
 
-	test( 'Checkout Block: Verify method title & description', async () => {
-		await addProductToCart( {page: checkoutBlockPage, productUrl: '/product/simple-product/'} );
-		await checkoutBlockPage.goto( '/checkout/' );
+	test( 'Edit Setting: Verify required notice for the credentials', async () => {
+		await gotoPayfastSettingPage( {page: adminPage} );
+		await editPayfastSetting( {
+			page: adminPage,
+			settings: {
+				merchant_id: '',
+				merchant_key: '',
+				passphrase: '',
+			}
+		} );
 
-		const paymentMethodLocator = await checkoutBlockPage.locator(
-			'label[for="radio-control-wc-payment-method-options-payfast"]' );
-		await expect( await checkoutBlockPage.locator(
-			'label[for="radio-control-wc-payment-method-options-payfast"] img' ).getAttribute( 'alt' ) )
-			.toEqual( 'Payfast' );
-		await paymentMethodLocator.click();
-		await expect( await checkoutBlockPage.locator( '.wc-block-components-radio-control-accordion-content' ) )
-			.toHaveText( /Pay with payfast/ );
+		await gotoPayfastSettingPage( {page: adminPage} );
+		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /You forgot to fill your merchant ID/ );
+		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /You forgot to fill your merchant key/ );
+		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /Payfast requires a passphrase to work/ );
 	} );
 
-	test( 'Checkout Page: Verify method title & description', async () => {
-		await addProductToCart( {page: checkoutPage, productUrl: '/product/simple-product/'} );
-		await checkoutPage.goto( '/shortcode-checkout/' );
 
-		const paymentMethodLocator = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
-		await expect( paymentMethodLocator ).toHaveText( /Payfast/ );
-		await paymentMethodLocator.click();
-		await expect( await checkoutPage.locator( '.payment_box.payment_method_payfast' ) )
-			.toHaveText( /Pay with payfast/ );
+	test( 'Edit Setting: Verify credentials and show notice for invalid credentials', async () => {
+		await gotoPayfastSettingPage( {page: adminPage} );
+		await editPayfastSetting( {
+			page: adminPage,
+			settings: {
+				merchant_id: '1',
+				merchant_key: '1',
+				passphrase: '1',
+			}
+		} );
+
+		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /Invalid Payfast credentials/ );
 	} );
 
 	test( 'Edit Setting: Verify Merchant ID, Merchant Key, and Passphrase', async () => {
@@ -120,6 +127,31 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 
 		const passphraseSettingLocator = await adminPage.getByLabel( 'Passphrase', {exact: true} );
 		await expect( await passphraseSettingLocator.inputValue() ).toEqual( payfastSandboxCredentials.passPharse );
+	} );
+
+	test( 'Checkout Block: Verify method title & description', async () => {
+		await addProductToCart( {page: checkoutBlockPage, productUrl: '/product/simple-product/'} );
+		await checkoutBlockPage.goto( '/checkout/' , { waitUntil: 'networkidle' });
+
+		const paymentMethodLocator = await checkoutBlockPage.locator(
+			'label[for="radio-control-wc-payment-method-options-payfast"]' );
+		await expect( await checkoutBlockPage.locator(
+			'label[for="radio-control-wc-payment-method-options-payfast"] img' ).getAttribute( 'alt' ) )
+			.toEqual( 'Payfast' );
+		await paymentMethodLocator.click();
+		await expect( await checkoutBlockPage.locator( '.wc-block-components-radio-control-accordion-content' ) )
+			.toHaveText( /Pay with payfast/ );
+	} );
+
+	test( 'Checkout Page: Verify method title & description', async () => {
+		await addProductToCart( {page: checkoutPage, productUrl: '/product/simple-product/'} );
+		await checkoutPage.goto( '/shortcode-checkout/' );
+
+		const paymentMethodLocator = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
+		await expect( paymentMethodLocator ).toHaveText( /Payfast/ );
+		await paymentMethodLocator.click();
+		await expect( await checkoutPage.locator( '.payment_box.payment_method_payfast' ) )
+			.toHaveText( /Pay with payfast/ );
 	} );
 
 	test( 'Edit Setting - Send Debug Emails - Verify when setting disabled', async () => {

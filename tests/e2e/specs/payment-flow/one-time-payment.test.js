@@ -45,7 +45,7 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 		await clearEmailLogs( {page: adminPage} );
 
 		await addProductToCart( {page: checkoutBlock, productUrl:'/product/simple-product/'} );
-		await checkoutBlock.goto('/checkout/');
+		await checkoutBlock.goto('/checkout/' , { waitUntil: 'networkidle' });
 		await fillBillingDetails(checkoutBlock, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order

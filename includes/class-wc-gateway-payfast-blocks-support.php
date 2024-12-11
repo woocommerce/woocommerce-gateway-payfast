@@ -45,7 +45,7 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 	 * @return array
 	 */
 	public function get_payment_method_script_handles() {
-		$asset_path   = WC_GATEWAY_PAYFAST_PATH . '/build/index.asset.php';
+		$asset_path   = WC_GATEWAY_PAYFAST_PATH . '/build/payment-method.asset.php';
 		$version      = WC_GATEWAY_PAYFAST_VERSION;
 		$dependencies = array();
 		if ( file_exists( $asset_path ) ) {
@@ -59,7 +59,7 @@ final class WC_PayFast_Blocks_Support extends AbstractPaymentMethodType {
 		}
 		wp_register_script(
 			'wc-payfast-blocks-integration',
-			WC_GATEWAY_PAYFAST_URL . '/build/index.js',
+			WC_GATEWAY_PAYFAST_URL . '/build/payment-method.js',
 			$dependencies,
 			$version,
 			true

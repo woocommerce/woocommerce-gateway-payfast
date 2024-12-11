@@ -18,7 +18,7 @@ module.exports = (
 		}
 
 		return defineConfig( {
-			testDir: '../../tests',
+			testDir: './specs',
 
 			/* Maximum time one test can run for. */
 			timeout: 90 * 1000,

@@ -44,7 +44,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 
 		await checkoutBlock.goto( '/product/simple-subscription-product/' );
 		await checkoutBlock.click( 'text=Sign up now' );
-		await checkoutBlock.goto( '/checkout/' );
+		await checkoutBlock.goto( '/checkout/', { waitUntil: 'networkidle' });
 		await fillBillingDetails(checkoutBlock, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order

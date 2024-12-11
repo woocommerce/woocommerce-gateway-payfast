@@ -3,6 +3,10 @@ const DependencyExtractionWebpackPlugin = require( '@woocommerce/dependency-extr
 
 module.exports = {
 	...defaultConfig,
+	entry: {
+		...defaultConfig.entry,
+		'payment-method': './src/blocks/payment-method/index.js',
+	},
 	plugins: [
 		...defaultConfig.plugins.filter(
 			( plugin ) =>
