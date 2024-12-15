@@ -1,3 +1,11 @@
+/**
+ * External dependencies
+ */
+import { fillBillingCheckoutBlocks } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
 import {customer} from "../config";
 import {expect} from "@playwright/test";
 
@@ -230,12 +238,28 @@ export async function blockFillBillingDetails(page, customerDetails) {
 		await card.locator('.wc-block-components-address-card__edit').click();
 	}
 
-	await page.getByLabel( 'First name' ).fill( customerDetails.firstname );
-	await page.getByLabel( 'Last name' ).fill( customerDetails.lastname );
-	await page.getByLabel( 'Address', {exact: true} ).fill( customerDetails.addressfirstline );
-	await page.getByLabel( 'City' ).fill( customerDetails.city );
-	await page.getByLabel( 'Zip Code' ).fill( customerDetails.postcode );
-	await page.getByLabel( 'Phone (optional)' ).fill( customerDetails.phone );
+	await fillBillingCheckoutBlocks(
+		page,
+		{
+			country: customerDetails.country,
+			firstName: customerDetails.firstname,
+			lastName: customerDetails.lastname,
+			address: customerDetails.addressfirstline,
+			zip: customerDetails.postcode,
+			city: customerDetails.city,
+			state: null,
+			isPostalCode: true,
+		}
+	);
+
+	await page.getByLabel( 'Add a note to your order' ).check();
+	await page
+		.getByPlaceholder(
+			'Notes about your order.'
+		)
+		.fill( 'This is to avoid flakiness' );
+
+	await page.waitForLoadState('networkidle');
 }
 
 /**
@@ -257,6 +281,6 @@ export async function fillBillingDetails(
 	await page.getByLabel( 'Last name' ).fill( customerBillingDetails.lastname );
 	await page.getByLabel( 'Street address' ).fill( customerBillingDetails.addressfirstline );
 	await page.getByLabel( 'Town / City' ).fill( customerBillingDetails.city );
-	await page.getByLabel( 'Zip Code' ).fill( customerBillingDetails.postcode );
+	await page.getByLabel( 'Postcode / ZIP' ).fill( customerBillingDetails.postcode );
 	await page.getByLabel( 'Phone' ).fill( customerBillingDetails.phone );
 }
