@@ -1,7 +1,12 @@
 /**
+ * External dependencies
+ */
+import { addOneOrMoreProductToCart } from '@woocommerce/e2e-utils-playwright';
+
+/**
  * Internal dependencies
  */
-import {addProductToCart, changeCurrency, editPayfastSetting, fillBillingDetails, goToOrderEditPage} from '../../utils';
+import {changeCurrency, editPayfastSetting, fillBillingDetails, goToOrderEditPage} from '../../utils';
 import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
@@ -41,7 +46,7 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 		test.slow();
 
 		const page = checkoutBlock;
-		await addProductToCart( {page, productUrl:'/product/simple-product/'} );
+		await addOneOrMoreProductToCart( page, 'simple-product' );
 		await page.goto('/checkout/', { waitUntil: 'networkidle' });
 		await fillBillingDetails(page, customer.billing, true);
 
@@ -74,7 +79,7 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 
 		const page = checkoutPage;
 
-		await addProductToCart( {page, productUrl: '/product/simple-product/'} );
+		await addOneOrMoreProductToCart( page, 'simple-product' );
 		await page.goto( '/shortcode-checkout/' );
 		await fillBillingDetails(page, customer.billing);
 
