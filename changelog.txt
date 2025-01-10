@@ -1,5 +1,10 @@
 *** PayFast Changelog ***
 
+= 1.6.10 - 2025-01-13 =
+* Dev - Bump WooCommerce "tested up to" version 9.6.
+* Dev - Bump WooCommerce minimum supported version to 9.4.
+* Dev - Use the `@woocommerce/e2e-utils-playwright` NPM package for E2E tests.
+
 = 1.6.9 - 2024-11-18 =
 * Dev - Bump WordPress "tested up to" version 6.7.
 
