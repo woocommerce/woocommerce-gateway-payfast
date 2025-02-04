@@ -72,6 +72,7 @@ This extension is compatible with:
 - [WooCommerce Blocks](https://woo.com/products/woocommerce-gutenberg-products-block/)
 - [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/)
 - [WooCommerce Deposits](https://woocommerce.com/products/woocommerce-deposits/)
+- [WooCommerce Pre-Orders](https://woocommerce.com/products/woocommerce-pre-orders/)
 
 ## License
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
