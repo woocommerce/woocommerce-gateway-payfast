@@ -49,7 +49,6 @@ Get in touch via the [official support forum](https://wordpress.org/support/plug
 
 Yes! WooCommerce PayFast Gateway is compatible with [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/).
 
-
 = Do I need an SSL certificate? =
 
 We recommend using a [Secure Sockets Layer (SSL) certificate](https://woocommerce.com/document/ssl-and-https/) for additional customer security and trust.
