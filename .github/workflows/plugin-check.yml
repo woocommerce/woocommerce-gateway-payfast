@@ -41,4 +41,4 @@ jobs:
           assets
 
         ignore-codes: |
-          WordPress.DateTime.RestrictedFunctions.date_date
+          plugin_header_no_license
