@@ -250,7 +250,7 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 				array(
 					sprintf(
 						/* translators: %d: Order ID */
-						esc_html__( 'Order ID %d contains an active Subscription' ),
+						esc_html__( 'Order ID %d contains an active Subscription', 'woocommerce-gateway-payfast' ),
 						$order->get_id()
 					),
 				),
