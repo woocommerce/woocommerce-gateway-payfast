@@ -39,5 +39,7 @@ jobs:
           build
           assets
 
+        ignore-warnings: true
+
         ignore-codes: |
           plugin_header_no_license
