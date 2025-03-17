@@ -1,5 +1,12 @@
 *** PayFast Changelog ***
 
+= 1.7.0 - 2025-03-17 =
+* Update - Refresh copy and brand assets.
+* Dev - Bump WooCommerce "tested up to" version 9.7.
+* Dev - Bump WooCommerce minimum supported version to 9.5.
+* Dev - Bump WordPress minimum supported version to 6.6.
+* Dev - Add the WordPress Plugin Check GitHub Action and fix all issues it found.
+
 = 1.6.10 - 2025-01-13 =
 * Dev - Bump WooCommerce "tested up to" version 9.6.
 * Dev - Bump WooCommerce minimum supported version to 9.4.
