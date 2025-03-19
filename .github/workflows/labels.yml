@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Sync repository labels
     steps:
-      - uses: woocommerce/woo-std-labels@v1
+      - uses: woocommerce/woo-std-labels@91ab3bca9daf544f250eafbbc2b66e039cc0c790 # v1.2.2
         with:
           labels-path: /home/runner/work/_actions/woocommerce/woo-std-labels/v1/labels.json
           github-token: ${{ secrets.GITHUB_TOKEN }}

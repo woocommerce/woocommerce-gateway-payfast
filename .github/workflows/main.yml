@@ -13,14 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
     - name: ⚙️ Install Utilities
       run: sudo apt-get update && sudo apt-get install -y lftp --allow-downgrades;
-      
 
     - name: 🔑 Prepare SSH key and known hosts
       run:  mkdir -p ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts && ssh-keyscan sftp.pressable.com >> ~/.ssh/known_hosts
-        
+
     - name: 📂 Sync files
       run: lftp -p22 sftp://${{ secrets.SFTP_USER }}:${{ secrets.SFTP_PASSWORD }}@sftp.pressable.com -e "mirror -v -R --exclude .git/ --exclude docker/ --exclude .github/ ./ ./wp-content/plugins/woocommerce-payfast-gateway/"
