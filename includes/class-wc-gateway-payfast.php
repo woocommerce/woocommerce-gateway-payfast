@@ -1752,7 +1752,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		<tr>
 			<td class="label payfast-fee">
-				<?php echo wc_help_tip( __( 'This represents the fee Payfast collects for the transaction.', 'woocommerce-gateway-payfast' ) ); ?>
+				<?php echo wc_help_tip( esc_html__( 'This represents the fee Payfast collects for the transaction.', 'woocommerce-gateway-payfast' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<?php esc_html_e( 'Payfast Fee:', 'woocommerce-gateway-payfast' ); ?>
 			</td>
 			<td width="1%"></td>
@@ -1782,7 +1782,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		<tr>
 			<td class="label payfast-net">
-				<?php echo wc_help_tip( __( 'This represents the net total that was credited to your Payfast account.', 'woocommerce-gateway-payfast' ) ); ?>
+				<?php echo wc_help_tip( esc_html__( 'This represents the net total that was credited to your Payfast account.', 'woocommerce-gateway-payfast' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				<?php esc_html_e( 'Amount Net:', 'woocommerce-gateway-payfast' ); ?>
 			</td>
 			<td width="1%"></td>

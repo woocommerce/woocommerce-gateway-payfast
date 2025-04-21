@@ -1,42 +1,102 @@
 === WooCommerce Payfast Gateway ===
 Contributors: woocommerce, automattic
 Tags: credit card, payfast, payment request, woocommerce, automattic
-Requires at least: 6.5
-Tested up to: 6.6
+Requires at least: 6.6
+Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.6.7
+Stable tag: 1.7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-This is the official WooCommerce extension to receive payments using the South African Payfast payments provider.
+Give customers more flexibility and increase your bottom line with Payfast — one of South Africa’s most popular payment gateways.
 
 == Description ==
 
-The Payfast extension for WooCommerce enables you to accept payments including Subscriptions, Deposits & Pre-Orders via one of South Africa’s most popular payment gateways.
+Give customers more flexibility and increase your bottom line with Payfast — one of South Africa’s most popular payment gateways.
 
-= Why choose Payfast? =
+= Features =
 
-Payfast gives your customers more flexibility including putting down deposits, ordering ahead of time or paying on a weekly, monthly or annual basis.
+* Fast, **super-secure** payments from almost anywhere in the world.
+* Compatible with **subscriptions**, **deposits**, and **pre-orders**.
+
+= Get started =
+
+This extension requires a Payfast merchant account. [Sign up for free](https://payfast.io/gateway-aggregator-selector/).
+
+= How does it work? =
+
+At checkout, customers are automatically taken to Payfast to pay for their orders. Once payment is complete, Payfast redirects them to your store to continue shopping.
+
+= Fast, super-secure, and scalable =
+
+Pay it safe, every time. Payfast is trusted by **more than 100,000** South African businesses, with security that exceeds industry standards. It’s PCI DSS-compliant and also supports 18+ popular payment methods. In a nutshell, WooCommerce Payfast Gateway is the fastest, smartest, and safest way to accept payments online.
+
+= Boost your bottom line =
+
+Payfast is compatible with [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/) and [WooCommerce Pre-Orders](https://woocommerce.com/products/woocommerce-pre-orders/), giving your shoppers the ultimate flexibility. **Convert more customers** by letting them make deposits, order in advance, or subscribe to your products and services. You win each way!
 
 == Frequently Asked Questions ==
 
-= Does this require a Payfast merchant account? =
-
-Yes! A Payfast merchant account, merchant key and merchant ID are required for this gateway to function.
-
-= Does this require an SSL certificate? =
-
-An SSL certificate is recommended for additional safety and security for your customers.
-
 = Where can I find documentation? =
 
-For help setting up and configuring, please refer to our [user guide](https://docs.woocommerce.com/document/payfast-payment-gateway)
+You’ve come to the right place. [Our documentation](https://woocommerce.com/document/payfast-payment-gateway/) for WooCommerce Payfast Gateway includes detailed setup instructions.
 
-= Where can I get support or talk to other users? =
+= Where can I get support? =
 
-If you get stuck, you can ask for help in the Plugin Forum.
+Get in touch via the [official support forum](https://wordpress.org/support/plugin/woocommerce-payfast-gateway/).
+
+= Does this extension support subscriptions? =
+
+Yes! WooCommerce PayFast Gateway is compatible with [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/).
+
+= Do I need an SSL certificate? =
+
+We recommend using a [Secure Sockets Layer (SSL) certificate](https://woocommerce.com/document/ssl-and-https/) for additional customer security and trust.
+
+= Can I accept international payments? =
+
+Yes! You can receive Visa and Mastercard payments from anywhere in the world.
+
+= Do I need a Payfast account? =
+
+Yes; a [Payfast merchant account](https://payfast.io/gateway-aggregator-selector/) is required.
+
+= Do I need to be a South African resident to open a Payfast account? =
+
+No, but to open a Payfast account, you’ll need a South African bank account to pay your funds into.
+
+
+
+
+
+
+
+
+
+
 
 == Changelog ==
+
+= 1.7.0 - 2025-03-17 =
+* Update - Refresh copy and brand assets.
+* Dev - Bump WooCommerce "tested up to" version 9.7.
+* Dev - Bump WooCommerce minimum supported version to 9.5.
+* Dev - Bump WordPress minimum supported version to 6.6.
+* Dev - Add the WordPress Plugin Check GitHub Action and fix all issues it found.
+
+= 1.6.10 - 2025-01-13 =
+* Dev - Bump WooCommerce "tested up to" version 9.6.
+* Dev - Bump WooCommerce minimum supported version to 9.4.
+* Dev - Use the `@woocommerce/e2e-utils-playwright` NPM package for E2E tests.
+
+= 1.6.9 - 2024-11-18 =
+* Dev - Bump WordPress "tested up to" version 6.7.
+
+= 1.6.8 - 2024-11-04 =
+* Add - Credentials validation and required field notice for PayFast in the sandbox environment.
+* Dev - Bump WooCommerce "tested up to" version 9.4.
+* Dev - Bump WooCommerce minimum supported version to 9.2.
+* Dev - Bump WordPress minimum supported version to 6.5.
 
 = 1.6.7 - 2024-09-09 =
 * Dev - Bump WooCommerce "tested up to" version 9.3.
@@ -187,4 +247,3 @@ If you get stuck, you can ask for help in the Plugin Forum.
  * Tweak - WP tested up to 5.4
 
 [See changelog for all versions](https://raw.githubusercontent.com/woocommerce/woocommerce-gateway-payfast/trunk/changelog.txt).
-

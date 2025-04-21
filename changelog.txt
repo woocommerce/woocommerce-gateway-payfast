@@ -1,5 +1,26 @@
 *** PayFast Changelog ***
 
+= 1.7.0 - 2025-03-17 =
+* Update - Refresh copy and brand assets.
+* Dev - Bump WooCommerce "tested up to" version 9.7.
+* Dev - Bump WooCommerce minimum supported version to 9.5.
+* Dev - Bump WordPress minimum supported version to 6.6.
+* Dev - Add the WordPress Plugin Check GitHub Action and fix all issues it found.
+
+= 1.6.10 - 2025-01-13 =
+* Dev - Bump WooCommerce "tested up to" version 9.6.
+* Dev - Bump WooCommerce minimum supported version to 9.4.
+* Dev - Use the `@woocommerce/e2e-utils-playwright` NPM package for E2E tests.
+
+= 1.6.9 - 2024-11-18 =
+* Dev - Bump WordPress "tested up to" version 6.7.
+
+= 1.6.8 - 2024-11-04 =
+* Add - Credentials validation and required field notice for PayFast in the sandbox environment.
+* Dev - Bump WooCommerce "tested up to" version 9.4.
+* Dev - Bump WooCommerce minimum supported version to 9.2.
+* Dev - Bump WordPress minimum supported version to 6.5.
+
 = 1.6.7 - 2024-09-09 =
 * Dev - Bump WooCommerce "tested up to" version 9.3.
 * Dev - Bump WooCommerce minimum supported version to 9.1.

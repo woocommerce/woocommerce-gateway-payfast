@@ -1,0 +1,45 @@
+name: 'WordPress Plugin Checks'
+on:
+  push:
+    branches:
+    - trunk
+    - develop
+
+  pull_request:
+    branches:
+      - trunk
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: Run plugin check
+      uses: wordpress/plugin-check-action@70f38272b2beee386e973f319591baa2fc7dff16 # v1.1.2
+      with:
+        exclude-checks: |
+          plugin_readme
+          plugin_updater
+          file_type
+          trademarks
+          direct_db_queries
+          performant_wp_query_params
+          enqueued_scripts_in_footer
+          plugin_header_text_domain
+
+        exclude-directories: |
+          .github
+          node_modules
+          vendor
+          tests
+          bin
+          build
+          assets
+
+        ignore-warnings: true
+
+        ignore-codes: |
+          plugin_header_no_license
