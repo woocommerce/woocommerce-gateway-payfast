@@ -145,6 +145,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'subscription_date_changes',
 			'subscription_payment_method_change', // Subs 1.x support.
 			'subscription_payment_method_change_customer', // Enabled for https://github.com/woocommerce/woocommerce-gateway-payfast/issues/32.
+			'multiple_subscriptions',
 		);
 
 		$this->init_form_fields();
