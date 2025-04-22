@@ -1,5 +1,8 @@
 *** PayFast Changelog ***
 
+= 1.7.1 - 2025-mm-dd =
+* Add - Added support for multiple subscriptions purchased in one order.
+
 = 1.7.0 - 2025-03-17 =
 * Update - Refresh copy and brand assets.
 * Dev - Bump WooCommerce "tested up to" version 9.7.
