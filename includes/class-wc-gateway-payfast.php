@@ -1811,7 +1811,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			return $currency;
 		}
 
-		$user_id = get_current_user_id();
+		$user_id       = get_current_user_id();
+		$currency_code = null; // Initialize to avoid undefined variable notice.
 
 		// Check if the currency is set in the URL.
 		if ( isset( $_GET['currency'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
