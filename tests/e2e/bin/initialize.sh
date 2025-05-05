@@ -16,6 +16,8 @@ wp-env run tests-cli wp wc payment_gateway update cod --enabled=true --user=1
 
 wp-env run tests-cli wp option update woocommerce_currency "USD"
 wp-env run tests-cli wp option update woocommerce_default_country "US:CA"
+wp-env run tests-cli wp option update woocommerce_allow_tracking "no"
+wp-env run tests-cli wp option update woocommerce_coming_soon "no"
 
 wp-env run tests-cli wp user create customer customer@euvatnumbertestsuite.com --user_pass=password --role=customer
 
