@@ -1,0 +1,288 @@
+*** PayFast Changelog ***
+
+<<<<<<< HEAD
+= 1.7.1 - 2025-05-05 =
+* Fix - PHP warning for undefined variable when running alongside WooPayments.
+* Dev - Bump WooCommerce "tested up to" version 9.8.
+* Dev - Bump WooCommerce minimum supported version to 9.6.
+* Dev - Bump WordPress "tested up to" version 6.8.
+* Dev - Bump WordPress minimum supported version to 6.6.
+* Dev - Update all third-party actions our workflows rely on to use versions based on specific commit hashes.
+
+=======
+>>>>>>> parent of e8a32e0 (Update changelog.txt)
+= 1.7.0 - 2025-03-17 =
+* Update - Refresh copy and brand assets.
+* Dev - Bump WooCommerce "tested up to" version 9.7.
+* Dev - Bump WooCommerce minimum supported version to 9.5.
+* Dev - Bump WordPress minimum supported version to 6.6.
+* Dev - Add the WordPress Plugin Check GitHub Action and fix all issues it found.
+
+= 1.6.10 - 2025-01-13 =
+* Dev - Bump WooCommerce "tested up to" version 9.6.
+* Dev - Bump WooCommerce minimum supported version to 9.4.
+* Dev - Use the `@woocommerce/e2e-utils-playwright` NPM package for E2E tests.
+
+= 1.6.9 - 2024-11-18 =
+* Dev - Bump WordPress "tested up to" version 6.7.
+
+= 1.6.8 - 2024-11-04 =
+* Add - Credentials validation and required field notice for PayFast in the sandbox environment.
+* Dev - Bump WooCommerce "tested up to" version 9.4.
+* Dev - Bump WooCommerce minimum supported version to 9.2.
+* Dev - Bump WordPress minimum supported version to 6.5.
+
+= 1.6.7 - 2024-09-09 =
+* Dev - Bump WooCommerce "tested up to" version 9.3.
+* Dev - Bump WooCommerce minimum supported version to 9.1.
+* Dev - Update E2E tests to accommodate changes in WooCommerce.
+
+= 1.6.6 - 2024-07-29 =
+* Dev - Bump WooCommerce "tested up to" version 9.1.
+* Dev - Bump WooCommerce minimum supported version to 8.9.
+* Dev - Bump WordPress "tested up to" version 6.6.
+* Dev - Bump WordPress minimum supported version to 6.4.
+* Dev - Update NPM packages and node version to v20 to modernize developer experience.
+* Dev - Exclude the Woo Comment Hook `@since` sniff.
+* Dev - Fix QIT E2E tests and add support for a few new test types.
+* Tweak - Update WordPress.org plugin assets.
+
+= 1.6.5 - 2024-05-14 =
+* Fix - Use `rawurlencode` around the call to `get_site_url` to ensure things are encoded properly.
+
+= 1.6.4 - 2024-05-07 =
+* Fix - Resolved signature mismatch error caused by HTML entity encoding in site/blog name.
+* Dev - Bump WooCommerce "tested up to" version 8.8.
+* Dev - Bump WooCommerce minimum supported version to 8.6.
+
+= 1.6.3 - 2024-05-02 =
+* Fix - Enforce amount match check for all payments in the Payfast ITN handler.
+* Dev - Bump WooCommerce "tested up to" version 8.7.
+* Dev - Bump WooCommerce minimum supported version to 8.5.
+* Dev - Bump WordPress "tested up to" version 6.5.
+* Dev - Bump WordPress minimum supported version to 6.3.
+
+= 1.6.2 - 2024-03-25 =
+* Dev - Bump WooCommerce "tested up to" version 8.6.
+* Dev - Bump WooCommerce minimum supported version to 8.4.
+* Dev - Bump WordPress minimum supported version to 6.3.
+* Fix - Payfast gateway not visible on Checkout when ZAR currency is set via WooPayments multi-currency feature.
+* Fix - Allow navigation back from PayFast gateway payment page.
+
+= 1.6.1 - 2024-01-08 =
+* Add - Readme.md file for e2e tests.
+* Dev - Declare compatibility with WooCommerce Blocks.
+* Dev - Declare compatibility with Product Editor.
+* Dev - Updated the main file of the plugin to match the plugin's slug.
+* Dev - Bump PHP minimum supported version to 7.4.
+* Dev - Bump WooCommerce "tested up to" version 8.4.
+* Dev - Bump WooCommerce minimum supported version to 8.2.
+* Dev - Resolve coding standards issues.
+* Tweak - Bump PHP "tested up to" version 8.3.
+
+= 1.6.0 - 2023-11-22 =
+* Dev - Add Playwright end-to-end tests.
+* Dev - Update default behavior to use a block-based cart and checkout in E2E tests.
+* Dev - Bump WooCommerce "tested up to" version 8.3.
+* Dev - Bump WooCommerce minimum supported version to 8.1.
+* Dev - Bump WordPress minimum supported version to 6.2.
+* Dev - Bump WordPress "tested up to" version 6.4.
+* Dev - Bump WordPress minimum supported version to 6.2.
+* Dev - Update PHPCS and PHPCompatibility GitHub Actions.
+
+= 1.5.9 - 2023-09-18 =
+* Dev - Bump WordPress "tested up to" version from 6.2 to 6.3.
+* Dev - Bump WooCommerce "tested up to" version 7.9.
+* Dev - Bump WooCommerce minimum supported version to 7.7.
+* Dev - Bump PHP minimum supported version to 7.3.
+
+= 1.5.8 - 2023-08-29 =
+* Add - Admin notice if this extension is activated without WooCommerce.
+
+= 1.5.7 - 2023-07-25 =
+* Fix - Handle WP_Error object when return from wp_remote_request.
+
+= 1.5.6 - 2023-07-19 =
+* Fix - Include build directory.
+
+= 1.5.5 - 2023-07-04 =
+* Dev - Bump WooCommerce "tested up to" version 7.8.
+* Dev - Bump WooCommerce minimum supported version from 6.8 to 7.2.
+* Dev - Bump WordPress minimum supported version from 5.8 to 6.1.
+* Fix - Replace escaping of order total price elements on the edit order admin screen.
+
+= 1.5.4 - 2023-06-13 =
+* Fix - Escaped strings.
+
+= 1.5.3 - 2023-05-25 =
+* Dev – Bump WooCommerce “tested up to” version 7.6.
+* Dev – Bump WordPress minimum supported version from 5.6 to 5.8.
+* Dev – Bump WordPress “tested up to” version 6.2.
+
+= 1.5.2 - 2023-03-16 =
+* Tweak - Bump PHP minimum supported version from 7.0 to 7.2.
+* Tweak - Bump WooCommerce minimum supported version from 6.0 to 6.8.
+* Tweak - Bump WooCommerce "tested up to" version 7.4.
+
+= 1.5.1 - 2023-02-28 =
+* Update – Payfast logo and text references to meet their new branding guidelines.
+* Tweak – Bump WooCommerce “Tested up to” to 7.3.
+* Tweak – Bump WooCommerce tested up to 7.3.0.
+* Dev – Bump @sideway/formula from 3.0.0 to 3.0.1.
+* Dev – Resolved linting issues.
+* Dev – Bump json5 from 1.0.1 to 1.0.2.
+* Dev – Bump loader-utils from 1.4.0 to 1.4.2.
+
+= 1.5.0 - 2022-12-06 =
+* Add – Support for High-performance Order Storage (“HPOS”) (formerly known as Custom Order Tables, “COT”).
+* Dev – Update node version from 12.0.0 to 16.13.0.
+* Dev – Update npm version from 6.9.0 to 8.0.0.
+* Tweak – Bump minimum PHP version from 5.6 to 7.0.
+* Tweak – Bump minimum WP version from 4.4 to 5.6.
+* Tweak – Bump minimum WC version from 2.6 to 6.0.
+
+= 1.4.25 - 2022-09-07 =
+* Fix - Add support for Transaction ID.
+
+= 1.4.24 - 2022-07-19 =
+* Fix - Subscription renewal payment failed issue in the production environment.
+
+= 1.4.23 - 2022-07-05 =
+ * Add - Allow setup PayFast during onboarding.
+ * Add - Added support for customer subscription payment method change.
+
+= 1.4.22 - 2022-05-12 =
+ * Tweak - WP tested up to 6.0
+
+= 1.4.21 - 2022-05-03 =
+ * Tweak - Bump tested up to WordPress version 5.9.
+
+= 1.4.20 - 2022-01-18 =
+ * Fix - Status toggle button not working as expected
+
+= 1.4.19 - 2021-05-04 =
+ * Add - support for the Cart and Checkout blocks included
+ * Fix - Error notice from direct access to the order id property.
+
+= 1.4.18 - 2021-02-04 =
+ * Add fees to order
+ * Add signature to the request to PayFast
+ * Tweak - WC 4.9.2 compatibility.
+ * Tweak - WP 5.6 compatibility.
+
+= 1.4.17 - 2020-11-25 =
+ * Fix   - Fix Object could not be converted to string when renewing a subscription.
+ * Tweak - WC tested up to 4.7
+ * Tweak - WP tested up to 5.6
+ * Tweak - PHP 8.0 compatibility.
+
+= 1.4.15 - 2020-03-30 =
+ * Tweak - WC tested up to 4.0
+ * Tweak - WP tested up to 5.4
+
+= 1.4.14 - 2019-10-24 =
+ * Fix   - Incorrect API response handling for subscription renewal payments.
+ * Tweak - WC tested up to 3.8
+ * Tweak - WP tested up to 5.3
+
+= 1.4.13 - 2019-08-06 =
+ * Tweak - WC tested up to 3.7
+
+= 1.4.12 - 2019-04-16 =
+ * Tweak - WC tested up to 3.6
+
+= 1.4.11 - 2018-11-19 =
+ * Update - WP tested up to 5.0
+
+= 1.4.10 - 2018-09-26 =
+ * Update - WC tested up to 3.5
+
+= 1.4.9 - 2018-05-22 =
+ * Update - WC tested up to 3.4
+ * Update - Privacy policy notification.
+ * Update - Export/erasure hooks added.
+
+= 1.4.8 - 2018-05-01 =
+ * Tweak - Add support for X-Forwarded-For header.
+
+= 1.4.7 - 2017-12-13 =
+ * Tweak - Adjusts the headers to indicate WooCommerce 3.3 compatibility.
+ * New - Adds a filter around the supported currencies.
+ * Tweak - Replaces "Pricing Options" with "General Settings" in the "disabled" admin notice.
+
+= 1.4.6 - 2017-11-23 =
+ * Fix - Error on admin setting pages due to wrong static method call.
+
+= 1.4.5 - 2017-11-22 =
+ * Tweak - Remove unneeded order information from the plugin log.
+ * Tweak - Passphrase now required.
+ * New   - filter to override the is valid ip check.
+
+= 1.4.4 - 2017-06-14 =
+ * Fix - Add additional error handling on the PayFast API.
+ * Add - Option to enable logging.
+
+= 1.4.3 - 2017-05-03 =
+ * Fix - Allow users to update card details when paying manually for a failed subscription
+ * Fix - Renewal orders on new subscriptions are stuck in Pending status even though the payment went through
+ * Fix - ITN debug emails are slightly messed up wrt new line characters
+
+= 1.4.2 - 2017-04-19 =
+ * Fix - Fatal error on renewing subscription.
+ * Fix - Additional updates for WooCommerce 3.0 compatibility.
+
+= 1.4.1 - 2017-04-03 =
+ * Fix - Update for WooCommerce 3.0 compatibility
+
+= 1.4.0 - 2016-09-02 =
+ * Add - Support for Subscriptions
+ * Add - Support for Pre-Orders
+
+= 1.3.1 - 2016-01-14 =
+ * Fix - Description field use on the checkout page
+ * Add - Helpful links on the plugin page
+
+= 1.3.0 - 2015-10-23 =
+ * New - Add email_address to the transaction information sent through to PayFast.
+
+= 1.2.9 - 2015-08-07 =
+ * Fix - Removes "empty()" call when outputting the description field.
+
+= 1.2.8 - 2015-08-04 =
+ * Fix - Fixes the notices displayed in admin when defining constants.
+ * Fix - Ensures the gateway displays correctly on checkout when in sandbox mode, even if no merchant credentials are yet present.
+ * Code tidy.
+ * Removed legacy code.
+ * Switched to WC logging class.
+
+= 1.2.7 - 2015-04-20 =
+ * Fix - Corrects the plugin textdomain.
+ * Fix - Corrects the incorrect use of the non-existent sanitize() function.
+
+= 1.2.6 - 2014-01-13 =
+ * WC 2.1 Compatibility
+
+= 1.2.5 - 2013-09-06 =
+ * Update PayFast Logo
+
+= 1.2.4 - 2013-08-29 =
+ * Sequential Order Numbers support
+ * Better WooCommerce version tracking for PayFast
+
+= 1.2.3 - 2013-06-26 =
+ * Track WooCommerce version
+
+= 1.2.2 - 2013-01-21 =
+ * WC 2.0 Compat
+
+= 1.2.1 - 2012-12-05 =
+ * Updater
+
+= 1.2 - 2012-10-23 =
+ * Class names
+
+= 1.1 - 2012-06-18 =
+ * Patched release with new class names and Woo updater
+
+= 1.0 - 2011-10-06 =
+ * First Release
