@@ -1,0 +1,51 @@
+{
+	"landingPage": "/wp-admin/admin.php?page=wc-settings&tab=checkout&section=payfast",
+	"login": true,
+	"plugins": [
+		"woocommerce",
+		"woocommerce-payfast-gateway"
+	],
+	"features": {
+		"networking": true
+	},
+	"phpExtensionBundles": [
+		"kitchen-sink"
+	],
+	"steps": [
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/skip-woo-activation.php",
+			"data": "<?php add_filter( 'woocommerce_enable_setup_wizard', '__return_false' );"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp wc tool run install_pages --user=1"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp option update woocommerce_onboarding_profile '{\"completed\":true,\"skipped\":false}' --format=json"
+		},
+		{
+			"step": "importWxr",
+			"file": {
+			"resource": "url",
+			"url": "https://raw.githubusercontent.com/woocommerce/woocommerce/d1be68b88c93caca359e93ff927017a2fafec1fc/plugins/woocommerce/sample-data/sample_products.xml"
+			}
+		},
+		{
+			"step": "setSiteOptions",
+			"options": {
+			"woocommerce_newly_installed": "no",
+			"woocommerce_store_address": "90 Plein Street",
+			"woocommerce_store_city": "Cape Town",
+			"woocommerce_default_country": "ZA:WC",
+			"woocommerce_store_postcode": "8000",
+			"woocommerce_allowed_countries": "all",
+			"woocommerce_ship_to_countries": "all",
+			"woocommerce_currency": "ZAR",
+			"woocommerce_coming_soon": "no",
+			"woocommerce_allow_tracking": "no"
+			}
+		}
+	]
+}
