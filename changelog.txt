@@ -1,5 +1,10 @@
 *** PayFast Changelog ***
 
+= 1.7.2 - 2025-07-14 =
+* Add - WordPress Playground instance.
+* Dev - Bump WooCommerce "tested up to" version 10.0.
+* Dev - Bump WooCommerce minimum supported version to 9.8.
+
 = 1.7.1 - 2025-05-05 =
 * Fix - PHP warning for undefined variable when running alongside WooPayments.
 * Dev - Bump WooCommerce "tested up to" version 9.8.
