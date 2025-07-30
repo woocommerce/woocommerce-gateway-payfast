@@ -10,7 +10,8 @@
             "!/build",
             "!/languages",
             "/client",
-            "/vendor"
+            "/vendor",
+            "/wordpress_org_assets"
         ]
     },
     "require-dev": {
