@@ -88,6 +88,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 		} );
 
 		await gotoPayfastSettingPage( {page: adminPage} );
+		await adminPage.waitForTimeout( 1000 );
 		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /You forgot to fill your merchant ID/ );
 		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /You forgot to fill your merchant key/ );
 		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /Payfast requires a passphrase to work/ );
