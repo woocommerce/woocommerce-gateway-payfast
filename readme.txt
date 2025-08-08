@@ -67,6 +67,12 @@ No, but to open a Payfast account, you’ll need a South African bank account to
 
 == Changelog ==
 
+= 1.7.3 - 2025-08-11 =
+* Dev - Bump WooCommerce "tested up to" version 10.1.
+* Dev - Bump WooCommerce minimum supported version to 9.9.
+* Dev - Bump WordPress minimum supported version to 6.7.
+* Dev - Update NPM packages to fix security issues.
+
 = 1.7.2 - 2025-07-14 =
 * Add - WordPress Playground instance.
 * Dev - Bump WooCommerce "tested up to" version 10.0.
