@@ -77,7 +77,6 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 	} );
 
 	test( 'Edit Setting: Verify required notice for the credentials', async () => {
-		await gotoPayfastSettingPage( {page: adminPage} );
 		await editPayfastSetting( {
 			page: adminPage,
 			settings: {
@@ -87,11 +86,12 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 			}
 		} );
 
+		await adminPage.waitForTimeout( 1500 );
 		await gotoPayfastSettingPage( {page: adminPage} );
 		await adminPage.waitForTimeout( 1000 );
-		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /You forgot to fill your merchant ID/ );
-		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /You forgot to fill your merchant key/ );
-		await expect( await adminPage.locator( '.notice.notice-error' ).last() ).toHaveText( /Payfast requires a passphrase to work/ );
+		await expect( await adminPage.locator( '.notice.notice-error', {hasText: /You forgot to fill your merchant ID/} ).last() ).toBeVisible();
+		await expect( await adminPage.locator( '.notice.notice-error', {hasText: /You forgot to fill your merchant key/} ).last() ).toBeVisible();
+		await expect( await adminPage.locator( '.notice.notice-error', {hasText: /Payfast requires a passphrase to work/} ).last() ).toBeVisible();
 	} );
 
 

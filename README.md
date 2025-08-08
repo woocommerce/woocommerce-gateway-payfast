@@ -9,7 +9,7 @@ Give customers more flexibility and increase your bottom line with Payfast — o
 
 ## Dependencies
 
-- Requires at least: 6.6
+- Requires at least: 6.7
 - Tested up to: 6.8
 - Requires PHP: 7.4
 
