@@ -55,6 +55,8 @@ jobs:
           cd ./tests/e2e/test-plugins
           unzip -o woocommerce-subscriptions.zip
           cd ../../..
+        env:
+          GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
 
       - name: Setup WP environment
         run: npm run env:start
