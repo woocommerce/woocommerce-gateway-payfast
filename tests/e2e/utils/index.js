@@ -114,6 +114,7 @@ export async function editPayfastSetting( {page, settings} ) {
 			'**/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payfast' );
 		await submitButtonLocator.click();
 		await waitForURLPromise;
+		await expect(page.getByText('Your settings have been saved.')).toBeVisible();
 	}
 }
 
