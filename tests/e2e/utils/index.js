@@ -75,16 +75,19 @@ export async function editPayfastSetting( {page, settings} ) {
 
 			case 'merchant_id':
 				const merchantIdSettingLocator = await page.getByLabel( 'Merchant ID', {exact: true} );
+				await merchantIdSettingLocator.clear();
 				await merchantIdSettingLocator.fill( settings.merchant_id );
 				break;
 
 			case 'merchant_key':
 				const merchantKeySettingLocator = await page.getByLabel( 'Merchant Key', {exact: true} );
+				await merchantKeySettingLocator.clear();
 				await merchantKeySettingLocator.fill( settings.merchant_key );
 				break;
 
 			case 'passphrase':
 				const passphraseSettingLocator = await page.getByLabel( 'Passphrase', {exact: true} );
+				await passphraseSettingLocator.clear();
 				await passphraseSettingLocator.fill( settings.passphrase );
 				break;
 
