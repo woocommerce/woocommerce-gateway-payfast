@@ -17,6 +17,7 @@ on:
           - phpcompat
           - security
           - malware
+          - validation
   pull_request:
     types: [opened, synchronize, reopened, labeled]
     branches:
@@ -28,11 +29,11 @@ permissions:
 
 jobs:
   build:
-    if: "${{ ( inputs.test != '' && inputs.test != 'none' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit activation test') || contains(github.event.pull_request.labels.*.name, 'needs: qit api test') || contains(github.event.pull_request.labels.*.name, 'needs: qit e2e test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpcompat test') || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') || contains(github.event.pull_request.labels.*.name, 'needs: qit malware test') }}"
+    if: "${{ ( inputs.test != '' && inputs.test != 'none' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit activation test') || contains(github.event.pull_request.labels.*.name, 'needs: qit api test') || contains(github.event.pull_request.labels.*.name, 'needs: qit e2e test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpcompat test') || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') || contains(github.event.pull_request.labels.*.name, 'needs: qit malware test') || contains(github.event.pull_request.labels.*.name, 'needs: qit validation test') }}"
     uses: woocommerce/woocommerce-gateway-payfast/.github/workflows/generate-zip.yml@trunk
 
   test:
-    if: "${{ ( inputs.test != '' && inputs.test != 'none' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit activation test') || contains(github.event.pull_request.labels.*.name, 'needs: qit api test') || contains(github.event.pull_request.labels.*.name, 'needs: qit e2e test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpcompat test') || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') || contains(github.event.pull_request.labels.*.name, 'needs: qit malware test') }}"
+    if: "${{ ( inputs.test != '' && inputs.test != 'none' ) || contains(github.event.pull_request.labels.*.name, 'needs: qit default tests') || contains(github.event.pull_request.labels.*.name, 'needs: qit activation test') || contains(github.event.pull_request.labels.*.name, 'needs: qit api test') || contains(github.event.pull_request.labels.*.name, 'needs: qit e2e test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpstan test') || contains(github.event.pull_request.labels.*.name, 'needs: qit phpcompat test') || contains(github.event.pull_request.labels.*.name, 'needs: qit security test') || contains(github.event.pull_request.labels.*.name, 'needs: qit malware test') || contains(github.event.pull_request.labels.*.name, 'needs: qit validation test') }}"
     needs: build
     name: run
     runs-on: ubuntu-latest
@@ -149,3 +150,15 @@ jobs:
           header: QIT PHPCompat result
           recreate: true
           path: phpcompat-result.txt
+
+      - name: Run validation test
+        if: "${{ inputs.tests == 'validation' || contains(github.event.pull_request.labels.*.name, 'needs: qit validation test') && ( success() || failure() ) }}"
+        id: run-validation-test
+        run: ./vendor/bin/qit run:validation ${{ github.event.repository.name }} --zip=${{ github.event.repository.name }}.zip --wait > validation-result.txt
+
+      - uses: marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728 # v2.9.1
+        if: ${{ failure() && steps.run-validation-test.conclusion == 'failure' }}
+        with:
+          header: QIT validation result
+          recreate: true
+          path: validation-result.txt
