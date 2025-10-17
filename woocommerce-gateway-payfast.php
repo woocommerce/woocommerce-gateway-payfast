@@ -12,7 +12,7 @@
  * WC requires at least: 10.1
  * WC tested up to: 10.3
  * Requires PHP: 7.4
- * PHP tested up to: 8.3
+ * PHP tested up to: 8.4
  *
  * @package WooCommerce Gateway Payfast
  */
