@@ -1,10 +1,10 @@
 === WooCommerce Payfast Gateway ===
 Contributors: woocommerce, automattic
 Tags: credit card, payfast, payment request, woocommerce, automattic
-Requires at least: 6.6
+Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -66,6 +66,12 @@ Yes; a [Payfast merchant account](https://payfast.io/gateway-aggregator-selector
 No, but to open a Payfast account, you’ll need a South African bank account to pay your funds into.
 
 == Changelog ==
+
+= 1.7.3 - 2025-08-11 =
+* Dev - Bump WooCommerce "tested up to" version 10.1.
+* Dev - Bump WooCommerce minimum supported version to 9.9.
+* Dev - Bump WordPress minimum supported version to 6.7.
+* Dev - Update NPM packages to fix security issues.
 
 = 1.7.2 - 2025-07-14 =
 * Add - WordPress Playground instance.
