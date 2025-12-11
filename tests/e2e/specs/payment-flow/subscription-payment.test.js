@@ -43,7 +43,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		let waitForURL;
 
 		await checkoutBlock.goto( '/product/simple-subscription-product/' );
-		await checkoutBlock.click( 'text=Sign up now' );
+		await checkoutBlock.locator( '.single_add_to_cart_button' ).click();
 		await checkoutBlock.goto( '/checkout/', { waitUntil: 'networkidle' });
 		await fillBillingDetails(checkoutBlock, customer.billing, true);
 
@@ -84,7 +84,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		let waitForURL;
 
 		await checkoutPage.goto( '/product/simple-subscription-product/' );
-		await checkoutPage.click( 'text=Sign up now' );
+		await checkoutPage.locator( '.single_add_to_cart_button' ).click();
 		await checkoutPage.goto( '/shortcode-checkout/' );
 		await fillBillingDetails(checkoutPage, customer.billing);
 
@@ -92,7 +92,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		waitForURL = checkoutPage.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
 		const payfastPaymentMethod = await checkoutPage.locator( '.wc_payment_method.payment_method_payfast' );
 		await payfastPaymentMethod.click();
-		await checkoutPage.getByRole( 'button', {name: 'Sign up now'} ).click();
+		await checkoutPage.locator('#place_order').click();
 		await waitForURL;
 
 		// Pay on Payfast checkout page.

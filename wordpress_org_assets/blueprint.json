@@ -1,0 +1,56 @@
+{
+	"landingPage": "/wp-admin/admin.php?page=wc-settings&tab=checkout&section=payfast",
+	"login": true,
+	"plugins": [
+		"woocommerce",
+		"woocommerce-payfast-gateway"
+	],
+	"features": {
+		"networking": true
+	},
+	"phpExtensionBundles": [
+		"kitchen-sink"
+	],
+	"steps": [
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/skip-woo-activation.php",
+			"data": "<?php add_filter( 'woocommerce_enable_setup_wizard', '__return_false' );"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/woocommerce-payfast-playground.php",
+			"data": "<?php\r\n\r\nnamespace WC_Gateway_Payfast\\WP_Playground;\r\n\r\nadd_action( 'init', __NAMESPACE__ . '\\\\woocommerce_payfast_init' );\r\n\r\nfunction woocommerce_payfast_init() {\r\n\t$payfast = get_payfast_gateway_instance();\r\n\r\n\tif ( ! $payfast ) {\r\n\t\treturn;\r\n\t}\r\n\r\n\tremove_action( 'woocommerce_receipt_payfast', array( $payfast, 'receipt_page' ) );\r\n\tadd_action( 'woocommerce_receipt_payfast', __NAMESPACE__ . '\\\\receipt_page' );\r\n}\r\n\r\nfunction get_payfast_gateway_instance() {\r\n\t$gatways = WC()->payment_gateways->get_available_payment_gateways();\r\n\r\n\tif ( isset( $gatways['payfast'] ) ) {\r\n\t\treturn $gatways['payfast'];\r\n\t}\r\n\r\n\treturn false;\r\n}\r\n\r\nfunction receipt_page() {\r\n\t?>\r\n\t<div>\r\n\t\t<h2><?php esc_html_e( 'Payfast payment redirection', 'woocommerce-gateway-payfast' ); ?><\/h2>\r\n\r\n\t\t<p><?php esc_html_e( 'WordPress Playground does not support Payfast payment redirection for security reasons.', 'woocommerce-gateway-payfast' ); ?><\/p>\r\n\t\t<p><?php esc_html_e( 'At this point in the checkout process, you would be redirected to the Payfast payment page to complete your transaction.', 'woocommerce-gateway-payfast' ); ?><\/p>\r\n\t\t<p><?php esc_html_e( 'Please use a local WordPress installation or a live server to test the Payfast payment gateway checkout process.', 'woocommerce-gateway-payfast' ); ?><\/p>\r\n\t<\/div>\r\n\t<?php\r\n}\r\n"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp wc tool run install_pages --user=1"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp option update woocommerce_onboarding_profile '{\"completed\":true,\"skipped\":false}' --format=json"
+		},
+		{
+			"step": "importWxr",
+			"file": {
+			"resource": "url",
+			"url": "https://raw.githubusercontent.com/woocommerce/woocommerce/d1be68b88c93caca359e93ff927017a2fafec1fc/plugins/woocommerce/sample-data/sample_products.xml"
+			}
+		},
+		{
+			"step": "setSiteOptions",
+			"options": {
+			"woocommerce_newly_installed": "no",
+			"woocommerce_store_address": "90 Plein Street",
+			"woocommerce_store_city": "Cape Town",
+			"woocommerce_default_country": "ZA:WC",
+			"woocommerce_store_postcode": "8000",
+			"woocommerce_allowed_countries": "all",
+			"woocommerce_ship_to_countries": "all",
+			"woocommerce_currency": "ZAR",
+			"woocommerce_coming_soon": "no",
+			"woocommerce_allow_tracking": "no"
+			}
+		}
+	]
+}
