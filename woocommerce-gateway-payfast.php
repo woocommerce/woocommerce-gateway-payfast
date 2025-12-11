@@ -34,7 +34,6 @@ function woocommerce_payfast_init() {
 	}
 
 	require_once plugin_basename( 'includes/class-wc-gateway-payfast.php' );
-	require_once plugin_basename( 'includes/class-wc-gateway-payfast-privacy.php' );
 	load_plugin_textdomain( 'woocommerce-gateway-payfast', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
 	add_filter( 'woocommerce_payment_gateways', 'woocommerce_payfast_add_gateway' );
 }
@@ -124,6 +123,19 @@ function woocommerce_payfast_declare_feature_compatibility() {
 	}
 }
 add_action( 'before_woocommerce_init', 'woocommerce_payfast_declare_feature_compatibility' );
+
+/**
+ * Initialize the privacy class.
+ *
+ * Initializes the privacy class for privacy export tools.
+ *
+ * @since x.x.x
+ * @return void
+ */
+function woocommerce_payfast_privacy_init() {
+		require_once plugin_basename( 'includes/class-wc-gateway-payfast-privacy.php' );
+}
+add_action( 'woocommerce_init', 'woocommerce_payfast_privacy_init' );
 
 /**
  * Display notice if WooCommerce is not installed.
