@@ -56,7 +56,7 @@ jobs:
           unzip -o woocommerce-subscriptions.zip
           cd ../../..
         env:
-          GH_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ORG_DOWNLOADS }}
 
       - name: Setup WP environment
         run: npm run env:start
