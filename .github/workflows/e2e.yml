@@ -51,11 +51,12 @@ jobs:
 
       - name: Install required WP plugins
         run: |
-          URL_CONFIG="url.https://${{ secrets.BOT_GITHUB_TOKEN }}:x-oauth-basic@github.com/.insteadOf git@github.com:"
-          git config --global $URL_CONFIG
-          npm run env:install-plugins
-
-          git config --global --unset $URL_CONFIG
+          gh release download --repo woocommerce/woocommerce-subscriptions --pattern  woocommerce-subscriptions.zip --dir ./tests/e2e/test-plugins
+          cd ./tests/e2e/test-plugins
+          unzip -o woocommerce-subscriptions.zip
+          cd ../../..
+        env:
+          GH_TOKEN: ${{ secrets.ORG_DOWNLOADS }}
 
       - name: Setup WP environment
         run: npm run env:start

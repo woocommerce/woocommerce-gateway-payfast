@@ -131,6 +131,15 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 	} );
 
 	test( 'Checkout Block: Verify method title & description', async () => {
+		await editPayfastSetting( {
+			page: adminPage,
+			settings: {
+				merchant_id: payfastSandboxCredentials.merchantId,
+				merchant_key: payfastSandboxCredentials.merchantKey,
+				passphrase: payfastSandboxCredentials.passPharse,
+			}
+		} );
+		
 		await addProductToCart( {page: checkoutBlockPage, productUrl: '/product/simple-product/'} );
 		await checkoutBlockPage.goto( '/checkout/' , { waitUntil: 'networkidle' });
 
@@ -145,6 +154,15 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 	} );
 
 	test( 'Checkout Page: Verify method title & description', async () => {
+		await editPayfastSetting( {
+			page: adminPage,
+			settings: {
+				merchant_id: payfastSandboxCredentials.merchantId,
+				merchant_key: payfastSandboxCredentials.merchantKey,
+				passphrase: payfastSandboxCredentials.passPharse,
+			}
+		} );
+
 		await addProductToCart( {page: checkoutPage, productUrl: '/product/simple-product/'} );
 		await checkoutPage.goto( '/shortcode-checkout/' );
 
