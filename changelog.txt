@@ -1,5 +1,12 @@
 *** PayFast Changelog ***
 
+= 1.7.4 - 2025-11-03 =
+* Dev - Bump WooCommerce "tested up to" version 10.3.
+* Dev - Bump WooCommerce minimum supported version to 10.1.
+* Dev - Run PHP Compatibility sniffs against production build in GitHub action.
+* Dev - Updates to our QIT GitHub Action workflow.
+* Dev - Add new deploy workflow.
+
 = 1.7.3 - 2025-08-11 =
 * Dev - Bump WooCommerce "tested up to" version 10.1.
 * Dev - Bump WooCommerce minimum supported version to 9.9.
