@@ -1,5 +1,11 @@
 *** PayFast Changelog ***
 
+= 1.7.5 - 2026-02-24 =
+* Fix - Prevent notice being thrown due to the early loading of translations.
+* Dev - Bump WordPress "tested up to" version 6.9.
+* Dev - Bump WooCommerce "tested up to" version 10.5.
+* Dev - Bump WooCommerce minimum supported version to 10.3.
+
 = 1.7.4 - 2025-11-03 =
 * Dev - Bump WooCommerce "tested up to" version 10.3.
 * Dev - Bump WooCommerce minimum supported version to 10.1.
