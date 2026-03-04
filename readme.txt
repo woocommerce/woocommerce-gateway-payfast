@@ -1,7 +1,7 @@
 === WooCommerce Payfast Gateway ===
 Contributors: woocommerce, automattic
 Tags: credit card, payfast, payment request, woocommerce, automattic
-Requires at least: 6.7
+Requires at least: 6.8
 Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 1.7.5
@@ -70,8 +70,9 @@ No, but to open a Payfast account, you’ll need a South African bank account to
 = 1.7.5 - 2026-02-24 =
 * Fix - Prevent notice being thrown due to the early loading of translations.
 * Dev - Bump WordPress "tested up to" version 6.9.
-* Dev - Bump WooCommerce "tested up to" version 10.5.
-* Dev - Bump WooCommerce minimum supported version to 10.3.
+* Dev - Bump WordPress minimum supported version to 6.8.
+* Dev - Bump WooCommerce "tested up to" version 10.6.
+* Dev - Bump WooCommerce minimum supported version to 10.4.
 
 = 1.7.4 - 2025-11-03 =
 * Dev - Bump WooCommerce "tested up to" version 10.3.
