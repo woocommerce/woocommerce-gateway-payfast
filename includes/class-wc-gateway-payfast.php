@@ -5,6 +5,10 @@
  * @package WooCommerce Gateway Payfast
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Payfast Payment Gateway
  *
