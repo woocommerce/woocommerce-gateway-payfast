@@ -41,6 +41,8 @@ jobs:
 
         ignore-warnings: true
 
+        # Ignoring this here as removal of load_plugin_textdomain requires quite some changes,
+        # involving textdomain updates and translation files. This requires a separate effort and is not part of this PR.
         ignore-codes: |
           plugin_header_no_license
           PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
