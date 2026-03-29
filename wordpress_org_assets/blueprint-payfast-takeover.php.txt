@@ -1,0 +1,66 @@
+<?php
+/**
+ * MU Plugin for the WordPress Playground.
+ *
+ * When importing this in to the blueprint.json file, run the code through
+ * https://www.freeformatter.com/json-escape.html to escape it correctly.
+ */
+
+
+namespace WC_Gateway_Payfast\WP_Playground;
+
+add_action( 'init', __NAMESPACE__ . '\\woocommerce_payfast_init' );
+
+/**
+ * Initialize Payfast gateway for WordPress Playground.
+ *
+ * Replaces the default Payfast receipt page with a custom message
+ * explaining the limitations of WordPress Playground regarding payment
+ * redirection.
+ */
+function woocommerce_payfast_init() {
+	$payfast = get_payfast_gateway_instance();
+
+	if ( ! $payfast ) {
+		return;
+	}
+
+	remove_action( 'woocommerce_receipt_payfast', array( $payfast, 'receipt_page' ) );
+	add_action( 'woocommerce_receipt_payfast', __NAMESPACE__ . '\\receipt_page' );
+}
+
+/**
+ * Get the Payfast gateway instance.
+ *
+ * @return WC_Payment_Gateway|false The Payfast gateway instance or false if not found.
+ */
+function get_payfast_gateway_instance() {
+	$gatways = WC()->payment_gateways->get_available_payment_gateways();
+
+	if ( isset( $gatways['payfast'] ) ) {
+		return $gatways['payfast'];
+	}
+
+	return false;
+}
+
+/**
+ * Custom receipt page for Payfast in WordPress Playground.
+ *
+ * Replaces the default redirect with an explanation for users explaining
+ * that the WordPress Playground does not support payment redirection
+ * for security reasons.
+ *
+ * @param \WC_Order $order The order object.
+ */
+function receipt_page( $order ) {
+	?>
+	<div>
+		<h2><?php esc_html_e( 'Payfast payment redirection', 'woocommerce-gateway-payfast' ); ?></h2>
+
+		<p><?php esc_html_e( 'WordPress Playground does not support Payfast payment redirection for security reasons.', 'woocommerce-gateway-payfast' ); ?></p>
+		<p><?php esc_html_e( 'At this point in the checkout process, you would be redirected to the Payfast payment page to complete your transaction.', 'woocommerce-gateway-payfast' ); ?></p>
+		<p><?php esc_html_e( 'Please use a local WordPress installation or a live server to test the Payfast payment gateway checkout process.', 'woocommerce-gateway-payfast' ); ?></p>
+	</div>
+	<?php
+}

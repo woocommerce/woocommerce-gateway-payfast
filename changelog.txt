@@ -1,5 +1,37 @@
 *** PayFast Changelog ***
 
+= 1.7.5 - 2026-02-24 =
+* Fix - Prevent notice being thrown due to the early loading of translations.
+* Dev - Bump WordPress "tested up to" version 6.9.
+* Dev - Bump WooCommerce "tested up to" version 10.5.
+* Dev - Bump WooCommerce minimum supported version to 10.3.
+
+= 1.7.4 - 2025-11-03 =
+* Dev - Bump WooCommerce "tested up to" version 10.3.
+* Dev - Bump WooCommerce minimum supported version to 10.1.
+* Dev - Run PHP Compatibility sniffs against production build in GitHub action.
+* Dev - Updates to our QIT GitHub Action workflow.
+* Dev - Add new deploy workflow.
+
+= 1.7.3 - 2025-08-11 =
+* Dev - Bump WooCommerce "tested up to" version 10.1.
+* Dev - Bump WooCommerce minimum supported version to 9.9.
+* Dev - Bump WordPress minimum supported version to 6.7.
+* Dev - Update NPM packages to fix security issues.
+
+= 1.7.2 - 2025-07-14 =
+* Add - WordPress Playground instance.
+* Dev - Bump WooCommerce "tested up to" version 10.0.
+* Dev - Bump WooCommerce minimum supported version to 9.8.
+
+= 1.7.1 - 2025-05-05 =
+* Fix - PHP warning for undefined variable when running alongside WooPayments.
+* Dev - Bump WooCommerce "tested up to" version 9.8.
+* Dev - Bump WooCommerce minimum supported version to 9.6.
+* Dev - Bump WordPress "tested up to" version 6.8.
+* Dev - Bump WordPress minimum supported version to 6.6.
+* Dev - Update all third-party actions our workflows rely on to use versions based on specific commit hashes.
+
 = 1.7.0 - 2025-03-17 =
 * Update - Refresh copy and brand assets.
 * Dev - Bump WooCommerce "tested up to" version 9.7.
