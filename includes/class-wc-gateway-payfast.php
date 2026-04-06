@@ -402,7 +402,23 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return void
 	 */
 	public function generate_payfast_form( $order_id ) {
-		$order     = wc_get_order( $order_id );
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order instanceof WC_Order ) {
+			wc_print_notice( esc_html__( 'Invalid order.', 'woocommerce-gateway-payfast' ), 'error' );
+			return;
+		}
+
+		// Defense-in-depth: require valid order key and Woo pay-for-order capability.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Pay-for-order URL; WooCommerce validates context.
+		$order_key_param = isset( $_GET['key'] ) ? wc_clean( wp_unslash( $_GET['key'] ) ) : '';
+		$key_valid       = $order_key_param && hash_equals( $order->get_order_key(), $order_key_param );
+
+		if ( ! $key_valid || ! current_user_can( 'pay_for_order', $order->get_id() ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+			wc_print_notice( esc_html__( 'Sorry, you are not allowed to pay for this order.', 'woocommerce-gateway-payfast' ), 'error' );
+			return;
+		}
+
 		$site_name = html_entity_decode( get_bloginfo( 'name' ), ENT_QUOTES, get_bloginfo( 'charset' ) );
 		// Construct variables for post.
 		$this->data_to_send = array(
@@ -591,16 +607,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Reciept page.
+	 * Receipt page.
 	 *
 	 * Display text and a button to direct the user to Payfast.
 	 *
-	 * @param WC_Order $order Order object.
+	 * @param int $order_id Order ID (WooCommerce passes order ID from order-receipt template).
 	 * @since 1.0.0
 	 */
-	public function receipt_page( $order ) {
+	public function receipt_page( $order_id ) {
 		echo '<p>' . esc_html__( 'Thank you for your order, please click the button below to pay with Payfast.', 'woocommerce-gateway-payfast' ) . '</p>';
-		$this->generate_payfast_form( $order );
+		$this->generate_payfast_form( $order_id );
 	}
 
 	/**
