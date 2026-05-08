@@ -226,11 +226,9 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 			return array( false, false, array() );
 		}
 
-		$subscription = current( wcs_get_subscriptions_for_order( $order->get_id() ) );
+		$subscriptions = wcs_get_subscriptions_for_order( $order->get_id() );
 
-		$payfast_source_id = $subscription->get_meta( '_payfast_subscription_token', true );
-
-		if ( empty( $payfast_source_id ) ) {
+		if ( empty( $subscriptions ) ) {
 			return array( false, false, array() );
 		}
 
@@ -243,18 +241,35 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 		 *
 		 * @param string[] $statuses Array of subscription statuses considered active.
 		 */
-		if ( $subscription->has_status( apply_filters( 'wc_payfast_privacy_eraser_subs_statuses', array( 'on-hold', 'active' ) ) ) ) {
-			return array(
-				false,
-				true,
-				array(
-					sprintf(
-						/* translators: %d: Order ID */
-						esc_html__( 'Order ID %d contains an active Subscription', 'woocommerce-gateway-payfast' ),
-						$order->get_id()
+		$retained_statuses = apply_filters( 'wc_payfast_privacy_eraser_subs_statuses', array( 'on-hold', 'active' ) );
+		$has_payfast_token = false;
+
+		foreach ( $subscriptions as $subscription ) {
+			$payfast_source_id = $subscription->get_meta( '_payfast_subscription_token', true );
+
+			if ( empty( $payfast_source_id ) ) {
+				continue;
+			}
+
+			$has_payfast_token = true;
+
+			if ( $subscription->has_status( $retained_statuses ) ) {
+				return array(
+					false,
+					true,
+					array(
+						sprintf(
+							/* translators: %d: Order ID */
+							esc_html__( 'Order ID %d contains an active Subscription', 'woocommerce-gateway-payfast' ),
+							$order->get_id()
+						),
 					),
-				),
-			);
+				);
+			}
+		}
+
+		if ( ! $has_payfast_token ) {
+			return array( false, false, array() );
 		}
 
 		$renewal_orders = WC_Subscriptions_Renewal_Order::get_renewal_orders( $order->get_id(), 'WC_Order' );
@@ -264,8 +279,10 @@ class WC_Gateway_PayFast_Privacy extends WC_Abstract_Privacy {
 			$renewal_order->save_meta_data();
 		}
 
-		$subscription->delete_meta_data( '_payfast_subscription_token' );
-		$subscription->save_meta_data();
+		foreach ( $subscriptions as $subscription ) {
+			$subscription->delete_meta_data( '_payfast_subscription_token' );
+			$subscription->save_meta_data();
+		}
 
 		return array( true, false, array( esc_html__( 'Payfast Subscriptions Data Erased.', 'woocommerce-gateway-payfast' ) ) );
 	}

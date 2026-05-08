@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import {changeCurrency, editPayfastSetting, fillBillingDetails, goToOrderEditPage} from '../../utils';
+import {changeCurrency, editPayfastSetting, fillBillingDetails, getOrderSubscriptions, goToOrderEditPage} from '../../utils';
 import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
@@ -11,6 +11,7 @@ const {test, expect} = require( '@playwright/test' );
 
 test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundational', async () => {
 	let adminPage, checkoutPage, checkoutBlock;
+	let subscriptionIdsForRenewal = [];
 
 	test.beforeAll( async ( {browser} ) => {
 		const adminContext = await browser
@@ -76,11 +77,12 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
 		await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
 
-		// Verify both subscriptions are created and active.
-		const relatedOrders = await adminPage.locator( '.woocommerce_subscriptions_related_orders' );
-		await expect( relatedOrders ).toContainText( 'Subscription' );
-		const activeSubscriptions = await relatedOrders.getByText( 'Active' );
-		await expect( activeSubscriptions ).toHaveCount( 2 );
+		await assertOrderHasActivePayfastSubscriptions( {
+			page: adminPage,
+			orderId,
+			expectedSubscriptionCount: 1,
+			expectedProductCount: 2,
+		} );
 	} );
 
 	test( 'Checkout Page: Verify multiple subscriptions payment', async () => {
@@ -115,8 +117,8 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 
 		// Validate order status.
 		// Order should be in processing state.
-		// Both subscriptions should be active.
-		// Receipt page should have information about subscriptions.
+		// The grouped subscription should be active.
+		// Receipt page should have information about the subscription.
 		const relatedSubscriptionsOnReceiptPage = await checkoutPage.getByRole( 'heading',
 			{name: 'Related subscriptions', exact: true} );
 		await expect( relatedSubscriptionsOnReceiptPage ).toBeVisible();
@@ -129,10 +131,83 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
 		await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
 
-		// Verify both subscriptions are created and active.
-		const relatedOrders = await adminPage.locator( '.woocommerce_subscriptions_related_orders' );
-		await expect( relatedOrders ).toContainText( 'Subscription' );
-		const activeSubscriptions = await relatedOrders.getByText( 'Active' );
-		await expect( activeSubscriptions ).toHaveCount( 2 );
+		const subscriptions = await assertOrderHasActivePayfastSubscriptions( {
+			page: adminPage,
+			orderId,
+			expectedSubscriptionCount: 1,
+			expectedProductCount: 2,
+		} );
+		subscriptionIdsForRenewal = subscriptions.map( subscription => subscription.id );
+	} );
+
+	test( 'Checkout Page: Verify multiple subscriptions renewal payment', async () => {
+		test.slow();
+
+		expect( subscriptionIdsForRenewal ).toHaveLength( 1 );
+
+		for ( const subscriptionId of subscriptionIdsForRenewal ) {
+			const orderId = await renewSubscriptionByCustomer( {page: checkoutPage, subscriptionId} );
+
+			await goToOrderEditPage( {page: adminPage, orderId} );
+
+			const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
+			await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
+
+			const subscriptions = await getOrderSubscriptions( {page: adminPage, orderId} );
+			expect( subscriptions ).toHaveLength( 1 );
+			expect( subscriptions[0].id ).toBe( subscriptionId );
+			expect( subscriptions[0].status ).toBe( 'active' );
+			expect( subscriptions[0].token ).toBeTruthy();
+			expect( subscriptions[0].items ).toHaveLength( 2 );
+		}
 	} );
 } );
+
+async function assertOrderHasActivePayfastSubscriptions( {
+	page,
+	orderId,
+	expectedSubscriptionCount,
+	expectedProductCount,
+} ) {
+	const relatedOrders = await page.locator( '.woocommerce_subscriptions_related_orders' );
+	await expect( relatedOrders ).toContainText( 'Subscription' );
+	const activeSubscriptions = await relatedOrders.getByText( 'Active' );
+	await expect( activeSubscriptions ).toHaveCount( expectedSubscriptionCount );
+
+	const subscriptions = await getOrderSubscriptions( {page, orderId} );
+	expect( subscriptions ).toHaveLength( expectedSubscriptionCount );
+
+	for ( const subscription of subscriptions ) {
+		expect( subscription.status ).toBe( 'active' );
+		expect( subscription.token ).toBeTruthy();
+		expect( subscription.items ).toHaveLength( expectedProductCount );
+	}
+
+	return subscriptions;
+}
+
+async function renewSubscriptionByCustomer( {page, subscriptionId} ) {
+	let waitForURL;
+
+	await page.goto( `/my-account/view-subscription/${subscriptionId}/` );
+	await page.getByRole( 'link', {name: 'Renew now'} ).click();
+
+	await page.goto( '/shortcode-checkout/' );
+
+	waitForURL = page.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
+	const payfastPaymentMethod = await page.locator( '.wc_payment_method.payment_method_payfast' );
+	await payfastPaymentMethod.click();
+	await page.getByRole( 'button', {name: 'Renew Subscription'} ).click();
+	await waitForURL;
+
+	waitForURL = page.waitForURL( /\/order-received\// );
+	const payfastCompletePaymentButton = await page.locator( 'button#pay-with-wallet' );
+	await payfastCompletePaymentButton.click();
+	await waitForURL;
+
+	const relatedSubscriptionsOnReceiptPage = await page.getByRole( 'heading',
+		{name: 'Related subscriptions', exact: true} );
+	await expect( relatedSubscriptionsOnReceiptPage ).toBeVisible();
+
+	return page.url().split( 'order-received/' )[1].split( '/' )[0];
+}

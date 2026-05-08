@@ -172,6 +172,28 @@ export async function clearWooCommerceLogs( {page} ) {
 }
 
 /**
+ * Get subscriptions related to an order.
+ *
+ * @param {Page} page
+ * @param {string} orderId
+ * @return {Promise<Array>} Related subscriptions.
+ */
+export async function getOrderSubscriptions( {page, orderId} ) {
+	const pageUrl = process.env.baseURL;
+
+	return page.evaluate(
+		async ( {pageUrl, orderId} ) => {
+			const response = await fetch(
+				`${pageUrl}/wp-json/e2e-wc/v1/orders/${orderId}/subscriptions`
+			);
+
+			return response.json();
+		},
+		{pageUrl, orderId}
+	);
+}
+
+/**
  * Process one-time order with block checkout page.
  *
  * @param {Page} page
