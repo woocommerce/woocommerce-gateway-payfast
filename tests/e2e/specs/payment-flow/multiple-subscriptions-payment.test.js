@@ -85,15 +85,15 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 		} );
 	} );
 
-	test( 'Checkout Page: Verify multiple subscriptions payment', async () => {
+	test( 'Checkout Page: Verify multiple subscription records payment', async () => {
 		test.slow();
 
 		let waitForURL;
 
-		// Add two subscription products to cart.
+		// Add subscription products with different schedules so WooCommerce creates separate subscriptions.
 		await checkoutPage.goto( '/product/simple-subscription-product/' );
 		await checkoutPage.locator( '.single_add_to_cart_button' ).click();
-		await checkoutPage.goto( '/product/second-subscription-product/' );
+		await checkoutPage.goto( '/product/yearly-subscription-product/' );
 		await checkoutPage.locator( '.single_add_to_cart_button' ).click();
 		await checkoutPage.goto( '/shortcode-checkout/' );
 		await fillBillingDetails( checkoutPage, customer.billing );
@@ -117,7 +117,7 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 
 		// Validate order status.
 		// Order should be in processing state.
-		// The grouped subscription should be active.
+		// The split subscriptions should be active.
 		// Receipt page should have information about the subscription.
 		const relatedSubscriptionsOnReceiptPage = await checkoutPage.getByRole( 'heading',
 			{name: 'Related subscriptions', exact: true} );
@@ -134,16 +134,17 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 		const subscriptions = await assertOrderHasActivePayfastSubscriptions( {
 			page: adminPage,
 			orderId,
-			expectedSubscriptionCount: 1,
-			expectedProductCount: 2,
+			expectedSubscriptionCount: 2,
+			expectedProductCount: 1,
+			expectedSharedToken: true,
 		} );
 		subscriptionIdsForRenewal = subscriptions.map( subscription => subscription.id );
 	} );
 
-	test( 'Checkout Page: Verify multiple subscriptions renewal payment', async () => {
+	test( 'Checkout Page: Verify multiple subscription records renewal payment', async () => {
 		test.slow();
 
-		expect( subscriptionIdsForRenewal ).toHaveLength( 1 );
+		expect( subscriptionIdsForRenewal ).toHaveLength( 2 );
 
 		for ( const subscriptionId of subscriptionIdsForRenewal ) {
 			const orderId = await renewSubscriptionByCustomer( {page: checkoutPage, subscriptionId} );
@@ -158,7 +159,7 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 			expect( subscriptions[0].id ).toBe( subscriptionId );
 			expect( subscriptions[0].status ).toBe( 'active' );
 			expect( subscriptions[0].token ).toBeTruthy();
-			expect( subscriptions[0].items ).toHaveLength( 2 );
+			expect( subscriptions[0].items ).toHaveLength( 1 );
 		}
 	} );
 } );
@@ -168,6 +169,7 @@ async function assertOrderHasActivePayfastSubscriptions( {
 	orderId,
 	expectedSubscriptionCount,
 	expectedProductCount,
+	expectedSharedToken = false,
 } ) {
 	const relatedOrders = await page.locator( '.woocommerce_subscriptions_related_orders' );
 	await expect( relatedOrders ).toContainText( 'Subscription' );
@@ -181,6 +183,10 @@ async function assertOrderHasActivePayfastSubscriptions( {
 		expect( subscription.status ).toBe( 'active' );
 		expect( subscription.token ).toBeTruthy();
 		expect( subscription.items ).toHaveLength( expectedProductCount );
+	}
+
+	if ( expectedSharedToken ) {
+		expect( new Set( subscriptions.map( subscription => subscription.token ) ).size ).toBe( 1 );
 	}
 
 	return subscriptions;
