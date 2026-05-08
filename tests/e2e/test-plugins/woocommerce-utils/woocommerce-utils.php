@@ -88,9 +88,9 @@ add_action(
 									array_map(
 										static function ( WC_Order_Item_Product $item ) {
 											return array(
-												'name'      => $item->get_name(),
+												'name'     => $item->get_name(),
 												'productId' => $item->get_product_id(),
-												'quantity'  => $item->get_quantity(),
+												'quantity' => $item->get_quantity(),
 											);
 										},
 										$subscription->get_items()
