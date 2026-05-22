@@ -1,5 +1,12 @@
 *** PayFast Changelog ***
 
+= 1.7.6 - 2026-04-06 =
+* Dev - Bump the `plugin-check-action` GitHub Action version to v1.1.5 to fix the runner path failure.
+* Dev - Bump WooCommerce "tested up to" version 10.6.
+* Dev - Bump WooCommerce minimum supported version to 10.4.
+* Dev - Bump WordPress "Tested up to" to 7.0.
+* Dev - Bump Wordpress minimum supported version to 6.8
+
 = 1.7.5 - 2026-02-24 =
 * Fix - Prevent notice being thrown due to the early loading of translations.
 * Dev - Bump WordPress "tested up to" version 6.9.
