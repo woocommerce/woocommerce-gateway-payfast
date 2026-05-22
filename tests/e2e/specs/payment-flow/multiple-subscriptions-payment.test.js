@@ -11,7 +11,6 @@ const {test, expect} = require( '@playwright/test' );
 
 test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundational', async () => {
 	let adminPage, checkoutPage, checkoutBlock;
-	let subscriptionIdsForRenewal = [];
 
 	test.beforeAll( async ( {browser} ) => {
 		const adminContext = await browser
@@ -131,19 +130,19 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
 		await expect( await orderStatus.evaluate( el => el.value ) ).toBe( 'wc-processing' );
 
-		const subscriptions = await assertOrderHasActivePayfastSubscriptions( {
+		await assertOrderHasActivePayfastSubscriptions( {
 			page: adminPage,
 			orderId,
 			expectedSubscriptionCount: 2,
 			expectedProductCount: 1,
 			expectedSharedToken: true,
 		} );
-		subscriptionIdsForRenewal = subscriptions.map( subscription => subscription.id );
 	} );
 
 	test( 'Checkout Page: Verify multiple subscription records renewal payment', async () => {
 		test.slow();
 
+		const subscriptionIdsForRenewal = await getActiveSubscriptionIdsForRenewal( {page: checkoutPage, count: 2} );
 		expect( subscriptionIdsForRenewal ).toHaveLength( 2 );
 
 		for ( const subscriptionId of subscriptionIdsForRenewal ) {
@@ -190,6 +189,26 @@ async function assertOrderHasActivePayfastSubscriptions( {
 	}
 
 	return subscriptions;
+}
+
+async function getActiveSubscriptionIdsForRenewal( {page, count} ) {
+	await page.goto( '/my-account/subscriptions/' );
+
+	const activeSubscriptions = await page
+		.locator( '.order.woocommerce-orders-table__row--status-active .subscription-id a' );
+	expect( await activeSubscriptions.count() ).toBeGreaterThanOrEqual( count );
+
+	const subscriptionIds = [];
+
+	for ( let index = 0; index < count; index++ ) {
+		const subscriptionUrl = await activeSubscriptions.nth( index ).getAttribute( 'href' );
+		const subscriptionIdMatch = subscriptionUrl.match( /\/view-subscription\/(\d+)/ );
+
+		expect( subscriptionIdMatch ).not.toBeNull();
+		subscriptionIds.push( Number( subscriptionIdMatch[1] ) );
+	}
+
+	return subscriptionIds;
 }
 
 async function renewSubscriptionByCustomer( {page, subscriptionId} ) {
