@@ -144,6 +144,13 @@ add_action(
 					delete_option( 'payfast_e2e_last_api_request' );
 
 					try {
+						/**
+						 * Processes a scheduled subscription payment for e2e admin renewal tests.
+						 *
+						 * @since 1.7.6
+						 *
+						 * @param int $subscription_id Subscription ID.
+						 */
 						do_action( 'woocommerce_scheduled_subscription_payment', $subscription_id );
 					} catch ( Exception $e ) {
 						return new WP_REST_Response(
@@ -180,7 +187,7 @@ add_action(
 					}
 
 					$gateway->handle_itn_request(
-						( new WebhookDataProvider( $renewal_order->get_id() ) )->getData(
+						( new WebhookDataProvider( $renewal_order->get_id() ) )->get_data(
 							array(
 								'item_description' => wp_json_encode(
 									array(
