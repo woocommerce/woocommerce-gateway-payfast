@@ -25,10 +25,8 @@ class WebhookDataProvider {
 	/**
 	 * This function should return the data for the transaction webhook.
 	 */
-	public function getData(): array {
-		ob_start();
-		$this->paymentGateway->generate_payfast_form( $this->order->get_id() );
-		$form = ob_get_clean();
+	public function getData( array $overrides = array(), bool $includeSubscriptionToken = true ): array {
+		$this->generatePaymentData();
 
 		// Make $data_to_send property and _generate_parameter_string function accessible.
 		$reflectionObject = new ReflectionObject( $this->paymentGateway );
@@ -64,11 +62,20 @@ class WebhookDataProvider {
 
 		// Add the token and billing date for subscriptions.
 		if (
-			$this->paymentGateway->is_subscription( $this->order )
-			|| $this->paymentGateway->order_contains_subscription( $this->order )
+			$includeSubscriptionToken &&
+			(
+				$this->paymentGateway->is_subscription( $this->order )
+				|| $this->paymentGateway->order_contains_subscription( $this->order )
+			)
 		) {
-			$result['token']        = wp_generate_password(8, false );
+			$result['token']        = wp_generate_password( 8, false );
 			$result['billing_date'] = date( 'Y-m-d' );
+		}
+
+		$result = array_merge( $result, $overrides );
+
+		if ( ! $includeSubscriptionToken ) {
+			unset( $result['token'], $result['billing_date'] );
 		}
 
 		$method = $reflectionObject->getMethod( '_generate_parameter_string' );
@@ -79,6 +86,41 @@ class WebhookDataProvider {
 		$result['signature'] = $signature;
 
 		return $result;
+	}
+
+	/**
+	 * Generate and cache the data Payfast would receive from the checkout form.
+	 */
+	private function generatePaymentData(): void {
+		$hadOrderKey      = array_key_exists( 'key', $_GET );
+		$previousOrderKey = $hadOrderKey ? $_GET['key'] : null;
+		$orderId          = $this->order->get_id();
+		$grantPayForOrder = static function ( $allcaps, $caps, $args ) use ( $orderId ) {
+			if ( isset( $args[0], $args[2] ) && 'pay_for_order' === $args[0] && absint( $args[2] ) === $orderId ) {
+				foreach ( (array) $caps as $cap ) {
+					$allcaps[ $cap ] = true;
+				}
+			}
+
+			return $allcaps;
+		};
+
+		$_GET['key'] = $this->order->get_order_key();
+		add_filter( 'user_has_cap', $grantPayForOrder, 10, 3 );
+
+		ob_start();
+		try {
+			$this->paymentGateway->generate_payfast_form( $this->order->get_id() );
+		} finally {
+			ob_end_clean();
+			remove_filter( 'user_has_cap', $grantPayForOrder, 10 );
+
+			if ( $hadOrderKey ) {
+				$_GET['key'] = $previousOrderKey;
+			} else {
+				unset( $_GET['key'] );
+			}
+		}
 	}
 
 	/**

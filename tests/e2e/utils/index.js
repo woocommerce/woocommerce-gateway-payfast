@@ -194,6 +194,36 @@ export async function getOrderSubscriptions( {page, orderId} ) {
 }
 
 /**
+ * Process a subscription renewal through the admin scheduled-payment flow.
+ *
+ * @param {Page} page
+ * @param {string} subscriptionId
+ * @return {Promise<Object>} Renewal result.
+ */
+export async function renewSubscriptionByAdmin( {page, subscriptionId} ) {
+	const pageUrl = process.env.baseURL;
+	const result = await page.evaluate(
+		async ( {pageUrl, subscriptionId} ) => {
+			const response = await fetch(
+				`${pageUrl}/wp-json/e2e-wc/v1/subscriptions/${subscriptionId}/admin-renewal`,
+				{method: 'POST'}
+			);
+
+			return {
+				ok: response.ok,
+				status: response.status,
+				body: await response.json(),
+			};
+		},
+		{pageUrl, subscriptionId}
+	);
+
+	expect( result.ok, JSON.stringify( result.body ) ).toBeTruthy();
+
+	return result.body;
+}
+
+/**
  * Process one-time order with block checkout page.
  *
  * @param {Page} page

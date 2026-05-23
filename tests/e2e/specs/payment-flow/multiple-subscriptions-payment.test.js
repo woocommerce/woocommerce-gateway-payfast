@@ -1,7 +1,14 @@
 /**
  * Internal dependencies
  */
-import {changeCurrency, editPayfastSetting, fillBillingDetails, getOrderSubscriptions, goToOrderEditPage} from '../../utils';
+import {
+	changeCurrency,
+	editPayfastSetting,
+	fillBillingDetails,
+	getOrderSubscriptions,
+	goToOrderEditPage,
+	renewSubscriptionByAdmin,
+} from '../../utils';
 import {customer, payfastSandboxCredentials} from "../../config";
 
 /**
@@ -146,7 +153,17 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 		expect( subscriptionIdsForRenewal ).toHaveLength( 2 );
 
 		for ( const subscriptionId of subscriptionIdsForRenewal ) {
-			const orderId = await renewSubscriptionByCustomer( {page: checkoutPage, subscriptionId} );
+			const renewal = await renewSubscriptionByAdmin( {page: adminPage, subscriptionId} );
+			const orderId = renewal.renewalOrderId;
+
+			expect( renewal.subscriptionId ).toBe( subscriptionId );
+			expect( renewal.subscriptionStatus ).toBe( 'active' );
+			expect( renewal.renewalOrderStatus ).toBe( 'processing' );
+			expect( renewal.tokenBefore ).toBeTruthy();
+			expect( renewal.tokenAfter ).toBe( renewal.tokenBefore );
+			expect( renewal.apiCommand ).toBe( 'adhoc' );
+			expect( renewal.apiToken ).toBe( renewal.tokenBefore );
+			expect( JSON.parse( renewal.apiBody.item_description ).renewal_order_id ).toBe( renewal.renewalOrderId );
 
 			await goToOrderEditPage( {page: adminPage, orderId} );
 
@@ -209,30 +226,4 @@ async function getActiveSubscriptionIdsForRenewal( {page, count} ) {
 	}
 
 	return subscriptionIds;
-}
-
-async function renewSubscriptionByCustomer( {page, subscriptionId} ) {
-	let waitForURL;
-
-	await page.goto( `/my-account/view-subscription/${subscriptionId}/` );
-	await page.getByRole( 'link', {name: 'Renew now'} ).click();
-
-	await page.goto( '/shortcode-checkout/' );
-
-	waitForURL = page.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
-	const payfastPaymentMethod = await page.locator( '.wc_payment_method.payment_method_payfast' );
-	await payfastPaymentMethod.click();
-	await page.getByRole( 'button', {name: 'Renew Subscription'} ).click();
-	await waitForURL;
-
-	waitForURL = page.waitForURL( /\/order-received\// );
-	const payfastCompletePaymentButton = await page.locator( 'button#pay-with-wallet' );
-	await payfastCompletePaymentButton.click();
-	await waitForURL;
-
-	const relatedSubscriptionsOnReceiptPage = await page.getByRole( 'heading',
-		{name: 'Related subscriptions', exact: true} );
-	await expect( relatedSubscriptionsOnReceiptPage ).toBeVisible();
-
-	return page.url().split( 'order-received/' )[1].split( '/' )[0];
 }

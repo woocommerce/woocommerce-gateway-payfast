@@ -105,5 +105,113 @@ add_action(
 				},
 			)
 		);
+
+		// Process a subscription renewal through the admin scheduled-payment flow.
+		register_rest_route(
+			'e2e-wc/v1',
+			'/subscriptions/(?P<id>\d+)/admin-renewal',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => '__return_true',
+				'callback'            => function ( WP_REST_Request $request ) {
+					$subscription_id = absint( $request['id'] );
+
+					if ( ! function_exists( 'wcs_get_subscription' ) ) {
+						return new WP_REST_Response(
+							array( 'message' => 'WooCommerce Subscriptions is not available.' ),
+							500
+						);
+					}
+
+					$subscription = wcs_get_subscription( $subscription_id );
+
+					if ( ! $subscription instanceof WC_Subscription ) {
+						return new WP_REST_Response(
+							array( 'message' => 'Subscription was not found.' ),
+							404
+						);
+					}
+
+					$token_before = $subscription->get_meta( '_payfast_subscription_token', true );
+
+					if ( empty( $token_before ) ) {
+						return new WP_REST_Response(
+							array( 'message' => 'Subscription does not have a Payfast token.' ),
+							400
+						);
+					}
+
+					delete_option( 'payfast_e2e_last_api_request' );
+
+					try {
+						do_action( 'woocommerce_scheduled_subscription_payment', $subscription_id );
+					} catch ( Exception $e ) {
+						return new WP_REST_Response(
+							array( 'message' => $e->getMessage() ),
+							500
+						);
+					}
+
+					$subscription  = wcs_get_subscription( $subscription_id );
+					$renewal_order = $subscription->get_last_order( 'all', 'renewal' );
+
+					if ( ! $renewal_order instanceof WC_Order ) {
+						return new WP_REST_Response(
+							array( 'message' => 'Renewal order was not created.' ),
+							500
+						);
+					}
+
+					$payment_gateways = WC()->payment_gateways()->payment_gateways();
+					$gateway          = isset( $payment_gateways['payfast'] ) ? $payment_gateways['payfast'] : null;
+
+					if ( ! $gateway instanceof WC_Gateway_PayFast ) {
+						return new WP_REST_Response(
+							array( 'message' => 'Payfast gateway is not available.' ),
+							500
+						);
+					}
+
+					if ( ! class_exists( 'WebhookDataProvider' ) ) {
+						return new WP_REST_Response(
+							array( 'message' => 'Payfast webhook faker is not available.' ),
+							500
+						);
+					}
+
+					$gateway->handle_itn_request(
+						( new WebhookDataProvider( $renewal_order->get_id() ) )->getData(
+							array(
+								'item_description' => wp_json_encode(
+									array(
+										'renewal_order_id' => $renewal_order->get_id(),
+									)
+								),
+							),
+							false
+						)
+					);
+
+					$renewal_order = wc_get_order( $renewal_order->get_id() );
+					$subscription  = wcs_get_subscription( $subscription_id );
+					$api_request   = get_option( 'payfast_e2e_last_api_request', array() );
+
+					return new WP_REST_Response(
+						array(
+							'subscriptionId'     => $subscription_id,
+							'subscriptionStatus' => $subscription->get_status(),
+							'tokenBefore'        => $token_before,
+							'tokenAfter'         => $subscription->get_meta( '_payfast_subscription_token', true ),
+							'renewalOrderId'     => $renewal_order->get_id(),
+							'renewalOrderStatus' => $renewal_order->get_status(),
+							'apiCommand'         => isset( $api_request['command'] ) ? $api_request['command'] : null,
+							'apiToken'           => isset( $api_request['token'] ) ? $api_request['token'] : null,
+							'apiBody'            => isset( $api_request['body'] ) ? $api_request['body'] : array(),
+						),
+						200
+					);
+				},
+			)
+		);
 	}
 );
