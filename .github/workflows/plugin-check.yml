@@ -17,32 +17,75 @@ jobs:
     - name: Checkout
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-    - name: Run plugin check
-      uses: wordpress/plugin-check-action@6f5a57e173c065a394b78688f75df543e4011902 # v1.1.5
+    - name: Set up Node
+      uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
       with:
-        exclude-checks: |
-          plugin_readme
-          plugin_updater
-          file_type
-          trademarks
-          direct_db_queries
-          performant_wp_query_params
-          enqueued_scripts_in_footer
-          plugin_header_text_domain
+        node-version-file: '.nvmrc'
 
-        exclude-directories: |
-          .github
-          node_modules
-          vendor
-          tests
-          bin
-          build
-          assets
+    - name: Install wp-env
+      run: |
+        WP_ENV_VERSION=$(node -p "require('./package-lock.json').packages['node_modules/@wordpress/env'].version")
+        npm --global --no-fund install "@wordpress/env@$WP_ENV_VERSION"
 
-        ignore-warnings: true
+    - name: Prepare Plugin Check environment
+      run: |
+        PLUGIN_DIR=$(pwd)
+        PLUGIN_SLUG=$(basename "$PLUGIN_DIR")
 
-        # Ignoring this here as removal of load_plugin_textdomain requires quite some changes,
-        # involving textdomain updates and translation files. This requires a separate effort and is not part of this PR.
-        ignore-codes: |
-          plugin_header_no_license
-          PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
+        mv .wp-env.json .wp-env.e2e.json
+        cat > .wp-env.json <<JSON
+        { "core": null, "port": 8880, "testsPort": 8881, "mappings": { "wp-content/plugins/$PLUGIN_SLUG": "$PLUGIN_DIR" } }
+        JSON
+
+        wp-env start --update
+        wp-env run cli wp plugin install woocommerce plugin-check --activate
+        wp-env run cli wp plugin activate "$PLUGIN_SLUG"
+
+    - name: Run plugin check
+      run: |
+        set +e
+        wp-env run cli wp plugin check "$(basename "$(pwd)")" \
+          --format=json \
+          --exclude-checks=plugin_readme,plugin_updater,file_type,trademarks,direct_db_queries,performant_wp_query_params,enqueued_scripts_in_footer,plugin_header_text_domain \
+          --exclude-files=.wp-env.json,.wp-env.e2e.json \
+          --exclude-directories=.git,.github,node_modules,vendor,tests,bin,build,assets \
+          --ignore-warnings \
+          --ignore-codes=plugin_header_no_license,PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound \
+          --require=./wp-content/plugins/plugin-check/cli.php \
+          > "${RUNNER_TEMP}/plugin-check-results.txt"
+        status=$?
+        set -e
+
+        cat "${RUNNER_TEMP}/plugin-check-results.txt"
+        if [ "$status" -ne 0 ]; then
+          exit "$status"
+        fi
+
+        node <<'NODE'
+        const fs = require( 'fs' );
+        const path = `${ process.env.RUNNER_TEMP }/plugin-check-results.txt`;
+        const output = fs.readFileSync( path, 'utf8' );
+        const start = output.indexOf( '[' );
+        const end = output.lastIndexOf( ']' );
+
+        if ( start === -1 || end === -1 ) {
+          console.log( 'Plugin Check returned no findings.' );
+          process.exit( 0 );
+        }
+
+        const results = JSON.parse( output.slice( start, end + 1 ) );
+        const errors = results.filter( ( result ) => result.type === 'ERROR' );
+
+        if ( errors.length > 0 ) {
+          console.error( `Plugin Check found ${ errors.length } error(s).` );
+          process.exit( 1 );
+        }
+        NODE
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      if: ${{ always() }}
+      with:
+        name: plugin-check-results
+        path: ${{ runner.temp }}/plugin-check-results.txt
+        if-no-files-found: ignore
