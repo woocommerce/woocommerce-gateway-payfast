@@ -734,7 +734,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 					// Set new subscription token on subscription.
 					$this->_set_subscription_token( $token, $subscription );
-					$this->log( 'Payfast token updated on Subcription: ' . $order_id );
+					$this->log( 'Payfast token updated on Subscription: ' . $order_id );
 				}
 			}
 			return;
@@ -1504,7 +1504,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		define( 'PF_ERR_PDT_FAIL', esc_html__( 'PDT query failed', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_PDT_TOKEN_MISSING', esc_html__( 'PDT token not present in URL', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_SESSIONID_MISMATCH', esc_html__( 'Session ID mismatch', 'woocommerce-gateway-payfast' ) );
-		define( 'PF_ERR_UNKNOWN', esc_html__( 'Unkown error occurred', 'woocommerce-gateway-payfast' ) );
+		define( 'PF_ERR_UNKNOWN', esc_html__( 'Unknown error occurred', 'woocommerce-gateway-payfast' ) );
 
 		// General messages.
 		define( 'PF_MSG_OK', esc_html__( 'Payment was successful', 'woocommerce-gateway-payfast' ) );
