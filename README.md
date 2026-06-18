@@ -76,3 +76,4 @@ This extension is compatible with:
 
 ## License
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
+
