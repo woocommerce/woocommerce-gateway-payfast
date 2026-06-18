@@ -26,7 +26,7 @@ export async function changeCurrency( {page, currency} ) {
 	if ( selectedCurrency !== currency ) {
 		await currencySelectorLocator.selectOption( currency );
 		const submitButtonLocator = await page.locator( 'text=Save changes' );
-		await submitButtonLocator.click();
+		await submitButtonLocator.click( { force: true } );
 		await waitForURLPromise;
 	}
 }
@@ -57,9 +57,9 @@ export async function editPayfastSetting( {page, settings} ) {
 				const togglePaymentGatewaySettingLocator = await page.getByLabel( 'Enable/Disable' );
 
 				if ( settings.toggle_payment_gateway ) {
-					await togglePaymentGatewaySettingLocator.check();
+					await togglePaymentGatewaySettingLocator.check( { force: true } );
 				} else {
-					await togglePaymentGatewaySettingLocator.uncheck();
+					await togglePaymentGatewaySettingLocator.uncheck( { force: true } );
 				}
 				break;
 
@@ -94,18 +94,18 @@ export async function editPayfastSetting( {page, settings} ) {
 			case 'send_debug_emails':
 				const sendDebugEmailsSettingLocator = await page.getByLabel( 'Send Debug Emails' );
 				if ( settings.send_debug_emails ) {
-					await sendDebugEmailsSettingLocator.check();
+					await sendDebugEmailsSettingLocator.check( { force: true } );
 				} else {
-					await sendDebugEmailsSettingLocator.uncheck();
+					await sendDebugEmailsSettingLocator.uncheck( { force: true } );
 				}
 				break;
 
 			case 'enable_logging':
 				const enableLoggingSettingLocator = await page.getByLabel( 'Enable Logging' );
 				if ( settings.enable_logging ) {
-					await enableLoggingSettingLocator.check();
+					await enableLoggingSettingLocator.check( { force: true } );
 				} else {
-					await enableLoggingSettingLocator.uncheck();
+					await enableLoggingSettingLocator.uncheck( { force: true } );
 				}
 				break;
 		}
@@ -115,7 +115,7 @@ export async function editPayfastSetting( {page, settings} ) {
 	if ( await submitButtonLocator.isEnabled() ) {
 		const waitForURLPromise = page.waitForURL(
 			'**/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_payfast' );
-		await submitButtonLocator.click();
+		await submitButtonLocator.click( { force: true } );
 		await waitForURLPromise;
 		await expect(page.getByText('Your settings have been saved.')).toBeVisible();
 	}
