@@ -32,7 +32,7 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 				toggle_payment_gateway: true,
 				merchant_id: payfastSandboxCredentials.merchantId,
 				merchant_key: payfastSandboxCredentials.merchantKey,
-				passphrase: payfastSandboxCredentials.passPharse,
+				passphrase: payfastSandboxCredentials.passPhrase,
 			}
 		} );
 	} );
@@ -108,10 +108,10 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		// Validate order status.
 		// Order should be in processing state.
 		// Subscription should be active
-		// Receipt page should have informaiton about subscription.
-		const relatedSubscriotionOnReceiptPage = await checkoutPage.getByRole( 'heading',
+		// Receipt page should have information about subscription.
+		const relatedSubscriptionOnReceiptPage = await checkoutPage.getByRole( 'heading',
 			{name: 'Related subscriptions', exact: true} );
-		await expect( relatedSubscriotionOnReceiptPage ).toBeVisible();
+		await expect( relatedSubscriptionOnReceiptPage ).toBeVisible();
 
 		// Open order page
 		const orderId = await checkoutPage.url().split( 'order-received/' )[1].split( '/' )[0];
@@ -158,10 +158,10 @@ test.describe( 'Verify Payfast Subscription Payment Process - @foundational', as
 		// Validate order status.
 		// Order should be in processing state.
 		// Subscription should be active
-		// Receipt page should have informaiton about subscription.
-		const relatedSubscriotionOnReceiptPage = await checkoutPage.getByRole( 'heading',
+		// Receipt page should have information about subscription.
+		const relatedSubscriptionOnReceiptPage = await checkoutPage.getByRole( 'heading',
 			{name: 'Related subscriptions', exact: true} );
-		await expect( relatedSubscriotionOnReceiptPage ).toBeVisible();
+		await expect( relatedSubscriptionOnReceiptPage ).toBeVisible();
 
 		// Open order page
 		const orderId = await checkoutPage.url().split( 'order-received/' )[1].split( '/' )[0];

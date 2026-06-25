@@ -76,6 +76,10 @@ module.exports = (
 
 				// Viewport used for all pages in the context.
 				viewport: {width: 1280, height: 720},
+
+				// Disable CSS animations/transitions so Playwright stability checks
+				// don't time out on @wordpress/components button hover/focus effects.
+				reducedMotion: 'reduce',
 			},
 
 			/* Configure projects for major browsers */

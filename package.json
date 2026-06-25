@@ -9,13 +9,13 @@
 		"url": "git://github.com/woocommerce/woocommerce-gateway-payfast.git"
 	},
 	"engines": {
-		"node": ">=20",
-		"npm": ">=10"
+		"node": ">=24.0.0",
+		"npm": ">=11.0.0"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.56.1",
-		"@woocommerce/dependency-extraction-webpack-plugin": "^3.0.1",
-		"@woocommerce/e2e-utils-playwright": "^0.2.1",
+		"@playwright/test": "^1.60.0",
+		"@woocommerce/dependency-extraction-webpack-plugin": "^3.1.0",
+		"@woocommerce/e2e-utils-playwright": "^0.4.0",
 		"@woocommerce/eslint-plugin": "^2.3.0",
 		"@wordpress/env": "^10.26.0",
 		"@wordpress/scripts": "^31.6.0",
@@ -23,11 +23,10 @@
 		"prettier": "^3.6.2"
 	},
 	"overrides": {
-		"@babel/runtime": "^7.26.10",
-		"@wordpress/scripts": {
-			"http-proxy-middleware@<2.0.8": "^2.0.8",
-			"ws@<7.5.9": "^7.5.9",
-			"webpack-dev-server@<5.2.0": "^5.2.0"
+		"serialize-javascript": "^7.0.5",
+		"minimatch": "^3.1.5",
+		"@typescript-eslint/typescript-estree": {
+			"minimatch": "^9.0.5"
 		}
 	},
 	"scripts": {

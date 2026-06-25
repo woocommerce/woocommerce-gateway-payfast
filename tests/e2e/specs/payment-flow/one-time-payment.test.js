@@ -37,7 +37,7 @@ test.describe( 'Verify Payfast One-Time Payment Process - @foundational', async 
 				toggle_payment_gateway: true,
 				merchant_id: payfastSandboxCredentials.merchantId,
 				merchant_key: payfastSandboxCredentials.merchantKey,
-				passphrase: payfastSandboxCredentials.passPharse,
+				passphrase: payfastSandboxCredentials.passPhrase,
 			}
 		} );
 	} );
