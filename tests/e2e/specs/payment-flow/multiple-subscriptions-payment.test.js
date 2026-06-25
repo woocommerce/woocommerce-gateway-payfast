@@ -39,7 +39,7 @@ test.describe( 'Verify Payfast Multiple Subscriptions Payment Process - @foundat
 				toggle_payment_gateway: true,
 				merchant_id: payfastSandboxCredentials.merchantId,
 				merchant_key: payfastSandboxCredentials.merchantKey,
-				passphrase: payfastSandboxCredentials.passPharse,
+				passphrase: payfastSandboxCredentials.passPhrase,
 			}
 		} );
 	} );
