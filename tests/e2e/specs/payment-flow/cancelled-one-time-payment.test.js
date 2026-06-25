@@ -37,7 +37,7 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 				toggle_payment_gateway: true,
 				merchant_id: payfastSandboxCredentials.merchantId,
 				merchant_key: payfastSandboxCredentials.merchantKey,
-				passphrase: payfastSandboxCredentials.passPharse,
+				passphrase: payfastSandboxCredentials.passPhrase,
 			}
 		} );
 	} );

@@ -116,7 +116,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 			settings: {
 				merchant_id: payfastSandboxCredentials.merchantId,
 				merchant_key: payfastSandboxCredentials.merchantKey,
-				passphrase: payfastSandboxCredentials.passPharse,
+				passphrase: payfastSandboxCredentials.passPhrase,
 			}
 		} );
 
@@ -127,7 +127,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 		await expect( await merchantKeySettingLocator.inputValue() ).toEqual( payfastSandboxCredentials.merchantKey );
 
 		const passphraseSettingLocator = await adminPage.getByLabel( 'Passphrase', {exact: true} );
-		await expect( await passphraseSettingLocator.inputValue() ).toEqual( payfastSandboxCredentials.passPharse );
+		await expect( await passphraseSettingLocator.inputValue() ).toEqual( payfastSandboxCredentials.passPhrase );
 	} );
 
 	test( 'Checkout Block: Verify method title & description', async () => {
@@ -136,7 +136,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 			settings: {
 				merchant_id: payfastSandboxCredentials.merchantId,
 				merchant_key: payfastSandboxCredentials.merchantKey,
-				passphrase: payfastSandboxCredentials.passPharse,
+				passphrase: payfastSandboxCredentials.passPhrase,
 			}
 		} );
 		
@@ -159,7 +159,7 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 			settings: {
 				merchant_id: payfastSandboxCredentials.merchantId,
 				merchant_key: payfastSandboxCredentials.merchantKey,
-				passphrase: payfastSandboxCredentials.passPharse,
+				passphrase: payfastSandboxCredentials.passPhrase,
 			}
 		} );
 

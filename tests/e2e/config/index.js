@@ -47,7 +47,7 @@ const customer = {
 const payfastSandboxCredentials = {
 	merchantId: process.env.PAYFAST_MERCHANT_ID || '',
 	merchantKey: process.env.PAYFAST_MERCHANT_KEY || '',
-	passPharse: process.env.PAYFAST_PASSPHRASE || ''
+	passPhrase: process.env.PAYFAST_PASSPHRASE || ''
 }
 
 export {admin, customer, payfastSandboxCredentials};

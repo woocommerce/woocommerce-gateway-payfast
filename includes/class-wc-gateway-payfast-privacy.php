@@ -5,6 +5,10 @@
  * @package WooCommerce Gateway Payfast
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! class_exists( 'WC_Abstract_Privacy' ) ) {
 	return;
 }
