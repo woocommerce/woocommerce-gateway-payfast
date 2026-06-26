@@ -149,6 +149,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'subscription_date_changes',
 			'subscription_payment_method_change', // Subs 1.x support.
 			'subscription_payment_method_change_customer', // Enabled for https://github.com/woocommerce/woocommerce-gateway-payfast/issues/32.
+			'multiple_subscriptions',
 		);
 
 		$this->init_form_fields();
@@ -1104,10 +1105,48 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * Retrieve the Payfast subscription token for a given order id.
 	 *
 	 * @param WC_Subscription $subscription The subscription object.
-	 * @return mixed
 	 */
 	protected function _delete_subscription_token( $subscription ) {
-		return $subscription->delete_meta_data( '_payfast_subscription_token' );
+		$subscription->delete_meta_data( '_payfast_subscription_token' );
+		$subscription->save_meta_data();
+	}
+
+	/**
+	 * Whether another active Payfast subscription is using the same token.
+	 *
+	 * @param string          $token        Payfast subscription token.
+	 * @param WC_Subscription $subscription The subscription object.
+	 * @return bool
+	 */
+	protected function _is_subscription_token_used_by_another_active_subscription( $token, $subscription ) {
+		if ( empty( $token ) || ! function_exists( 'wcs_get_subscriptions' ) ) {
+			return false;
+		}
+
+		$subscriptions = wcs_get_subscriptions(
+			array(
+				'subscriptions_per_page' => -1,
+				'subscription_status'    => array( 'active', 'on-hold' ),
+				'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					array(
+						'key'   => '_payment_method',
+						'value' => $this->id,
+					),
+					array(
+						'key'   => '_payfast_subscription_token',
+						'value' => $token,
+					),
+				),
+			)
+		);
+
+		foreach ( $subscriptions as $active_subscription ) {
+			if ( $active_subscription->get_id() !== $subscription->get_id() ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -1378,6 +1417,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		if ( empty( $token ) ) {
 			return;
 		}
+
+		if ( $this->_is_subscription_token_used_by_another_active_subscription( $token, $subscription ) ) {
+			$this->log( 'Payfast subscription token cancellation skipped because the token is used by another active subscription.' );
+			return;
+		}
+
 		$this->api_request( 'cancel', $token, array(), 'PUT' );
 	}
 
