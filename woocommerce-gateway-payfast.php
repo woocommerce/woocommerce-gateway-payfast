@@ -6,7 +6,7 @@
  * Description: Receive payments using the South African Payfast payments provider.
  * Author: WooCommerce
  * Author URI: https://woocommerce.com/
- * Version: 1.7.6
+ * Version: 1.7.7
  * Requires at least: 6.8
  * Tested up to: 7.0
  * WC requires at least: 10.7
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WC_GATEWAY_PAYFAST_VERSION', '1.7.6' ); // WRCS: DEFINED_VERSION.
+define( 'WC_GATEWAY_PAYFAST_VERSION', '1.7.7' ); // WRCS: DEFINED_VERSION.
 define( 'WC_GATEWAY_PAYFAST_URL', untrailingslashit( plugins_url( '/', __FILE__ ) ) );
 define( 'WC_GATEWAY_PAYFAST_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 
