@@ -426,7 +426,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			// Merchant details.
 			'merchant_id'      => $this->merchant_id,
 			'merchant_key'     => $this->merchant_key,
-			'return_url'       => esc_url_raw( add_query_arg( 'utm_nooverride', '1', $this->get_return_url( $order ) ) ),
+			'return_url'       => $this->get_payfast_return_url( $order ),
 			'cancel_url'       => $order->get_cancel_order_url(),
 			'notify_url'       => $this->response_url,
 
@@ -1897,6 +1897,60 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		return $currency;
+	}
+
+	/**
+	 * Get a Payfast-safe order return URL.
+	 *
+	 * Third-party plugins can turn the order-received
+	 * URL into a relative `/order-received/{id}/` path. Payfast rejects relative
+	 * URLs, so rebuild from the checkout URL without endpoint filters.
+	 *
+	 * @since x.x.x
+	 * @param WC_Order $order Order object.
+	 * @return string Absolute checkout order-received URL.
+	 */
+	protected function get_payfast_return_url( $order ) {
+		$return_url = add_query_arg( 'utm_nooverride', '1', $this->get_return_url( $order ) );
+
+		if ( preg_match( '#^https?://#i', $return_url ) ) {
+			return esc_url_raw( $return_url );
+		}
+
+		// Avoid wc_get_endpoint_url() so endpoint filters cannot strip the checkout base.
+		$checkout_url = wc_get_checkout_url();
+		$endpoint     = get_option( 'woocommerce_checkout_order_received_endpoint', 'order-received' );
+
+		if ( WC()->query ) {
+			$query_vars = WC()->query->get_query_vars();
+			if ( ! empty( $query_vars['order-received'] ) ) {
+				$endpoint = $query_vars['order-received'];
+			}
+		}
+
+		if ( get_option( 'permalink_structure' ) ) {
+			$query_string = '';
+			if ( strstr( $checkout_url, '?' ) ) {
+				$query_string = '?' . wp_parse_url( $checkout_url, PHP_URL_QUERY );
+				$checkout_url = current( explode( '?', $checkout_url ) );
+			}
+
+			$return_url  = trailingslashit( $checkout_url );
+			$return_url .= trailingslashit( $endpoint ) . user_trailingslashit( $order->get_id() );
+			$return_url .= $query_string;
+		} else {
+			$return_url = add_query_arg( $endpoint, $order->get_id(), $checkout_url );
+		}
+
+		$return_url = add_query_arg(
+			array(
+				'key'            => $order->get_order_key(),
+				'utm_nooverride' => '1',
+			),
+			$return_url
+		);
+
+		return esc_url_raw( $return_url );
 	}
 
 	/**
