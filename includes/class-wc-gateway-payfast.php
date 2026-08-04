@@ -1931,7 +1931,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		if ( get_option( 'permalink_structure' ) ) {
 			$query_string = '';
 			if ( strstr( $checkout_url, '?' ) ) {
-				$query_string = '?' . wp_parse_url( $checkout_url, PHP_URL_QUERY );
+				$parsed_query = wp_parse_url( $checkout_url, PHP_URL_QUERY );
+				if ( ! empty( $parsed_query ) ) {
+					$query_string = '?' . $parsed_query;
+				}
 				$checkout_url = current( explode( '?', $checkout_url ) );
 			}
 
