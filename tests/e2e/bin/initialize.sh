@@ -53,9 +53,15 @@ wp-env run tests-cli wp option update woocommerce_default_country "US:CA"
 wp-env run tests-cli wp option update woocommerce_allow_tracking "no"
 wp-env run tests-cli wp option update woocommerce_coming_soon "no"
 
-wp-env run tests-cli wp user create customer customer@euvatnumbertestsuite.com --user_pass=password --role=customer
+# Add customer user if it doesn't exist.
+if ! wp-env run tests-cli wp user get customer --field=ID &>/dev/null; then
+    wp-env run tests-cli wp user create customer customer@payfasttestsuite.com --user_pass=password --role=customer
+fi
 
-wp-env run tests-cli wp wc tax create -- --country="*" --state="*" --postcode="*" --city="*" --rate=20 --name="General Tax" --user=1
+if ! wp-env run tests-cli wp wc tax list --field=name --user=1 | grep -q "General Tax"; then
+    wp-env run tests-cli wp wc tax create -- --country="*" --state="*" --postcode="*" --city="*" --rate=20 --name="General Tax" --user=1
+fi
+
 if ! wp-env run tests-cli wp wc product list --field=slug --user=1 | grep -qx "simple-product"; then
 	wp-env run tests-cli wp wc product create -- --name="Simple Product" --slug="simple-product" --user=1 --regular_price=10 --virtual=true
 fi
@@ -64,4 +70,6 @@ create_subscription_product "second-subscription-product" "Second Subscription P
 create_subscription_product "yearly-subscription-product" "Yearly Subscription Product" "50" "year"
 
 # Add Shortcode checkout page.
-wp-env run tests-cli wp post create --post_title='Shortcode Checkout' --post_type=page --post_status=publish --post_author=1 --post_content='<!-- wp:shortcode -->[woocommerce_checkout]<!-- /wp:shortcode -->'
+if ! wp-env run tests-cli wp post list --post_type=page --field=post_name | grep -q "shortcode-checkout"; then
+	wp-env run tests-cli wp post create --post_title='Shortcode Checkout' --post_type=page --post_status=publish --post_author=1 --post_content='<!-- wp:shortcode -->[woocommerce_checkout]<!-- /wp:shortcode -->'
+fi
