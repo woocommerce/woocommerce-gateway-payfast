@@ -22,6 +22,11 @@ create_subscription_product() {
 	# Resolve the new product's ID by slug so the plan meta can be attached to it.
 	product_id=$(wp-env run tests-cli wp post list --post_type=product --name="${slug}" --format=ids | grep -oE '[0-9]+' | tail -n1)
 
+	if [[ -z "${product_id}" ]]; then
+		echo "Failed to resolve product ID for slug=${slug}" >&2
+		exit 1
+	fi
+
 	# `_wcsatt_schemes` holds a nested array; store it via --format=json so WP-CLI serializes it.
 	# Pricing method "override" sets the plan's own recurring price to the product-level price.
 	schemes_json=$(printf '{"%s":{"id":"%s","key":"%s","subscription_period":"%s","subscription_period_interval":1,"subscription_length":0,"subscription_trial_period":"day","subscription_trial_length":0,"subscription_pricing_method":"override","subscription_regular_price":"%s","subscription_sale_price":"","subscription_discount":""}}' "${scheme_key}" "${scheme_key}" "${scheme_key}" "${period}" "${price}")
