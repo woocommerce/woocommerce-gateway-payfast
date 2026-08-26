@@ -33,7 +33,6 @@ create_subscription_product() {
 
 	wp-env run tests-cli wp post meta update "${product_id}" _wcsatt_schemes "${schemes_json}" --format=json
 	wp-env run tests-cli wp post meta update "${product_id}" _wcsatt_force_subscription "yes"
-	wp-env run tests-cli wp post meta update "${product_id}" _wcsatt_default_status "subscription"
 }
 
 # Enable pretty permalinks.
