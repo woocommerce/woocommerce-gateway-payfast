@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.7
+Stable tag: 1.7.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -66,6 +66,15 @@ Yes; a [Payfast merchant account](https://payfast.io/gateway-aggregator-selector
 No, but to open a Payfast account, you’ll need a South African bank account to pay your funds into.
 
 == Changelog ==
+
+= 1.7.8 - 2026-08-26 =
+* Fix - Rebuild an absolute checkout thank-you URL when a third-party plugin makes the Payfast return URL relative.
+* Dev - Update the E2E test setup to seed subscription products using the WooCommerce Subscriptions 9.0 purchase-options model.
+* Dev - Update WPCS to 3.4.1.
+* Dev - Bump WordPress "Tested up to" version 7.1.
+* Dev - Bump WordPress minimum supported version to 6.9.
+* Dev - Bump WooCommerce "tested up to" version 11.1.
+* Dev - Bump WooCommerce minimum supported version to 10.9.
 
 = 1.7.7 - 2026-06-29 =
 * Add - Support for purchasing multiple subscriptions in a single order.
