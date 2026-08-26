@@ -1906,7 +1906,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * URL into a relative `/order-received/{id}/` path. Payfast rejects relative
 	 * URLs, so rebuild from the checkout URL without endpoint filters.
 	 *
-	 * @since x.x.x
+	 * @since 1.7.8
 	 * @param WC_Order $order Order object.
 	 * @return string Absolute checkout order-received URL.
 	 */
