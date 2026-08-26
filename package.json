@@ -18,7 +18,7 @@
 		"@woocommerce/e2e-utils-playwright": "^0.4.0",
 		"@woocommerce/eslint-plugin": "^2.3.0",
 		"@wordpress/env": "^10.26.0",
-		"@wordpress/scripts": "^31.6.0",
+		"@wordpress/scripts": "^34.2.0",
 		"node-wp-i18n": "^1.2.8",
 		"prettier": "^3.6.2"
 	},
