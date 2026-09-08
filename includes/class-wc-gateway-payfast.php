@@ -1801,10 +1801,6 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 		}
 
-		if ( ! $is_valid_ip ) {
-			$this->log( 'Source IP outside every valid range: ' . ( is_scalar( $source_ip ) ? (string) $source_ip : gettype( $source_ip ) ) );
-		}
-
 		/**
 		 * Filter whether Payfast Gateway IP address is valid.
 		 *
@@ -1813,7 +1809,15 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 * @param bool $is_valid_ip Whether IP address is valid.
 		 * @param bool $source_ip   Source IP.
 		 */
-		return apply_filters( 'woocommerce_gateway_payfast_is_valid_ip', $is_valid_ip, $source_ip );
+		$is_valid_ip = apply_filters( 'woocommerce_gateway_payfast_is_valid_ip', $is_valid_ip, $source_ip );
+
+		// Logged on the final answer, so the line cannot contradict a callback that accepted the
+		// request. The reason is left out: past this point it is no longer only the range check.
+		if ( ! $is_valid_ip ) {
+			$this->log( 'Source IP refused: ' . ( is_scalar( $source_ip ) ? (string) $source_ip : gettype( $source_ip ) ) );
+		}
+
+		return $is_valid_ip;
 	}
 
 	/**
