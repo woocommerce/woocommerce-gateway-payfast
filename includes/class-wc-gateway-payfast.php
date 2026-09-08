@@ -1672,6 +1672,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Parse an IPv4 range into the network address and prefix length it stands for.
 	 *
+	 * This is also what decides which filtered entries survive in get_valid_ip_ranges(), so a
+	 * subclass that overrides is_ip_in_range() to accept another notation has to override this
+	 * method as well. Entries written in that notation are dropped here otherwise, before the
+	 * matcher ever sees them.
+	 *
 	 * @since x.x.x
 	 *
 	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
