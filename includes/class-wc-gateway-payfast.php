@@ -1788,6 +1788,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 		}
 
+		if ( ! $is_valid_ip ) {
+			$this->log( 'Source IP outside every valid range: ' . ( is_scalar( $source_ip ) ? (string) $source_ip : gettype( $source_ip ) ) );
+		}
+
 		/**
 		 * Filter whether Payfast Gateway IP address is valid.
 		 *
