@@ -1602,7 +1602,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * looking the ranges up at request time would put a network call in the payment notification
 	 * path, where a slow or failing lookup silently shrinks the allowlist.
 	 *
-	 * @since 1.7.9
+	 * @since x.x.x
 	 *
 	 * @return string[] IPv4 ranges in CIDR notation. A bare address is treated as a single host.
 	 */
@@ -1632,7 +1632,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 * value that is not an array, or that leaves no usable entry once those are dropped, is
 		 * ignored in favour of the ranges shipped with the plugin.
 		 *
-		 * @since 1.7.9
+		 * @since x.x.x
 		 *
 		 * @param string[] $valid_ranges IPv4 ranges in CIDR notation.
 		 */
@@ -1672,7 +1672,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Parse an IPv4 range into the network address and prefix length it stands for.
 	 *
-	 * @since 1.7.9
+	 * @since x.x.x
 	 *
 	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
 	 * @return array|false Network address as a long and prefix length, or false when the range is malformed.
@@ -1722,7 +1722,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Check whether an IPv4 address falls inside a range.
 	 *
-	 * @since 1.7.9
+	 * @since x.x.x
 	 *
 	 * @param string $ip    IPv4 address to check.
 	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
