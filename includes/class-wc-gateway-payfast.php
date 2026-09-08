@@ -1596,6 +1596,133 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Get the IP address ranges Payfast sends ITN requests from.
+	 *
+	 * Payfast publishes its ITN senders as IPv4 CIDR ranges. The list is hardcoded on purpose:
+	 * looking the ranges up at request time would put a network call in the payment notification
+	 * path, where a slow or failing lookup silently shrinks the allowlist.
+	 *
+	 * @since 1.7.9
+	 *
+	 * @return string[] IPv4 ranges in CIDR notation. A bare address is treated as a single host.
+	 */
+	public function get_valid_ip_ranges() {
+		$valid_ranges = array(
+			'197.97.145.144/28',
+			'41.74.179.192/27',
+			'102.216.36.0/28',
+			'102.216.36.128/28',
+			'144.126.193.139',
+		);
+
+		/**
+		 * Filter the IP address ranges ITN requests are accepted from.
+		 *
+		 * Every entry must be a string holding either an IPv4 address in CIDR notation or a bare
+		 * IPv4 address for a single host. Entries that are not strings are dropped, and a return
+		 * value that is not an array or that holds no usable entry is ignored in favour of the
+		 * ranges shipped with the plugin.
+		 *
+		 * @since 1.7.9
+		 *
+		 * @param string[] $valid_ranges IPv4 ranges in CIDR notation.
+		 */
+		$filtered_ranges = apply_filters( 'woocommerce_gateway_payfast_valid_ip_ranges', $valid_ranges );
+
+		if ( ! is_array( $filtered_ranges ) ) {
+			$this->log( 'Ignoring woocommerce_gateway_payfast_valid_ip_ranges: expected an array, got ' . gettype( $filtered_ranges ) . '.' );
+			return $valid_ranges;
+		}
+
+		$sanitized_ranges = array();
+
+		foreach ( $filtered_ranges as $filtered_range ) {
+			if ( ! is_string( $filtered_range ) ) {
+				continue;
+			}
+
+			$filtered_range = trim( $filtered_range );
+
+			if ( '' !== $filtered_range ) {
+				$sanitized_ranges[] = $filtered_range;
+			}
+		}
+
+		if ( empty( $sanitized_ranges ) ) {
+			$this->log( 'Ignoring woocommerce_gateway_payfast_valid_ip_ranges: no usable range was returned.' );
+			return $valid_ranges;
+		}
+
+		return $sanitized_ranges;
+	}
+
+	/**
+	 * Check whether an IPv4 address falls inside a range.
+	 *
+	 * @since 1.7.9
+	 *
+	 * @param string $ip    IPv4 address to check.
+	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
+	 * @return bool
+	 */
+	public function is_ip_in_range( $ip, $range ) {
+		if ( ! is_string( $ip ) || ! is_string( $range ) ) {
+			return false;
+		}
+
+		$ip    = trim( $ip );
+		$range = trim( $range );
+
+		// Payfast sends from IPv4 addresses only, so anything else cannot match a documented range.
+		if ( false === filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return false;
+		}
+
+		$prefix_length = 32;
+		$network       = $range;
+
+		if ( false !== strpos( $range, '/' ) ) {
+			list( $network, $prefix_length ) = explode( '/', $range, 2 );
+
+			$network       = trim( $network );
+			$prefix_length = trim( $prefix_length );
+
+			// ctype_digit() also rejects an empty, negative or non numeric prefix.
+			if ( ! ctype_digit( $prefix_length ) ) {
+				return false;
+			}
+
+			$prefix_length = (int) $prefix_length;
+
+			if ( $prefix_length > 32 ) {
+				return false;
+			}
+		}
+
+		if ( false === filter_var( $network, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return false;
+		}
+
+		$ip_long      = ip2long( $ip );
+		$network_long = ip2long( $network );
+
+		if ( false === $ip_long || false === $network_long ) {
+			return false;
+		}
+
+		// A /0 range covers every address, and shifting by the full width of an integer is not
+		// portable, so answer that case directly. Every other prefix leaves at most 31 host bits,
+		// and dropping them from both addresses is what decides the match.
+		if ( 0 === $prefix_length ) {
+			return true;
+		}
+
+		$host_bits = 32 - $prefix_length;
+
+		return ( $ip_long >> $host_bits ) === ( $network_long >> $host_bits );
+	}
+
+	/**
 	 * Validate the IP address to make sure it's coming from Payfast.
 	 *
 	 * @param string $source_ip Source IP.
