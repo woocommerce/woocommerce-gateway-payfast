@@ -1607,6 +1607,14 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * @return string[] IPv4 ranges in CIDR notation. A bare address is treated as a single host.
 	 */
 	public function get_valid_ip_ranges() {
+		/*
+		 * Payfast's DNS records also answer with addresses that sit in none of these ranges:
+		 * 13.245.74.88 (w1w and w2w), 34.107.176.71 (www) and 34.120.184.229 (sandbox). Requests
+		 * from those addresses are refused, deliberately: they are not documented as ITN senders,
+		 * and an allowlist is the wrong place to guess. Whether Payfast sends notifications from
+		 * any of them is an open question with Payfast, and the filter below is the escape hatch
+		 * until that is answered.
+		 */
 		$valid_ranges = array(
 			'197.97.145.144/28',
 			'41.74.179.192/27',
