@@ -1725,31 +1725,15 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Validate the IP address to make sure it's coming from Payfast.
 	 *
+	 * The address is matched against the ranges Payfast publishes for its ITN senders, which is a
+	 * wider set than the addresses currently held in DNS.
+	 *
 	 * @param string $source_ip Source IP.
 	 * @since 1.0.0
 	 * @return bool
 	 */
 	public function is_valid_ip( $source_ip ) {
-		// Variable initialization.
-		$valid_hosts = array(
-			'www.payfast.co.za',
-			'sandbox.payfast.co.za',
-			'w1w.payfast.co.za',
-			'w2w.payfast.co.za',
-		);
-
-		$valid_ips = array();
-
-		foreach ( $valid_hosts as $pf_hostname ) {
-			$ips = gethostbynamel( $pf_hostname );
-
-			if ( false !== $ips ) {
-				$valid_ips = array_merge( $valid_ips, $ips );
-			}
-		}
-
-		// Remove duplicates.
-		$valid_ips = array_unique( $valid_ips );
+		$valid_ranges = $this->get_valid_ip_ranges();
 
 		// Adds support for X_Forwarded_For.
 		if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
@@ -1757,9 +1741,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			$source_ip               = rest_is_ip_address( $x_forwarded_http_header ) ? rest_is_ip_address( $x_forwarded_http_header ) : $source_ip;
 		}
 
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- used for logging.
-		$this->log( "Valid IPs:\n" . print_r( $valid_ips, true ) );
-		$is_valid_ip = in_array( $source_ip, $valid_ips, true );
+		$this->log( 'Valid IP ranges: ' . implode( ', ', $valid_ranges ) );
+
+		$is_valid_ip = false;
+
+		foreach ( $valid_ranges as $valid_range ) {
+			if ( $this->is_ip_in_range( $source_ip, $valid_range ) ) {
+				$is_valid_ip = true;
+				break;
+			}
+		}
 
 		/**
 		 * Filter whether Payfast Gateway IP address is valid.
