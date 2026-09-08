@@ -1619,9 +1619,10 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 * Filter the IP address ranges ITN requests are accepted from.
 		 *
 		 * Every entry must be a string holding either an IPv4 address in CIDR notation or a bare
-		 * IPv4 address for a single host. Entries that are not strings are dropped, and a return
-		 * value that is not an array or that holds no usable entry is ignored in favour of the
-		 * ranges shipped with the plugin.
+		 * IPv4 address for a single host. An entry that is not a string, or that does not parse
+		 * as one of those two forms, is dropped and the rest of the list is still used. A return
+		 * value that is not an array, or that leaves no usable entry once those are dropped, is
+		 * ignored in favour of the ranges shipped with the plugin.
 		 *
 		 * @since 1.7.9
 		 *
@@ -1643,9 +1644,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 			$filtered_range = trim( $filtered_range );
 
-			if ( '' !== $filtered_range ) {
-				$sanitized_ranges[] = $filtered_range;
+			// Drop anything that is not a range this gateway can match against, so that one bad
+			// entry cannot take the whole allowlist down with it.
+			if ( false === $this->parse_ip_range( $filtered_range ) ) {
+				continue;
 			}
+
+			$sanitized_ranges[] = $filtered_range;
 		}
 
 		if ( empty( $sanitized_ranges ) ) {
@@ -1657,26 +1662,19 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Check whether an IPv4 address falls inside a range.
+	 * Parse an IPv4 range into the network address and prefix length it stands for.
 	 *
 	 * @since 1.7.9
 	 *
-	 * @param string $ip    IPv4 address to check.
 	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
-	 * @return bool
+	 * @return array|false Network address as a long and prefix length, or false when the range is malformed.
 	 */
-	public function is_ip_in_range( $ip, $range ) {
-		if ( ! is_string( $ip ) || ! is_string( $range ) ) {
+	protected function parse_ip_range( $range ) {
+		if ( ! is_string( $range ) ) {
 			return false;
 		}
 
-		$ip    = trim( $ip );
 		$range = trim( $range );
-
-		// Payfast sends from IPv4 addresses only, so anything else cannot match a documented range.
-		if ( false === filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
-			return false;
-		}
 
 		$prefix_length = 32;
 		$network       = $range;
@@ -1704,10 +1702,47 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			return false;
 		}
 
-		$ip_long      = ip2long( $ip );
 		$network_long = ip2long( $network );
 
-		if ( false === $ip_long || false === $network_long ) {
+		if ( false === $network_long ) {
+			return false;
+		}
+
+		return array( $network_long, $prefix_length );
+	}
+
+	/**
+	 * Check whether an IPv4 address falls inside a range.
+	 *
+	 * @since 1.7.9
+	 *
+	 * @param string $ip    IPv4 address to check.
+	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
+	 * @return bool
+	 */
+	public function is_ip_in_range( $ip, $range ) {
+		if ( ! is_string( $ip ) ) {
+			return false;
+		}
+
+		$ip = trim( $ip );
+
+		// Payfast sends from IPv4 addresses only, so anything else cannot match a documented range.
+		if ( false === filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return false;
+		}
+
+		$parsed_range = $this->parse_ip_range( $range );
+
+		if ( false === $parsed_range ) {
+			return false;
+		}
+
+		list( $network_long, $prefix_length ) = $parsed_range;
+
+		$ip_long = ip2long( $ip );
+
+		if ( false === $ip_long ) {
 			return false;
 		}
 
