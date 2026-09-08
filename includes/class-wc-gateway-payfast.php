@@ -1687,8 +1687,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			$network       = trim( $network );
 			$prefix_length = trim( $prefix_length );
 
-			// ctype_digit() also rejects an empty, negative or non numeric prefix.
-			if ( ! ctype_digit( $prefix_length ) ) {
+			// Rejects an empty, negative or non numeric prefix, and a zero padded one: /08
+			// reads as /8 once cast, which would widen the range by a factor of a million.
+			if ( ! preg_match( '/^(0|[1-9][0-9]?)$/', $prefix_length ) ) {
 				return false;
 			}
 
