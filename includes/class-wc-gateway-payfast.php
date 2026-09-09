@@ -1698,6 +1698,129 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Get the hostnames Payfast publishes its ITN sender addresses under.
+	 *
+	 * These are the four hostnames this gateway has always resolved. They are consulted only when
+	 * an address is not in the documented list, so the set of accepted addresses stays a superset
+	 * of what resolving them alone would accept.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string[] Hostnames to resolve, empty when the lookup has been switched off.
+	 */
+	public function get_valid_ip_hostnames() {
+		$valid_hostnames = array(
+			'www.payfast.co.za',
+			'sandbox.payfast.co.za',
+			'w1w.payfast.co.za',
+			'w2w.payfast.co.za',
+		);
+
+		/**
+		 * Filter the hostnames resolved to widen the set of accepted ITN sender addresses.
+		 *
+		 * Every entry must be a string holding a hostname; anything else is dropped. Returning an
+		 * empty array switches the lookup off and leaves only the documented ranges. A return
+		 * value that is not an array, or one whose entries are all dropped as malformed, is
+		 * ignored in favour of the hostnames shipped with the plugin.
+		 *
+		 * @since x.x.x
+		 *
+		 * @param string[] $valid_hostnames Hostnames to resolve.
+		 */
+		$filtered_hostnames = apply_filters( 'woocommerce_gateway_payfast_valid_ip_hostnames', $valid_hostnames );
+
+		if ( ! is_array( $filtered_hostnames ) ) {
+			$this->log( 'Ignoring woocommerce_gateway_payfast_valid_ip_hostnames: expected an array, got ' . gettype( $filtered_hostnames ) . '.' );
+			return $valid_hostnames;
+		}
+
+		// An empty array is an instruction rather than a mistake: it turns the lookup off.
+		if ( empty( $filtered_hostnames ) ) {
+			return array();
+		}
+
+		$sanitized_hostnames = array();
+
+		foreach ( $filtered_hostnames as $filtered_hostname ) {
+			if ( ! is_string( $filtered_hostname ) ) {
+				continue;
+			}
+
+			$filtered_hostname = trim( $filtered_hostname );
+
+			if ( '' === $filtered_hostname || strlen( $filtered_hostname ) > 253 ) {
+				continue;
+			}
+
+			if ( ! preg_match( '/^[A-Za-z0-9]([A-Za-z0-9._-]*[A-Za-z0-9])?$/', $filtered_hostname ) ) {
+				continue;
+			}
+
+			$sanitized_hostnames[] = $filtered_hostname;
+		}
+
+		if ( empty( $sanitized_hostnames ) ) {
+			$this->log( 'Ignoring woocommerce_gateway_payfast_valid_ip_hostnames: no usable hostname was returned.' );
+			return $valid_hostnames;
+		}
+
+		return $sanitized_hostnames;
+	}
+
+	/**
+	 * Resolve the Payfast hostnames, caching the answer.
+	 *
+	 * The result can only widen the set of accepted addresses, so a lookup that fails, times out
+	 * or answers with nothing is swallowed and the caller carries on. The empty answer is cached
+	 * as well: gethostbynamel() takes no timeout argument, so a cache is the only bound available
+	 * on how often a broken resolver can stall a request.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string[] Resolved IPv4 addresses, possibly empty.
+	 */
+	public function get_resolved_ip_addresses() {
+		$hostnames = $this->get_valid_ip_hostnames();
+
+		if ( empty( $hostnames ) ) {
+			return array();
+		}
+
+		// Keyed on the hostnames themselves, so a change of filter is not served a stale answer.
+		$cache_key    = 'wc_payfast_itn_sender_ips_' . md5( implode( ',', $hostnames ) );
+		$cached_lists = get_transient( $cache_key );
+
+		if ( is_array( $cached_lists ) ) {
+			return $cached_lists;
+		}
+
+		$resolved_ips = array();
+
+		foreach ( $hostnames as $hostname ) {
+			$host_ips = gethostbynamel( $hostname );
+
+			if ( is_array( $host_ips ) ) {
+				$resolved_ips = array_merge( $resolved_ips, $host_ips );
+			}
+		}
+
+		$resolved_ips = array_values( array_unique( $resolved_ips ) );
+
+		/*
+		 * Payfast serves these records with a 60 second TTL, so 15 minutes keeps the plugin close
+		 * enough to a rotation while collapsing repeated lookups into one. An empty answer is held
+		 * for 5 minutes only, so that a resolver which recovers is picked up soon, while a broken
+		 * one can still only stall one request in every five minutes.
+		 */
+		$cache_lifetime = empty( $resolved_ips ) ? 5 * MINUTE_IN_SECONDS : 15 * MINUTE_IN_SECONDS;
+
+		set_transient( $cache_key, $resolved_ips, $cache_lifetime );
+
+		return $resolved_ips;
+	}
+
+	/**
 	 * Parse an IPv4 range into the network address and prefix length it stands for.
 	 *
 	 * This is also what decides which filtered entries survive in get_valid_ip_ranges(), so a
