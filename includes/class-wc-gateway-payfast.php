@@ -1608,12 +1608,18 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function get_valid_ip_ranges() {
 		/*
-		 * Payfast's DNS records also answer with addresses that sit in none of these ranges:
-		 * 13.245.74.88 (w1w and w2w), 34.107.176.71 (www) and 34.120.184.229 (sandbox). Requests
-		 * from those addresses are refused, deliberately: they are not documented as ITN senders,
-		 * and an allowlist is the wrong place to guess. Whether Payfast sends notifications from
-		 * any of them is an open question with Payfast, and the filter below is the escape hatch
-		 * until that is answered.
+		 * The first five entries are the ranges Payfast documents for its ITN servers.
+		 * 13.245.74.88 is a production address Payfast has shared with merchants for
+		 * allowlisting, and the 3.163.x addresses are the static CloudFront pool that fronts
+		 * payment.payfast.io and api.payfast.co.za. Payfast confirmed all of them should be
+		 * allowlisted. The CloudFront pool is not a contiguous block, so it is listed address by
+		 * address rather than as a range.
+		 *
+		 * Payfast asks that its published DNS records be considered alongside this list, and
+		 * declined to guarantee that notifications only ever come from published addresses, so
+		 * anything this list misses gets a second chance against DNS in is_valid_ip(). Addresses
+		 * such as 34.107.176.71 (www) and 34.120.184.229 (sandbox) are reachable that way without
+		 * being hardcoded here.
 		 */
 		$valid_ranges = array(
 			'197.97.145.144/28',
@@ -1621,6 +1627,28 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			'102.216.36.0/28',
 			'102.216.36.128/28',
 			'144.126.193.139',
+			'13.245.74.88',
+			'3.163.232.237',
+			'3.163.233.237',
+			'3.163.234.237',
+			'3.163.235.237',
+			'3.163.236.237',
+			'3.163.237.237',
+			'3.163.238.237',
+			'3.163.239.237',
+			'3.163.240.237',
+			'3.163.241.237',
+			'3.163.242.237',
+			'3.163.243.237',
+			'3.163.244.237',
+			'3.163.245.237',
+			'3.163.246.237',
+			'3.163.247.237',
+			'3.163.248.237',
+			'3.163.249.237',
+			'3.163.250.237',
+			'3.163.251.237',
+			'3.163.252.237',
 		);
 
 		/**
