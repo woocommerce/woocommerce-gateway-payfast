@@ -1769,12 +1769,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Resolve the Payfast hostnames, caching the answer.
+	 * Resolve the Payfast hostnames, caching each one on its own schedule.
 	 *
 	 * The result can only widen the set of accepted addresses, so a lookup that fails, times out
-	 * or answers with nothing is swallowed and the caller carries on. The empty answer is cached
-	 * as well: gethostbynamel() takes no timeout argument, so a cache is the only bound available
-	 * on how often a broken resolver can stall a request.
+	 * or answers with nothing is swallowed and the caller carries on. Failures are cached too:
+	 * gethostbynamel() takes no timeout argument, so a cache is the only bound available on how
+	 * often a resolver that hangs can stall a request.
 	 *
 	 * @since x.x.x
 	 *
@@ -1787,37 +1787,40 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			return array();
 		}
 
-		// Keyed on the hostnames themselves, so a change of filter is not served a stale answer.
-		$cache_key    = 'wc_payfast_itn_sender_ips_' . md5( implode( ',', $hostnames ) );
-		$cached_lists = get_transient( $cache_key );
-
-		if ( is_array( $cached_lists ) ) {
-			return $cached_lists;
-		}
-
 		$resolved_ips = array();
 
 		foreach ( $hostnames as $hostname ) {
+			// Cached per hostname, so that one name answering slowly or not at all cannot decide
+			// how long another name's answer lives, and a change of filter reads no stale entry.
+			$cache_key  = 'wc_payfast_itn_sender_ips_' . md5( $hostname );
+			$cached_ips = get_transient( $cache_key );
+
+			if ( is_array( $cached_ips ) ) {
+				$resolved_ips = array_merge( $resolved_ips, $cached_ips );
+				continue;
+			}
+
 			$host_ips = gethostbynamel( $hostname );
 
+			/*
+			 * The two windows are deliberately lopsided. A name that answers is re-checked on
+			 * roughly the order of the records' own lifetime, which costs milliseconds, and that
+			 * freshness is the whole point: it is what keeps the accepted set at least as wide as
+			 * a live lookup would make it. A name that does not answer is left alone far longer,
+			 * because a name that fails is a name that stalls, and retrying it buys nothing: the
+			 * only addresses this lookup contributes beyond the documented list come from the
+			 * names that answer quickly.
+			 */
 			if ( is_array( $host_ips ) ) {
 				$resolved_ips = array_merge( $resolved_ips, $host_ips );
+
+				set_transient( $cache_key, $host_ips, 2 * MINUTE_IN_SECONDS );
+			} else {
+				set_transient( $cache_key, array(), 10 * MINUTE_IN_SECONDS );
 			}
 		}
 
-		$resolved_ips = array_values( array_unique( $resolved_ips ) );
-
-		/*
-		 * Payfast serves these records with a 60 second TTL, so 15 minutes keeps the plugin close
-		 * enough to a rotation while collapsing repeated lookups into one. An empty answer is held
-		 * for 5 minutes only, so that a resolver which recovers is picked up soon, while a broken
-		 * one can still only stall one request in every five minutes.
-		 */
-		$cache_lifetime = empty( $resolved_ips ) ? 5 * MINUTE_IN_SECONDS : 15 * MINUTE_IN_SECONDS;
-
-		set_transient( $cache_key, $resolved_ips, $cache_lifetime );
-
-		return $resolved_ips;
+		return array_values( array_unique( $resolved_ips ) );
 	}
 
 	/**
