@@ -1952,6 +1952,23 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			}
 		}
 
+		/*
+		 * Second chance for an address Payfast has rotated into DNS but not into its
+		 * documentation. It runs only when the documented list did not match, so a notification
+		 * from a documented address never waits on a resolver, and it can only ever add
+		 * addresses: a lookup that fails or answers with nothing leaves the request refused
+		 * exactly as it already was.
+		 */
+		if ( ! $is_valid_ip ) {
+			foreach ( $this->get_resolved_ip_addresses() as $resolved_ip ) {
+				if ( $this->is_ip_in_range( $source_ip, $resolved_ip ) ) {
+					$is_valid_ip = true;
+					$this->log( 'Source IP accepted from DNS, outside the documented ranges: ' . $resolved_ip );
+					break;
+				}
+			}
+		}
+
 		/**
 		 * Filter whether Payfast Gateway IP address is valid.
 		 *
