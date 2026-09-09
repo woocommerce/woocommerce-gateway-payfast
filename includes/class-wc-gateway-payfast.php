@@ -1660,6 +1660,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 * value that is not an array, or that leaves no usable entry once those are dropped, is
 		 * ignored in favour of the ranges shipped with the plugin.
 		 *
+		 * This list decides the first pass only, not the whole answer. When it does not match,
+		 * is_valid_ip() falls back to the addresses the Payfast hostnames resolve to, so narrowing
+		 * this list does not by itself narrow the senders that are accepted: an address that
+		 * resolves is still accepted through that fallback. To restrict senders to exactly what
+		 * this filter returns, also return an empty array from the companion filter
+		 * woocommerce_gateway_payfast_valid_ip_hostnames, which switches the fallback off.
+		 *
 		 * @since x.x.x
 		 *
 		 * @param string[] $valid_ranges IPv4 ranges in CIDR notation.
@@ -1719,10 +1726,15 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		/**
 		 * Filter the hostnames resolved to widen the set of accepted ITN sender addresses.
 		 *
-		 * Every entry must be a string holding a hostname; anything else is dropped. Returning an
-		 * empty array switches the lookup off and leaves only the documented ranges. A return
+		 * Every entry must be a string holding a hostname; anything else is dropped. A return
 		 * value that is not an array, or one whose entries are all dropped as malformed, is
 		 * ignored in favour of the hostnames shipped with the plugin.
+		 *
+		 * These hostnames are resolved only when the documented ranges did not match, so this
+		 * filter can widen the senders that are accepted but never narrow them. Returning an
+		 * empty array switches the lookup off altogether, which is what turns the companion
+		 * filter woocommerce_gateway_payfast_valid_ip_ranges from the first pass into the whole
+		 * answer, and is the only way to restrict senders to that list alone.
 		 *
 		 * @since x.x.x
 		 *
