@@ -1596,33 +1596,359 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Validate the IP address to make sure it's coming from Payfast.
+	 * Get the IP address ranges Payfast sends ITN requests from.
 	 *
-	 * @param string $source_ip Source IP.
-	 * @since 1.0.0
-	 * @return bool
+	 * Payfast publishes its ITN senders as IPv4 CIDR ranges. The list is hardcoded on purpose:
+	 * looking the ranges up at request time would put a network call in the payment notification
+	 * path, where a slow or failing lookup silently shrinks the allowlist.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string[] IPv4 ranges in CIDR notation. A bare address is treated as a single host.
 	 */
-	public function is_valid_ip( $source_ip ) {
-		// Variable initialization.
-		$valid_hosts = array(
+	public function get_valid_ip_ranges() {
+		/*
+		 * The first five entries are the ranges Payfast documents for its ITN servers.
+		 * 13.245.74.88 is a production address Payfast has shared with merchants for
+		 * allowlisting, and the 3.163.x addresses are the static CloudFront pool that fronts
+		 * payment.payfast.io and api.payfast.co.za. Payfast confirmed all of them should be
+		 * allowlisted. The CloudFront pool is not a contiguous block, so it is listed address by
+		 * address rather than as a range.
+		 *
+		 * Payfast asks that its published DNS records be considered alongside this list, and
+		 * declined to guarantee that notifications only ever come from published addresses, so
+		 * anything this list misses gets a second chance against DNS in is_valid_ip(). Addresses
+		 * such as 34.107.176.71 (www) and 34.120.184.229 (sandbox) are reachable that way without
+		 * being hardcoded here.
+		 */
+		$valid_ranges = array(
+			'197.97.145.144/28',
+			'41.74.179.192/27',
+			'102.216.36.0/28',
+			'102.216.36.128/28',
+			'144.126.193.139',
+			'13.245.74.88',
+			'3.163.232.237',
+			'3.163.233.237',
+			'3.163.234.237',
+			'3.163.235.237',
+			'3.163.236.237',
+			'3.163.237.237',
+			'3.163.238.237',
+			'3.163.239.237',
+			'3.163.240.237',
+			'3.163.241.237',
+			'3.163.242.237',
+			'3.163.243.237',
+			'3.163.244.237',
+			'3.163.245.237',
+			'3.163.246.237',
+			'3.163.247.237',
+			'3.163.248.237',
+			'3.163.249.237',
+			'3.163.250.237',
+			'3.163.251.237',
+			'3.163.252.237',
+		);
+
+		/**
+		 * Filter the IP address ranges ITN requests are accepted from.
+		 *
+		 * Every entry must be a string holding either an IPv4 address in CIDR notation or a bare
+		 * IPv4 address for a single host. An entry that is not a string, or that does not parse
+		 * as one of those two forms, is dropped and the rest of the list is still used. A return
+		 * value that is not an array, or that leaves no usable entry once those are dropped, is
+		 * ignored in favour of the ranges shipped with the plugin.
+		 *
+		 * This list decides the first pass only, not the whole answer. When it does not match,
+		 * is_valid_ip() falls back to the addresses the Payfast hostnames resolve to, so narrowing
+		 * this list does not by itself narrow the senders that are accepted: an address that
+		 * resolves is still accepted through that fallback. To restrict senders to exactly what
+		 * this filter returns, also return an empty array from the companion filter
+		 * woocommerce_gateway_payfast_valid_ip_hostnames, which switches the fallback off.
+		 *
+		 * @since x.x.x
+		 *
+		 * @param string[] $valid_ranges IPv4 ranges in CIDR notation.
+		 */
+		$filtered_ranges = apply_filters( 'woocommerce_gateway_payfast_valid_ip_ranges', $valid_ranges );
+
+		if ( ! is_array( $filtered_ranges ) ) {
+			$this->log( 'Ignoring woocommerce_gateway_payfast_valid_ip_ranges: expected an array, got ' . gettype( $filtered_ranges ) . '.' );
+			return $valid_ranges;
+		}
+
+		$sanitized_ranges = array();
+
+		foreach ( $filtered_ranges as $filtered_range ) {
+			if ( ! is_string( $filtered_range ) ) {
+				continue;
+			}
+
+			$filtered_range = trim( $filtered_range );
+
+			// Drop anything that is not a range this gateway can match against, so that one bad
+			// entry cannot take the whole allowlist down with it.
+			if ( false === $this->parse_ip_range( $filtered_range ) ) {
+				continue;
+			}
+
+			$sanitized_ranges[] = $filtered_range;
+		}
+
+		if ( empty( $sanitized_ranges ) ) {
+			$this->log( 'Ignoring woocommerce_gateway_payfast_valid_ip_ranges: no usable range was returned.' );
+			return $valid_ranges;
+		}
+
+		return $sanitized_ranges;
+	}
+
+	/**
+	 * Get the hostnames Payfast publishes its ITN sender addresses under.
+	 *
+	 * These are the four hostnames this gateway has always resolved. They are consulted only when
+	 * an address is not in the documented list, so the set of accepted addresses stays a superset
+	 * of what resolving them alone would accept.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string[] Hostnames to resolve, empty when the lookup has been switched off.
+	 */
+	public function get_valid_ip_hostnames() {
+		$valid_hostnames = array(
 			'www.payfast.co.za',
 			'sandbox.payfast.co.za',
 			'w1w.payfast.co.za',
 			'w2w.payfast.co.za',
 		);
 
-		$valid_ips = array();
+		/**
+		 * Filter the hostnames resolved to widen the set of accepted ITN sender addresses.
+		 *
+		 * Every entry must be a string holding a hostname; anything else is dropped. A return
+		 * value that is not an array, or one whose entries are all dropped as malformed, is
+		 * ignored in favour of the hostnames shipped with the plugin.
+		 *
+		 * These hostnames are resolved only when the documented ranges did not match, so this
+		 * filter can widen the senders that are accepted but never narrow them. Returning an
+		 * empty array switches the lookup off altogether, which is what turns the companion
+		 * filter woocommerce_gateway_payfast_valid_ip_ranges from the first pass into the whole
+		 * answer, and is the only way to restrict senders to that list alone.
+		 *
+		 * @since x.x.x
+		 *
+		 * @param string[] $valid_hostnames Hostnames to resolve.
+		 */
+		$filtered_hostnames = apply_filters( 'woocommerce_gateway_payfast_valid_ip_hostnames', $valid_hostnames );
 
-		foreach ( $valid_hosts as $pf_hostname ) {
-			$ips = gethostbynamel( $pf_hostname );
+		if ( ! is_array( $filtered_hostnames ) ) {
+			$this->log( 'Ignoring woocommerce_gateway_payfast_valid_ip_hostnames: expected an array, got ' . gettype( $filtered_hostnames ) . '.' );
+			return $valid_hostnames;
+		}
 
-			if ( false !== $ips ) {
-				$valid_ips = array_merge( $valid_ips, $ips );
+		// An empty array is an instruction rather than a mistake: it turns the lookup off.
+		if ( empty( $filtered_hostnames ) ) {
+			return array();
+		}
+
+		$sanitized_hostnames = array();
+
+		foreach ( $filtered_hostnames as $filtered_hostname ) {
+			if ( ! is_string( $filtered_hostname ) ) {
+				continue;
+			}
+
+			$filtered_hostname = trim( $filtered_hostname );
+
+			if ( '' === $filtered_hostname || strlen( $filtered_hostname ) > 253 ) {
+				continue;
+			}
+
+			if ( ! preg_match( '/^[A-Za-z0-9]([A-Za-z0-9._-]*[A-Za-z0-9])?$/', $filtered_hostname ) ) {
+				continue;
+			}
+
+			$sanitized_hostnames[] = $filtered_hostname;
+		}
+
+		if ( empty( $sanitized_hostnames ) ) {
+			$this->log( 'Ignoring woocommerce_gateway_payfast_valid_ip_hostnames: no usable hostname was returned.' );
+			return $valid_hostnames;
+		}
+
+		return $sanitized_hostnames;
+	}
+
+	/**
+	 * Resolve the Payfast hostnames, caching each one on its own schedule.
+	 *
+	 * The result can only widen the set of accepted addresses, so a lookup that fails, times out
+	 * or answers with nothing is swallowed and the caller carries on. Failures are cached too:
+	 * gethostbynamel() takes no timeout argument, so a cache is the only bound available on how
+	 * often a resolver that hangs can stall a request.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string[] Resolved IPv4 addresses, possibly empty.
+	 */
+	public function get_resolved_ip_addresses() {
+		$hostnames = $this->get_valid_ip_hostnames();
+
+		if ( empty( $hostnames ) ) {
+			return array();
+		}
+
+		$resolved_ips = array();
+
+		foreach ( $hostnames as $hostname ) {
+			// Cached per hostname, so that one name answering slowly or not at all cannot decide
+			// how long another name's answer lives, and a change of filter reads no stale entry.
+			$cache_key  = 'wc_payfast_itn_sender_ips_' . md5( $hostname );
+			$cached_ips = get_transient( $cache_key );
+
+			if ( is_array( $cached_ips ) ) {
+				$resolved_ips = array_merge( $resolved_ips, $cached_ips );
+				continue;
+			}
+
+			$host_ips = gethostbynamel( $hostname );
+
+			/*
+			 * The two windows are deliberately lopsided. A name that answers is re-checked on
+			 * roughly the order of the records' own lifetime, which costs milliseconds, and that
+			 * freshness is the whole point: it is what keeps the accepted set at least as wide as
+			 * a live lookup would make it. A name that does not answer is left alone far longer,
+			 * because a name that fails is a name that stalls, and retrying it buys nothing: the
+			 * only addresses this lookup contributes beyond the documented list come from the
+			 * names that answer quickly.
+			 */
+			if ( is_array( $host_ips ) ) {
+				$resolved_ips = array_merge( $resolved_ips, $host_ips );
+
+				set_transient( $cache_key, $host_ips, 2 * MINUTE_IN_SECONDS );
+			} else {
+				set_transient( $cache_key, array(), 10 * MINUTE_IN_SECONDS );
 			}
 		}
 
-		// Remove duplicates.
-		$valid_ips = array_unique( $valid_ips );
+		return array_values( array_unique( $resolved_ips ) );
+	}
+
+	/**
+	 * Parse an IPv4 range into the network address and prefix length it stands for.
+	 *
+	 * This is also what decides which filtered entries survive in get_valid_ip_ranges(), so a
+	 * subclass that overrides is_ip_in_range() to accept another notation has to override this
+	 * method as well. Entries written in that notation are dropped here otherwise, before the
+	 * matcher ever sees them.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
+	 * @return array|false Network address as a long and prefix length, or false when the range is malformed.
+	 */
+	protected function parse_ip_range( $range ) {
+		if ( ! is_string( $range ) ) {
+			return false;
+		}
+
+		$range = trim( $range );
+
+		$prefix_length = 32;
+		$network       = $range;
+
+		if ( false !== strpos( $range, '/' ) ) {
+			list( $network, $prefix_length ) = explode( '/', $range, 2 );
+
+			$network       = trim( $network );
+			$prefix_length = trim( $prefix_length );
+
+			// Rejects an empty, negative or non numeric prefix, and a zero padded one: /08
+			// reads as /8 once cast, which would widen the range by a factor of a million.
+			if ( ! preg_match( '/^(0|[1-9][0-9]?)$/', $prefix_length ) ) {
+				return false;
+			}
+
+			$prefix_length = (int) $prefix_length;
+
+			if ( $prefix_length > 32 ) {
+				return false;
+			}
+		}
+
+		if ( false === filter_var( $network, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return false;
+		}
+
+		$network_long = ip2long( $network );
+
+		if ( false === $network_long ) {
+			return false;
+		}
+
+		return array( $network_long, $prefix_length );
+	}
+
+	/**
+	 * Check whether an IPv4 address falls inside a range.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $ip    IPv4 address to check.
+	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
+	 * @return bool
+	 */
+	public function is_ip_in_range( $ip, $range ) {
+		if ( ! is_string( $ip ) ) {
+			return false;
+		}
+
+		$ip = trim( $ip );
+
+		// Payfast sends from IPv4 addresses only, so anything else cannot match a documented range.
+		if ( false === filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
+			return false;
+		}
+
+		$parsed_range = $this->parse_ip_range( $range );
+
+		if ( false === $parsed_range ) {
+			return false;
+		}
+
+		list( $network_long, $prefix_length ) = $parsed_range;
+
+		$ip_long = ip2long( $ip );
+
+		if ( false === $ip_long ) {
+			return false;
+		}
+
+		// A /0 range covers every address, and shifting by the full width of an integer is not
+		// portable, so answer that case directly. Every other prefix leaves at most 31 host bits,
+		// and dropping them from both addresses is what decides the match.
+		if ( 0 === $prefix_length ) {
+			return true;
+		}
+
+		$host_bits = 32 - $prefix_length;
+
+		return ( $ip_long >> $host_bits ) === ( $network_long >> $host_bits );
+	}
+
+	/**
+	 * Validate the IP address to make sure it's coming from Payfast.
+	 *
+	 * The address is matched against the ranges Payfast publishes for its ITN senders, which is a
+	 * wider set than the addresses currently held in DNS.
+	 *
+	 * @param string $source_ip Source IP.
+	 * @since 1.0.0
+	 * @return bool
+	 */
+	public function is_valid_ip( $source_ip ) {
+		$valid_ranges = $this->get_valid_ip_ranges();
 
 		// Adds support for X_Forwarded_For.
 		if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
@@ -1630,9 +1956,33 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			$source_ip               = rest_is_ip_address( $x_forwarded_http_header ) ? rest_is_ip_address( $x_forwarded_http_header ) : $source_ip;
 		}
 
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- used for logging.
-		$this->log( "Valid IPs:\n" . print_r( $valid_ips, true ) );
-		$is_valid_ip = in_array( $source_ip, $valid_ips, true );
+		$this->log( 'Valid IP ranges: ' . implode( ', ', $valid_ranges ) );
+
+		$is_valid_ip = false;
+
+		foreach ( $valid_ranges as $valid_range ) {
+			if ( $this->is_ip_in_range( $source_ip, $valid_range ) ) {
+				$is_valid_ip = true;
+				break;
+			}
+		}
+
+		/*
+		 * Second chance for an address Payfast has rotated into DNS but not into its
+		 * documentation. It runs only when the documented list did not match, so a notification
+		 * from a documented address never waits on a resolver, and it can only ever add
+		 * addresses: a lookup that fails or answers with nothing leaves the request refused
+		 * exactly as it already was.
+		 */
+		if ( ! $is_valid_ip ) {
+			foreach ( $this->get_resolved_ip_addresses() as $resolved_ip ) {
+				if ( $this->is_ip_in_range( $source_ip, $resolved_ip ) ) {
+					$is_valid_ip = true;
+					$this->log( 'Source IP accepted from DNS, outside the documented ranges: ' . $resolved_ip );
+					break;
+				}
+			}
+		}
 
 		/**
 		 * Filter whether Payfast Gateway IP address is valid.
@@ -1642,7 +1992,15 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 * @param bool $is_valid_ip Whether IP address is valid.
 		 * @param bool $source_ip   Source IP.
 		 */
-		return apply_filters( 'woocommerce_gateway_payfast_is_valid_ip', $is_valid_ip, $source_ip );
+		$is_valid_ip = apply_filters( 'woocommerce_gateway_payfast_is_valid_ip', $is_valid_ip, $source_ip );
+
+		// Logged on the final answer, so the line cannot contradict a callback that accepted the
+		// request. The reason is left out: past this point it is no longer only the range check.
+		if ( ! $is_valid_ip ) {
+			$this->log( 'Source IP refused: ' . ( is_scalar( $source_ip ) ? (string) $source_ip : gettype( $source_ip ) ) );
+		}
+
+		return $is_valid_ip;
 	}
 
 	/**
