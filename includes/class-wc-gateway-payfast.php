@@ -1682,6 +1682,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		foreach ( $filtered_ranges as $filtered_range ) {
 			if ( ! is_string( $filtered_range ) ) {
+				$this->log( 'Dropping woocommerce_gateway_payfast_valid_ip_ranges entry: expected a string, got ' . gettype( $filtered_range ) . '.' );
 				continue;
 			}
 
@@ -1690,6 +1691,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			// Drop anything that is not a range this gateway can match against, so that one bad
 			// entry cannot take the whole allowlist down with it.
 			if ( false === $this->parse_ip_range( $filtered_range ) ) {
+				$this->log( 'Dropping woocommerce_gateway_payfast_valid_ip_ranges entry: not a valid IPv4 address or range: ' . $filtered_range );
 				continue;
 			}
 
