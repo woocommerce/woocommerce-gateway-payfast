@@ -1786,12 +1786,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Resolve the Payfast hostnames, caching each one on its own schedule.
+	 * Resolve the Payfast hostnames, caching each answer briefly.
 	 *
 	 * The result can only widen the set of accepted addresses, so a lookup that fails, times out
-	 * or answers with nothing is swallowed and the caller carries on. Failures are cached too:
-	 * gethostbynamel() takes no timeout argument, so a cache is the only bound available on how
-	 * often a resolver that hangs can stall a request.
+	 * or answers with nothing is logged and the caller carries on. Only answers are cached; a
+	 * failure is retried on the next request, so a resolver that recovers is picked up at once
+	 * rather than leaving addresses reachable only through that hostname refused in the meantime.
 	 *
 	 * @since x.x.x
 	 *
@@ -1820,20 +1820,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			$host_ips = gethostbynamel( $hostname );
 
 			/*
-			 * The two windows are deliberately lopsided. A name that answers is re-checked on
-			 * roughly the order of the records' own lifetime, which costs milliseconds, and that
-			 * freshness is the whole point: it is what keeps the accepted set at least as wide as
-			 * a live lookup would make it. A name that does not answer is left alone far longer,
-			 * because a name that fails is a name that stalls, and retrying it buys nothing: the
-			 * only addresses this lookup contributes beyond the documented list come from the
-			 * names that answer quickly.
+			 * An answer is cached for roughly the order of the records' own lifetime, so the
+			 * accepted set stays at least as wide as a live lookup would make it. A failure is not
+			 * cached: it is logged and retried on the next request.
 			 */
 			if ( is_array( $host_ips ) ) {
 				$resolved_ips = array_merge( $resolved_ips, $host_ips );
 
 				set_transient( $cache_key, $host_ips, 2 * MINUTE_IN_SECONDS );
 			} else {
-				set_transient( $cache_key, array(), 10 * MINUTE_IN_SECONDS );
+				$this->log( 'Could not resolve ' . $hostname . ', skipping it for this request.' );
 			}
 		}
 
