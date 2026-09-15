@@ -1758,16 +1758,19 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		foreach ( $filtered_hostnames as $filtered_hostname ) {
 			if ( ! is_string( $filtered_hostname ) ) {
+				$this->log( 'Dropping woocommerce_gateway_payfast_valid_ip_hostnames entry: expected a string, got ' . gettype( $filtered_hostname ) . '.' );
 				continue;
 			}
 
 			$filtered_hostname = trim( $filtered_hostname );
 
 			if ( '' === $filtered_hostname || strlen( $filtered_hostname ) > 253 ) {
+				$this->log( 'Dropping woocommerce_gateway_payfast_valid_ip_hostnames entry: empty or longer than 253 characters.' );
 				continue;
 			}
 
 			if ( ! preg_match( '/^[A-Za-z0-9]([A-Za-z0-9._-]*[A-Za-z0-9])?$/', $filtered_hostname ) ) {
+				$this->log( 'Dropping woocommerce_gateway_payfast_valid_ip_hostnames entry: not a valid hostname: ' . $filtered_hostname );
 				continue;
 			}
 
