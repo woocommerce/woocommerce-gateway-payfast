@@ -1994,6 +1994,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 */
 		$is_valid_ip = apply_filters( 'woocommerce_gateway_payfast_is_valid_ip', $is_valid_ip, $source_ip );
 
+		// Any callback in the chain can return something other than a boolean, and this value
+		// decides whether a payment notification is accepted, so it is normalised before use.
+		if ( ! is_bool( $is_valid_ip ) ) {
+			$this->log( 'woocommerce_gateway_payfast_is_valid_ip returned ' . gettype( $is_valid_ip ) . ', treating it as ' . ( $is_valid_ip ? 'true' : 'false' ) . '.' );
+			$is_valid_ip = (bool) $is_valid_ip;
+		}
+
 		// Logged on the final answer, so the line cannot contradict a callback that accepted the
 		// request. The reason is left out: past this point it is no longer only the range check.
 		if ( ! $is_valid_ip ) {
