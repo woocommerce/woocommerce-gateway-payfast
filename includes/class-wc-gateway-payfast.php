@@ -1989,8 +1989,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 *
 		 * @since 1.4.13
 		 *
-		 * @param bool $is_valid_ip Whether IP address is valid.
-		 * @param bool $source_ip   Source IP.
+		 * @param bool   $is_valid_ip Whether IP address is valid.
+		 * @param string $source_ip   Source IP.
 		 */
 		$is_valid_ip = apply_filters( 'woocommerce_gateway_payfast_is_valid_ip', $is_valid_ip, $source_ip );
 
