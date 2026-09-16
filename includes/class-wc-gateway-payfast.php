@@ -728,14 +728,24 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				$subscription = wcs_get_subscription( $order_id );
 				if ( ! empty( $subscription ) && ! empty( $token ) ) {
 					$old_token = $this->_get_subscription_token( $subscription );
-					// Cancel old subscription token of subscription if we have it.
-					if ( ! empty( $old_token ) ) {
-						$this->cancel_subscription_listener( $subscription );
-					}
 
-					// Set new subscription token on subscription.
-					$this->_set_subscription_token( $token, $subscription );
-					$this->log( 'Payfast token updated on Subscription: ' . $order_id );
+					/*
+					 * A replayed ITN (Payfast retry or manual re-send) carries the token
+					 * that is already stored. Cancelling it would leave the subscription
+					 * with a cancelled token, so skip the cancel and the update.
+					 */
+					if ( $old_token === $token ) {
+						$this->log( 'Possible ITN replay detected, Payfast token already stored on Subscription: ' . $order_id );
+					} else {
+						// Cancel old subscription token of subscription if we have it.
+						if ( ! empty( $old_token ) ) {
+							$this->cancel_subscription_listener( $subscription );
+						}
+
+						// Set new subscription token on subscription.
+						$this->_set_subscription_token( $token, $subscription );
+						$this->log( 'Payfast token updated on Subscription: ' . $order_id );
+					}
 				}
 			}
 			return;
