@@ -23,3 +23,5 @@ composer.lock export-ignore
 .nvmrc export-ignore
 .wp-env.json export-ignore
 .wp-env.override.json export-ignore
+AGENTS.md export-ignore
+CLAUDE.md export-ignore
