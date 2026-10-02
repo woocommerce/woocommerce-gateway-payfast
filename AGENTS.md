@@ -96,7 +96,7 @@ Use the smallest command set needed for the task. Run `nvm use` first so Node ma
 
 - There is no PHPUnit suite. Do not add one as a side effect of another change; it is a separate piece of work.
 - E2E tests use Playwright and live in `tests/e2e/`: specs in `tests/e2e/specs/` (`admin/`, `payment-flow/`), helpers in `tests/e2e/utils/`, setup in `tests/e2e/bin/`, and test-only plugins in `tests/e2e/test-plugins/`.
-- Tag tests that CI must run on every PR with `@foundational`.
+- Tag tests that CI must run on every PR with `@foundational`. CI runs only `@foundational` tests, and only on PRs labelled `needs: e2e testing`.
 - Reuse the helpers in `tests/e2e/utils/` before adding new setup code.
 - For behavior changes, update or add the nearest E2E spec. If E2E cannot cover it, describe the manual test in the PR.
 
