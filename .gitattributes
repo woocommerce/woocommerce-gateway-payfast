@@ -25,3 +25,8 @@ composer.lock export-ignore
 .wp-env.override.json export-ignore
 AGENTS.md export-ignore
 CLAUDE.md export-ignore
+CLAUDE.local.md export-ignore
+.claude export-ignore
+.agents export-ignore
+apm_modules export-ignore
+.aider* export-ignore
