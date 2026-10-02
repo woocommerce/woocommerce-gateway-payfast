@@ -34,3 +34,12 @@ tests/e2e/test-results
 tests/e2e/test-plugins/woocommerce-subscriptions/
 
 tests/e2e/config/.env
+
+# Local and personal AI agent files (never committed).
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/worktrees/
+.claude/tmp/
+/.agents/
+/apm_modules/
+.aider*
