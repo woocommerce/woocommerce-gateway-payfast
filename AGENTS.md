@@ -6,7 +6,7 @@ This file provides guidance to coding agents working in this repository.
 
 WooCommerce Payfast Gateway lets WooCommerce stores accept payments through Payfast, a South African payment processor. Customers are sent to Payfast to pay, and Payfast reports the result back to the store with an ITN (Instant Transaction Notification). It supports one-time payments, WooCommerce Subscriptions (ad hoc tokens), and WooCommerce Pre-Orders.
 
-**Requirements:** PHP 7.4+, WordPress 6.9+, WooCommerce 10.9+, Node 24 (`.nvmrc`), npm 11+.
+**Requirements:** PHP, WordPress, and WooCommerce versions are in the plugin header of `woocommerce-gateway-payfast.php`. Node and npm versions are in `.nvmrc` and `package.json` (`engines`).
 
 **Names:** the repository and text domain are `woocommerce-gateway-payfast`, the WordPress.org slug is `woocommerce-payfast-gateway`, and the gateway id is `payfast`.
 
@@ -45,7 +45,7 @@ Use the smallest command set needed for the task. Run `nvm use` first so Node ma
 | JS lint | `npm run lint:js` | Currently crashes with `prettier.resolveConfig.sync is not a function` (Prettier 3 is not supported by the installed ESLint Prettier plugin). |
 | Start E2E environment | `npm run env:start-local` | Needs Docker and SSH access to the private `woocommerce/woocommerce-subscriptions` repo. Site runs at `http://localhost` (port 80). |
 | Stop or reset E2E environment | `npm run env:stop` / `npm run env:clean` / `npm run env:destroy` | |
-| E2E run | `npm run test:e2e-local` | Reads Payfast sandbox credentials from `tests/e2e/config/.env` (copy `tests/e2e/config/.sample-env`). |
+| E2E run | `npm run test:e2e-local` | Run `npx playwright install` once first. Reads Payfast sandbox credentials from `tests/e2e/config/.env` (copy `tests/e2e/config/.sample-env`). |
 | E2E foundational only | `npm run test:e2e-foundational` | The subset CI runs on PRs. Export the `.env` values first. |
 | E2E debug | `npm run test:e2e-debug` | Playwright debug mode. |
 
@@ -121,7 +121,7 @@ Any change to a public class, method signature, hook, endpoint, or persisted dat
 
 **The ITN callback is an external contract with Payfast's servers.** Payment notifications arrive at the WooCommerce API endpoint registered as `woocommerce_api_wc_gateway_payfast` and are processed by `check_itn_response()` and `handle_itn_request()`. The endpoint name and the validation sequence (signature verification, source IP check, amount check, order state transition) are load-bearing for payments in flight; never rename the endpoint or remove a validation step. ITN payloads are external input: validate every field before acting on it.
 
-**Hooks and filters are public contracts.** The `woocommerce_gateway_payfast_*` filters (`setup_constants`, `payment_data_to_send`, `is_valid_ip`, `available_currencies`), the `woocommerce_payfast_handle_itn_payment_complete` action, and `wc_payfast_privacy_eraser_subs_statuses` are interfaces that third-party callbacks depend on. Removing a hook, renaming it, or removing or reordering its arguments breaks attached callbacks. Changing *when* or *whether* a hook fires breaks them too, for example a filter that still runs on the shortcode checkout but no longer on the Blocks checkout. Append new arguments at the end; retire hooks through `apply_filters_deprecated()` / `do_action_deprecated()`.
+**Hooks and filters are public contracts.** The `woocommerce_gateway_payfast_*` filters (`payment_data_to_send`, `is_valid_ip`, `available_currencies`), the `woocommerce_gateway_payfast_setup_constants` and `woocommerce_payfast_handle_itn_payment_complete` actions, and `wc_payfast_privacy_eraser_subs_statuses` are interfaces that third-party callbacks depend on. Removing a hook, renaming it, or removing or reordering its arguments breaks attached callbacks. Changing *when* or *whether* a hook fires breaks them too, for example a filter that still runs on the shortcode checkout but no longer on the Blocks checkout. Append new arguments at the end; retire hooks through `apply_filters_deprecated()` / `do_action_deprecated()`.
 
 **Never trust data that flows through hooks.** Keep hook callback parameters untyped and validate the value before passing it to strictly typed code. Validate the final return value of every filter before using it, because any callback in the chain can return the wrong thing. The `woocommerce_gateway_payfast_payment_data_to_send` return feeds the signed payload sent to Payfast, and the `woocommerce_gateway_payfast_is_valid_ip` return decides whether an ITN request is accepted; validate both before use.
 
