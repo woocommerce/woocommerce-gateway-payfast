@@ -728,14 +728,24 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				$subscription = wcs_get_subscription( $order_id );
 				if ( ! empty( $subscription ) && ! empty( $token ) ) {
 					$old_token = $this->_get_subscription_token( $subscription );
-					// Cancel old subscription token of subscription if we have it.
-					if ( ! empty( $old_token ) ) {
-						$this->cancel_subscription_listener( $subscription );
-					}
 
-					// Set new subscription token on subscription.
-					$this->_set_subscription_token( $token, $subscription );
-					$this->log( 'Payfast token updated on Subscription: ' . $order_id );
+					/*
+					 * A replayed ITN (Payfast retry or manual re-send) carries the token
+					 * that is already stored. Cancelling it would leave the subscription
+					 * with a cancelled token, so skip the cancel and the update.
+					 */
+					if ( $old_token === $token ) {
+						$this->log( 'Possible ITN replay detected, Payfast token already stored on Subscription: ' . $order_id );
+					} else {
+						// Cancel old subscription token of subscription if we have it.
+						if ( ! empty( $old_token ) ) {
+							$this->cancel_subscription_listener( $subscription );
+						}
+
+						// Set new subscription token on subscription.
+						$this->_set_subscription_token( $token, $subscription );
+						$this->log( 'Payfast token updated on Subscription: ' . $order_id );
+					}
 				}
 			}
 			return;
@@ -938,15 +948,23 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Store token for future subscription deductions.
 		if ( count( $subscriptions ) > 0 && isset( $data['token'] ) ) {
-			if ( $this->_has_renewal_flag( reset( $subscriptions ) ) ) {
-				// Renewal flag is set to true, so we need to cancel previous token since we will create a new one.
-				$this->log( 'Cancel previous subscriptions with token ' . $this->_get_subscription_token( reset( $subscriptions ) ) );
+			$token = sanitize_text_field( $data['token'] );
 
-				// Only request API cancel token for the first subscription since all of them are using the same token.
-				$this->cancel_subscription_listener( reset( $subscriptions ) );
+			if ( $this->_has_renewal_flag( reset( $subscriptions ) ) ) {
+				$old_token = $this->_get_subscription_token( reset( $subscriptions ) );
+
+				if ( $old_token === $token ) {
+					// The ITN carries the token that is already stored, so do not cancel it.
+					$this->log( 'Possible ITN replay detected, Payfast token already stored on Subscription: ' . self::get_order_prop( reset( $subscriptions ), 'id' ) );
+				} else {
+					// Renewal flag is set to true, so we need to cancel previous token since we will create a new one.
+					$this->log( 'Cancel previous subscriptions with token ' . $old_token );
+
+					// Only request API cancel token for the first subscription since all of them are using the same token.
+					$this->cancel_subscription_listener( reset( $subscriptions ) );
+				}
 			}
 
-			$token = sanitize_text_field( $data['token'] );
 			foreach ( $subscriptions as $subscription ) {
 				$this->_delete_renewal_flag( $subscription );
 				$this->_set_subscription_token( $token, $subscription );
