@@ -131,7 +131,7 @@ Any change to a public class, method signature, hook, endpoint, or persisted dat
 
 **Keep the legacy loader.** `gateway-payfast.php` rewrites the old plugin basename inside the `active_plugins` option so sites that activated the plugin under its old file name stay active. Do not remove or rename it.
 
-**Do not assume global state.** ITN handling, subscription renewals, and pre-order completion run outside a normal front-end request: no cart, no session, no `$post`, and often no logged-in user. The Subscriptions and Pre-Orders integrations are optional; guard every use with `function_exists` (`wcs_*` functions) or `class_exists` (`WC_Pre_Orders_Order`) as the existing code does. WooPayments Multi-Currency is optional too; guard it with `class_exists`.
+**Do not assume global state.** ITN handling, subscription renewals, and pre-order completion run outside a normal front-end request: no cart, no session, no `$post`, and often no logged-in user. The Subscriptions and Pre-Orders integrations are optional; guard every use with `function_exists` (`wcs_*` functions) or `class_exists` (`WC_Pre_Orders_Order`, `WC_Pre_Orders_Cart`) as the existing code does. WooPayments Multi-Currency is optional too; guard it with `class_exists`.
 
 **Do not assume single-site or a standard install layout.** A change that reads or writes site state must state in its PR whether it behaves correctly under multisite; if it was not tested there, say so. Build return and notify URLs from WooCommerce and WordPress URL helpers; never concatenate them from the domain root.
 
