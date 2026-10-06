@@ -1441,6 +1441,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			return;
 		}
 
+		$this->log(
+			sprintf(
+				'Cancellation request for Payfast token %s for subscription %d sent to Payfast',
+				sanitize_key( $token ), // Should be a hyphen separated alphanumeric string.
+				$subscription->get_id()
+			)
+		);
 		$this->api_request( 'cancel', $token, array(), 'PUT' );
 	}
 
