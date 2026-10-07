@@ -202,6 +202,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		// Validate the gateway credentials.
 		add_action( 'update_option_woocommerce_payfast_settings', array( $this, 'validate_payfast_credentials' ), 10, 2 );
+
+		add_filter( 'pre_update_option_woocommerce_payfast_settings', array( $this, 'protect_credential_settings' ), 10, 2 );
+		add_filter( 'woocommerce_rest_prepare_payment_gateway', array( $this, 'redact_rest_credential_settings' ), 10, 2 );
 	}
 
 	/**
@@ -273,10 +276,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				'default'     => '',
 			),
 			'pass_phrase'      => array(
-				'title'       => __( 'Passphrase', 'woocommerce-gateway-payfast' ),
-				'type'        => 'text',
-				'description' => __( '* Required. Needed to ensure the data passed through is secure.', 'woocommerce-gateway-payfast' ),
-				'default'     => '',
+				'title'             => __( 'Passphrase', 'woocommerce-gateway-payfast' ),
+				'type'              => 'password',
+				'description'       => __( '* Required. Needed to ensure the data passed through is secure.', 'woocommerce-gateway-payfast' ),
+				'default'           => '',
+				'custom_attributes' => array(
+					'autocomplete' => 'new-password',
+				),
 			),
 			'send_debug_email' => array(
 				'title'   => __( 'Send Debug Emails', 'woocommerce-gateway-payfast' ),
@@ -319,6 +325,203 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function needs_setup() {
 		return ! $this->get_option( 'merchant_id' ) || ! $this->get_option( 'merchant_key' ) || ! $this->get_option( 'pass_phrase' );
+	}
+
+	/**
+	 * Get the settings that only users who can manage the credentials may change.
+	 *
+	 * @return string[]
+	 */
+	private function get_credential_setting_keys() {
+		// Sandbox mode is included because it skips the ITN source IP check.
+		return array(
+			'merchant_id',
+			'merchant_key',
+			'pass_phrase',
+			'testmode',
+		);
+	}
+
+	/**
+	 * Check if the current user can view and change the Payfast credentials.
+	 *
+	 * @return bool
+	 */
+	public function can_manage_credentials() {
+		/**
+		 * Filter the capability needed to manage the Payfast credentials.
+		 *
+		 * @since x.x.x
+		 *
+		 * @param string $capability Capability name. Default 'manage_options'.
+		 */
+		$capability = apply_filters( 'woocommerce_gateway_payfast_credentials_capability', 'manage_options' );
+
+		if ( ! is_string( $capability ) || '' === $capability ) {
+			$capability = 'manage_options';
+		}
+
+		return current_user_can( $capability ); // phpcs:ignore WordPress.WP.Capabilities.Undetermined -- Validated above.
+	}
+
+	/**
+	 * Generate the settings HTML, with the credential fields disabled for other users.
+	 *
+	 * @param array $form_fields Form fields.
+	 * @param bool  $echo        Whether to echo the output.
+	 * @return string
+	 */
+	public function generate_settings_html( $form_fields = array(), $echo = true ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.echoFound -- Parent signature.
+		if ( empty( $form_fields ) ) {
+			$form_fields = $this->get_form_fields();
+		}
+
+		if ( ! $this->can_manage_credentials() ) {
+			foreach ( $this->get_credential_setting_keys() as $key ) {
+				if ( ! isset( $form_fields[ $key ] ) ) {
+					continue;
+				}
+
+				$form_fields[ $key ]['disabled']    = true;
+				$form_fields[ $key ]['description'] = trim( ( $form_fields[ $key ]['description'] ?? '' ) . ' ' . esc_html__( 'Only administrators can change this setting.', 'woocommerce-gateway-payfast' ) );
+			}
+		}
+
+		return parent::generate_settings_html( $form_fields, $echo );
+	}
+
+	/**
+	 * Generate the password field HTML, without printing the saved passphrase.
+	 *
+	 * @param string $key  Field key.
+	 * @param array  $data Field data.
+	 * @return string
+	 */
+	public function generate_password_html( $key, $data ) {
+		if ( 'pass_phrase' !== $key ) {
+			return parent::generate_password_html( $key, $data );
+		}
+
+		$pass_phrase = $this->get_option( $key );
+		if ( '' !== $pass_phrase ) {
+			$data['placeholder'] = __( 'A passphrase is saved. Leave blank to keep it.', 'woocommerce-gateway-payfast' );
+			$data['description'] = str_replace(
+				__( '* Required. Needed to ensure the data passed through is secure.', 'woocommerce-gateway-payfast' ),
+				__( 'Needed to ensure the data passed through is secure.', 'woocommerce-gateway-payfast' ),
+				$data['description'] ?? ''
+			);
+		}
+
+		$this->settings[ $key ] = '';
+		$html                   = parent::generate_password_html( $key, $data );
+		$this->settings[ $key ] = $pass_phrase;
+
+		return $html;
+	}
+
+	/**
+	 * Validate the merchant ID field.
+	 *
+	 * @param string $key   Field key.
+	 * @param mixed  $value Posted value.
+	 * @return string
+	 */
+	public function validate_merchant_id_field( $key, $value ) {
+		if ( ! $this->can_manage_credentials() ) {
+			return $this->get_option( $key );
+		}
+
+		return $this->validate_text_field( $key, is_string( $value ) ? $value : '' );
+	}
+
+	/**
+	 * Validate the merchant key field.
+	 *
+	 * @param string $key   Field key.
+	 * @param mixed  $value Posted value.
+	 * @return string
+	 */
+	public function validate_merchant_key_field( $key, $value ) {
+		return $this->validate_merchant_id_field( $key, $value );
+	}
+
+	/**
+	 * Validate the passphrase field. A blank value keeps the saved passphrase.
+	 *
+	 * @param string $key   Field key.
+	 * @param mixed  $value Posted value.
+	 * @return string
+	 */
+	public function validate_pass_phrase_field( $key, $value ) {
+		if ( ! $this->can_manage_credentials() || ! is_string( $value ) || '' === trim( $value ) ) {
+			return $this->get_option( $key );
+		}
+
+		return $this->validate_text_field( $key, $value );
+	}
+
+	/**
+	 * Validate the sandbox field.
+	 *
+	 * @param string $key   Field key.
+	 * @param mixed  $value Posted value.
+	 * @return string
+	 */
+	public function validate_testmode_field( $key, $value ) {
+		if ( ! $this->can_manage_credentials() ) {
+			return $this->get_option( $key );
+		}
+
+		return $this->validate_checkbox_field( $key, $value );
+	}
+
+	/**
+	 * Keep the saved credentials when another logged-in user updates the settings (settings page or REST API).
+	 *
+	 * @param mixed $value     New settings.
+	 * @param mixed $old_value Old settings.
+	 * @return mixed
+	 */
+	public function protect_credential_settings( $value, $old_value ) {
+		if ( ! is_user_logged_in() || $this->can_manage_credentials() ) {
+			return $value;
+		}
+
+		if ( ! is_array( $value ) ) {
+			return $old_value;
+		}
+
+		$old_value = is_array( $old_value ) ? $old_value : array();
+		foreach ( $this->get_credential_setting_keys() as $key ) {
+			if ( array_key_exists( $key, $old_value ) ) {
+				$value[ $key ] = $old_value[ $key ];
+			} else {
+				unset( $value[ $key ] );
+			}
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Hide the passphrase in REST API responses from users who cannot manage the credentials.
+	 *
+	 * @param WP_REST_Response   $response Response.
+	 * @param WC_Payment_Gateway $gateway  Gateway.
+	 * @return WP_REST_Response
+	 */
+	public function redact_rest_credential_settings( $response, $gateway ) {
+		if ( ! $response instanceof WP_REST_Response || ! $gateway instanceof WC_Payment_Gateway || $this->id !== $gateway->id || $this->can_manage_credentials() ) {
+			return $response;
+		}
+
+		$data = $response->get_data();
+		if ( isset( $data['settings']['pass_phrase']['value'] ) ) {
+			$data['settings']['pass_phrase']['value'] = '';
+			$response->set_data( $data );
+		}
+
+		return $response;
 	}
 
 	/**

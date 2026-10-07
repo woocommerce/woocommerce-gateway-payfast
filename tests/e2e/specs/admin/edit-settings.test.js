@@ -82,7 +82,6 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 			settings: {
 				merchant_id: '',
 				merchant_key: '',
-				passphrase: '',
 			}
 		} );
 
@@ -91,7 +90,6 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 		await adminPage.waitForTimeout( 1000 );
 		await expect( await adminPage.locator( '.notice.notice-error', {hasText: /You forgot to fill your merchant ID/} ).last() ).toBeVisible();
 		await expect( await adminPage.locator( '.notice.notice-error', {hasText: /You forgot to fill your merchant key/} ).last() ).toBeVisible();
-		await expect( await adminPage.locator( '.notice.notice-error', {hasText: /Payfast requires a passphrase to work/} ).last() ).toBeVisible();
 	} );
 
 
@@ -126,8 +124,10 @@ test.describe( 'Verify payfast setting - @foundational', async () => {
 		const merchantKeySettingLocator = await adminPage.getByLabel( 'Merchant Key', {exact: true} );
 		await expect( await merchantKeySettingLocator.inputValue() ).toEqual( payfastSandboxCredentials.merchantKey );
 
+		// The saved passphrase is never printed on the page.
 		const passphraseSettingLocator = await adminPage.getByLabel( 'Passphrase', {exact: true} );
-		await expect( await passphraseSettingLocator.inputValue() ).toEqual( payfastSandboxCredentials.passPhrase );
+		await expect( await passphraseSettingLocator.inputValue() ).toEqual( '' );
+		await expect( passphraseSettingLocator ).toHaveAttribute( 'placeholder', 'A passphrase is saved. Leave blank to keep it.' );
 	} );
 
 	test( 'Checkout Block: Verify method title & description', async () => {
