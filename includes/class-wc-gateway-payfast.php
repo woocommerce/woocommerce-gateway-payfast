@@ -117,6 +117,13 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	protected $logger;
 
 	/**
+	 * Whether the currency filter is running.
+	 *
+	 * @var bool $is_filtering_currency
+	 */
+	private $is_filtering_currency = false;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -564,6 +571,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function is_available() {
 		if ( 'yes' === $this->enabled ) {
+			$order_id = absint( get_query_var( 'order-pay' ) );
+			if ( $order_id && ! $this->is_order_currency_supported( wc_get_order( $order_id ) ) ) {
+				return false;
+			}
+
 			$errors = $this->check_requirements();
 			// Prevent using this gateway on frontend if there are any configuration errors.
 			return 0 === count( $errors );
@@ -620,6 +632,11 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 
 		if ( ! $key_valid || ! current_user_can( 'pay_for_order', $order->get_id() ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
 			wc_print_notice( esc_html__( 'Sorry, you are not allowed to pay for this order.', 'woocommerce-gateway-payfast' ), 'error' );
+			return;
+		}
+
+		if ( ! $this->is_order_currency_supported( $order ) ) {
+			wc_print_notice( esc_html__( 'This order cannot be paid with Payfast because its currency is not South African Rand (ZAR).', 'woocommerce-gateway-payfast' ), 'error' );
 			return;
 		}
 
@@ -963,6 +980,9 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			if ( ! $this->amounts_equal( $data['amount_gross'], self::get_order_prop( $order, 'order_total' ) ) ) {
 				$payfast_error         = true;
 				$payfast_error_message = PF_ERR_AMOUNT_MISMATCH;
+			} elseif ( ! $this->is_order_currency_supported( $order ) ) {
+				$payfast_error         = true;
+				$payfast_error_message = PF_ERR_CURRENCY_MISMATCH;
 			} elseif ( strcasecmp( $data['custom_str1'], self::get_order_prop( $original_order, 'order_key' ) ) !== 0 ) {
 				// Check session ID.
 				$payfast_error         = true;
@@ -1449,11 +1469,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			return;
 		}
 
-		$response = $this->submit_subscription_payment( $subscription, $amount_to_charge );
+		if ( ! $this->is_order_currency_supported( $renewal_order ) ) {
+			$response = new WP_Error( 'payfast_unsupported_currency', esc_html__( 'Payfast can only charge subscriptions in South African Rand (ZAR).', 'woocommerce-gateway-payfast' ) );
+		} else {
+			$response = $this->submit_subscription_payment( $subscription, $amount_to_charge );
+		}
 
 		if ( is_wp_error( $response ) ) {
 			/* translators: 1: error code 2: error message */
 			$renewal_order->update_status( 'failed', sprintf( esc_html__( 'Payfast Subscription renewal transaction failed (%1$s:%2$s)', 'woocommerce-gateway-payfast' ), $response->get_error_code(), $response->get_error_message() ) );
+			return;
 		}
 		// Payment will be completion will be capture only when the ITN callback is sent to $this->handle_itn_request().
 		$renewal_order->add_order_note( esc_html__( 'Payfast Subscription renewal transaction submitted.', 'woocommerce-gateway-payfast' ) );
@@ -1470,6 +1495,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		$token     = $this->_get_subscription_token( $subscription );
 		$item_name = $this->get_subscription_name( $subscription );
 
+		$latest_order_to_renew = null;
 		foreach ( $subscription->get_related_orders( 'all', 'renewal' ) as $order ) {
 			$statuses_to_charge = array( 'on-hold', 'failed', 'pending' );
 			if ( in_array( $order->get_status(), $statuses_to_charge, true ) ) {
@@ -1477,6 +1503,12 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				break;
 			}
 		}
+
+		if ( ! $this->is_order_currency_supported( $subscription ) || ! $this->is_order_currency_supported( $latest_order_to_renew ) ) {
+			$this->log( 'Subscription renewal not submitted: the subscription or renewal order currency is not ZAR.' );
+			return new WP_Error( 'payfast_unsupported_currency', esc_html__( 'Payfast can only charge subscriptions in South African Rand (ZAR).', 'woocommerce-gateway-payfast' ) );
+		}
+
 		$item_description = wp_json_encode( array( 'renewal_order_id' => self::get_order_prop( $latest_order_to_renew, 'id' ) ) );
 
 		return $this->submit_ad_hoc_payment( $token, $amount_to_charge, $item_name, $item_description );
@@ -1741,6 +1773,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		define( 'PF_ERR_BAD_ACCESS', esc_html__( 'Bad access of page', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_BAD_SOURCE_IP', esc_html__( 'Bad source IP address', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_CONNECT_FAILED', esc_html__( 'Failed to connect to Payfast', 'woocommerce-gateway-payfast' ) );
+		define( 'PF_ERR_CURRENCY_MISMATCH', esc_html__( 'Currency mismatch', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_INVALID_SIGNATURE', esc_html__( 'Security signature mismatch', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_MERCHANT_ID_MISMATCH', esc_html__( 'Merchant ID mismatch', 'woocommerce-gateway-payfast' ) );
 		define( 'PF_ERR_NO_SESSION', esc_html__( 'No saved session found for ITN transaction', 'woocommerce-gateway-payfast' ) );
@@ -2436,7 +2469,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function filter_currency( $currency ) {
 		// Do nothing if WooPayments is not activated.
-		if ( ! class_exists( '\WCPay\MultiCurrency\MultiCurrency' ) ) {
+		if ( ! class_exists( '\WCPay\MultiCurrency\MultiCurrency' ) || ! is_callable( array( '\WCPay\MultiCurrency\MultiCurrency', 'instance' ) ) ) {
 			return $currency;
 		}
 
@@ -2445,20 +2478,27 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 			return $currency;
 		}
 
-		$user_id       = get_current_user_id();
-		$currency_code = null; // Initialize to avoid undefined variable notice.
+		// Do nothing if the WooPayments Multi-Currency feature is off.
+		if ( ! class_exists( 'WC_Payments_Features' ) || ! is_callable( array( 'WC_Payments_Features', 'is_customer_multi_currency_enabled' ) ) || ! WC_Payments_Features::is_customer_multi_currency_enabled() ) {
+			return $currency;
+		}
 
-		// Check if the currency is set in the URL.
-		if ( isset( $_GET['currency'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$currency_code = sanitize_text_field(
-				wp_unslash( $_GET['currency'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			);
-			// Check if the currency is set in the session (for logged-out users).
-		} elseif ( 0 === $user_id && WC()->session ) {
-			$currency_code = WC()->session->get( \WCPay\MultiCurrency\MultiCurrency::CURRENCY_SESSION_KEY );
-			// Check if the currency is set in the user meta (for logged-in users).
-		} elseif ( $user_id ) {
-			$currency_code = get_user_meta( $user_id, \WCPay\MultiCurrency\MultiCurrency::CURRENCY_META_KEY, true );
+		// WooPayments sets up Multi-Currency on `init`, and it calls this filter too.
+		if ( ! did_action( 'wp_loaded' ) || $this->is_filtering_currency ) {
+			return $currency;
+		}
+
+		$this->is_filtering_currency = true;
+		$currency_code               = null;
+		try {
+			$selected_currency = \WCPay\MultiCurrency\MultiCurrency::instance()->get_selected_currency();
+			if ( is_object( $selected_currency ) && is_callable( array( $selected_currency, 'get_code' ) ) ) {
+				$currency_code = $selected_currency->get_code();
+			}
+		} catch ( Throwable $e ) {
+			$currency_code = null;
+		} finally {
+			$this->is_filtering_currency = false;
 		}
 
 		if ( is_string( $currency_code ) && 'ZAR' === $currency_code ) {
@@ -2466,6 +2506,16 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		return $currency;
+	}
+
+	/**
+	 * Check if the saved order currency is ZAR, the only currency Payfast charges in.
+	 *
+	 * @param WC_Order $order Order object.
+	 * @return bool
+	 */
+	public function is_order_currency_supported( $order ) {
+		return $order instanceof WC_Order && 'ZAR' === strtoupper( (string) $order->get_currency() );
 	}
 
 	/**
