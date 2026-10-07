@@ -358,7 +358,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		/**
 		 * Filter the capability needed to manage the Payfast credentials.
 		 *
-		 * @since x.x.x
+		 * @since 1.7.9
 		 *
 		 * @param string $capability Capability name. Default 'manage_options'.
 		 */
@@ -1838,7 +1838,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * looking the ranges up at request time would put a network call in the payment notification
 	 * path, where a slow or failing lookup silently shrinks the allowlist.
 	 *
-	 * @since x.x.x
+	 * @since 1.7.9
 	 *
 	 * @return string[] IPv4 ranges in CIDR notation. A bare address is treated as a single host.
 	 */
@@ -1903,7 +1903,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 * this filter returns, also return an empty array from the companion filter
 		 * woocommerce_gateway_payfast_valid_ip_hostnames, which switches the fallback off.
 		 *
-		 * @since x.x.x
+		 * @since 1.7.9
 		 *
 		 * @param string[] $valid_ranges IPv4 ranges in CIDR notation.
 		 */
@@ -1949,7 +1949,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * an address is not in the documented list, so the set of accepted addresses stays a superset
 	 * of what resolving them alone would accept.
 	 *
-	 * @since x.x.x
+	 * @since 1.7.9
 	 *
 	 * @return string[] Hostnames to resolve, empty when the lookup has been switched off.
 	 */
@@ -1974,7 +1974,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		 * filter woocommerce_gateway_payfast_valid_ip_ranges from the first pass into the whole
 		 * answer, and is the only way to restrict senders to that list alone.
 		 *
-		 * @since x.x.x
+		 * @since 1.7.9
 		 *
 		 * @param string[] $valid_hostnames Hostnames to resolve.
 		 */
@@ -2029,7 +2029,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * failure is retried on the next request, so a resolver that recovers is picked up at once
 	 * rather than leaving addresses reachable only through that hostname refused in the meantime.
 	 *
-	 * @since x.x.x
+	 * @since 1.7.9
 	 *
 	 * @return string[] Resolved IPv4 addresses, possibly empty.
 	 */
@@ -2080,7 +2080,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 * method as well. Entries written in that notation are dropped here otherwise, before the
 	 * matcher ever sees them.
 	 *
-	 * @since x.x.x
+	 * @since 1.7.9
 	 *
 	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
 	 * @return array|false Network address as a long and prefix length, or false when the range is malformed.
@@ -2130,7 +2130,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	/**
 	 * Check whether an IPv4 address falls inside a range.
 	 *
-	 * @since x.x.x
+	 * @since 1.7.9
 	 *
 	 * @param string $ip    IPv4 address to check.
 	 * @param string $range IPv4 range in CIDR notation, or a bare IPv4 address for a single host.
