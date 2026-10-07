@@ -4,7 +4,7 @@ Tags: credit card, payfast, payment request, woocommerce, automattic
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.8
+Stable tag: 1.7.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -66,6 +66,15 @@ Yes; a [Payfast merchant account](https://payfast.io/gateway-aggregator-selector
 No, but to open a Payfast account, you’ll need a South African bank account to pay your funds into.
 
 == Changelog ==
+
+= 1.7.9 - 2026-10-07 =
+* Fix - Only users who can manage options can view or change the Payfast credentials and sandbox mode.
+* Fix - Only accept Payfast payments and renewals for orders in South African Rand (ZAR).
+* Fix - Accept ITN requests from every IP address Payfast publishes for its notification servers, instead of only the addresses currently held in DNS.
+* Add - `woocommerce_gateway_payfast_credentials_capability` filter to change the capability needed to manage the Payfast credentials.
+* Dev - Add the `woocommerce_gateway_payfast_valid_ip_ranges` and `woocommerce_gateway_payfast_valid_ip_hostnames` filters to adjust which sources ITN requests are accepted from.
+* Dev - Expand the coding agent instructions in `AGENTS.md` and add `CLAUDE.md`.
+* Dev - Add AGENTS.md backward-compatibility guardrails.
 
 = 1.7.8 - 2026-08-26 =
 * Fix - Rebuild an absolute checkout thank-you URL when a third-party plugin makes the Payfast return URL relative.

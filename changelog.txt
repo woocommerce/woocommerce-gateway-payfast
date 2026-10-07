@@ -1,5 +1,14 @@
 *** PayFast Changelog ***
 
+= 1.7.9 - 2026-10-07 =
+* Fix - Only users who can manage options can view or change the Payfast credentials and sandbox mode.
+* Fix - Only accept Payfast payments and renewals for orders in South African Rand (ZAR).
+* Fix - Accept ITN requests from every IP address Payfast publishes for its notification servers, instead of only the addresses currently held in DNS.
+* Add - `woocommerce_gateway_payfast_credentials_capability` filter to change the capability needed to manage the Payfast credentials.
+* Dev - Add the `woocommerce_gateway_payfast_valid_ip_ranges` and `woocommerce_gateway_payfast_valid_ip_hostnames` filters to adjust which sources ITN requests are accepted from.
+* Dev - Expand the coding agent instructions in `AGENTS.md` and add `CLAUDE.md`.
+* Dev - Add AGENTS.md backward-compatibility guardrails.
+
 = 1.7.8 - 2026-08-26 =
 * Fix - Rebuild an absolute checkout thank-you URL when a third-party plugin makes the Payfast return URL relative.
 * Dev - Update the E2E test setup to seed subscription products using the WooCommerce Subscriptions 9.0 purchase-options model.
