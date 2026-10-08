@@ -51,10 +51,17 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 		await fillBillingDetails(page, customer.billing, true);
 
 		// Check if Payfast payment method is visible & place order
+		// WooCommerce 11.2+ removes order_id from the cart URL after a cancel, so take it from the order-pay URL.
+		let orderId;
+		const orderPayPage = page.waitForURL( ( url ) => {
+			orderId = url.pathname.match( /\/order-pay\/(\d+)\// )?.[ 1 ];
+			return !! orderId;
+		}, { waitUntil: 'commit' } );
 		const payfastCheckoutPage = page.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
 		const payfastPaymentMethod = await page.locator( 'label[for="radio-control-wc-payment-method-options-payfast"]' );
 		await payfastPaymentMethod.click();
 		await page.getByRole( 'button', {name: 'Place order'} ).click();
+		await orderPayPage;
 		await payfastCheckoutPage;
 
 		// Pay on Payfast checkout page.
@@ -67,7 +74,6 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 
 		// Validate order status.
 		// Order should be in cancelled state.
-		const orderId = (new URLSearchParams(page.url())).get('order_id');
 		await goToOrderEditPage({page: adminPage, orderId});
 
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
@@ -84,10 +90,17 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 		await fillBillingDetails(page, customer.billing);
 
 		// Check if Payfast payment method is visible & place order
+		// WooCommerce 11.2+ removes order_id from the cart URL after a cancel, so take it from the order-pay URL.
+		let orderId;
+		const orderPayPage = page.waitForURL( ( url ) => {
+			orderId = url.pathname.match( /\/order-pay\/(\d+)\// )?.[ 1 ];
+			return !! orderId;
+		}, { waitUntil: 'commit' } );
 		const payfastCheckoutPage = page.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
 		const payfastPaymentMethod = await page.locator( '.wc_payment_method.payment_method_payfast' );
 		await payfastPaymentMethod.click();
 		await page.getByRole( 'button', {name: 'Place order'} ).click();
+		await orderPayPage;
 		await payfastCheckoutPage;
 
 		// Pay on Payfast checkout page.
@@ -100,7 +113,6 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 
 		// Validate order status.
 		// Order should be in processing state.
-		const orderId = (new URLSearchParams(page.url())).get('order_id');
 		await goToOrderEditPage({page: adminPage, orderId});
 
 		const orderStatus = await adminPage.locator( 'select[name="order_status"]' );
