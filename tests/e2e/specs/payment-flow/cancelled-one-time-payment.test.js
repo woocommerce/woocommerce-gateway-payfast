@@ -93,7 +93,7 @@ test.describe( 'Verify Payfast Cancelled One-Time Payment Process - @foundationa
 		// WooCommerce 11.2+ removes order_id from the cart URL after a cancel, so take it from the order-pay URL.
 		let orderId;
 		const orderPayPage = page.waitForURL( ( url ) => {
-			orderId = url.pathname.match( /\/order-pay\/(\d+)\// )?.[ 1 ];
+			orderId = url.pathname.match( /\/order-pay\/(\d+)/ )?.[ 1 ];
 			return !! orderId;
 		}, { waitUntil: 'commit' } );
 		const payfastCheckoutPage = page.waitForURL( /\/sandbox.payfast.co.za\/eng/ );
