@@ -333,6 +333,8 @@ export async function fillBillingDetails(
 	if (isBlock) {
 		return blockFillBillingDetails(page, customerBillingDetails);
 	}
+	// The postcode label and required fields depend on the country, so set it first.
+	await page.locator( '#billing_country' ).selectOption( customerBillingDetails.country );
 	await page.getByLabel( 'First name' ).fill( customerBillingDetails.firstname );
 	await page.getByLabel( 'Last name' ).fill( customerBillingDetails.lastname );
 	await page.getByLabel( 'Street address' ).fill( customerBillingDetails.addressfirstline );
