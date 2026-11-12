@@ -56,6 +56,7 @@ Use the smallest command set needed for the task. Run `nvm use` first so Node ma
 - The block checkout script is registered from `build/payment-method.js`. If `build/` is missing, the Blocks checkout has no Payfast script; run `npm run build:webpack`.
 - `npm run build` creates a zip in the repository root. Do not commit it.
 - CI runs E2E on a PR only when the `needs: e2e testing` label is added, and then only the `@foundational` tests.
+- Every PR gets a "Test the build" comment from `.github/workflows/pr-build-live-branch.yml`. Its WordPress Playground links run `tests/playground/setup.php` and use `wordpress_org_assets/blueprint-payfast-takeover.php.txt` as a mu-plugin, so a change to either file changes the previews. The Blueprints MUST NOT contain or ask for Payfast credentials; see `tests/playground/README.md`.
 - Pushing to the `staging` branch deploys the plugin to a staging site (`.github/workflows/main.yml`). Do not push to it unless asked.
 - The ITN handler is reached through `?wc-api=WC_Gateway_PayFast`, not a REST route. Local sites are not reachable by Payfast, so real ITNs do not arrive locally; E2E tests fake them with `tests/e2e/test-plugins/payfast-webhook-faker`.
 - Amounts are sent to Payfast as the order total number with no currency. Anything that changes which order or total is sent MUST keep the order currency ZAR.
