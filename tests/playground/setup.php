@@ -8,6 +8,7 @@
  * @package WooCommerce Gateway Payfast
  */
 
+// A Blueprint step runs as a bare PHP script, so WordPress has to be loaded first.
 require_once '/wordpress/wp-load.php';
 
 // WooCommerce would otherwise replace the Blueprint's landing page with its setup wizard.
