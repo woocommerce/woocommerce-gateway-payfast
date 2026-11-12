@@ -1,0 +1,291 @@
+name: Test the build
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  # The name this plugin is registered under in the Jetpack Beta Builder. Jetpack Beta uses it to
+  # find the stable version on WordPress.org and installs the dev build as "<slug>-dev", so it is
+  # the WordPress.org slug and not the repository name.
+  BETA_PLUGIN_SLUG: woocommerce-payfast-gateway
+
+jobs:
+  build-and-comment:
+    name: Build the plugin and comment on the PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup node version
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Node cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+        with:
+          php-version: '7.4'
+          tools: composer:v2
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      # The version tells a tester which pull request and commit a site is running.
+      - name: Set the dev version
+        id: dev-version
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          VERSION=$( jq -r '.version' package.json )
+          IFS=. read -r MAJOR MINOR PATCH <<<"$VERSION"
+          # A pre-release suffix such as "-beta.1" is dropped before the patch number is raised.
+          DEV_VERSION="${MAJOR}.${MINOR}.$(( ${PATCH%%[!0-9]*} + 1 ))-dev_PR-${PR_NUMBER}_commit-${PR_HEAD_SHA:0:7}"
+
+          sed -i "s/^ \* Version: .*$/ * Version: ${DEV_VERSION}/" woocommerce-gateway-payfast.php
+          sed -i "s/define( 'WC_GATEWAY_PAYFAST_VERSION', '[^']*' )/define( 'WC_GATEWAY_PAYFAST_VERSION', '${DEV_VERSION}' )/" woocommerce-gateway-payfast.php
+          sed -i "s/^Stable tag: .*$/Stable tag: ${DEV_VERSION}/" readme.txt
+
+          grep -q "Version: ${DEV_VERSION}" woocommerce-gateway-payfast.php
+          grep -q "'WC_GATEWAY_PAYFAST_VERSION', '${DEV_VERSION}'" woocommerce-gateway-payfast.php
+
+          echo "Dev version: ${DEV_VERSION}" >> "$GITHUB_STEP_SUMMARY"
+          echo "version=${DEV_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Build the plugin
+        run: npm run build
+
+      # The dev build gets its own folder name, so Jetpack Beta can install it next to the released plugin.
+      - name: Rename the plugin folder for the dev build
+        run: |
+          mkdir release
+          unzip -q woocommerce-gateway-payfast.zip -d release
+          cd release
+          mv woocommerce-gateway-payfast "${BETA_PLUGIN_SLUG}-dev"
+          zip -q -r "${BETA_PLUGIN_SLUG}-dev.zip" "${BETA_PLUGIN_SLUG}-dev"
+          rm -r "${BETA_PLUGIN_SLUG}-dev"
+
+      # The Playground links download this artifact on every click, so it is kept for longer than the
+      # Jetpack Beta Builder one. The run ID in the name ties each link to the files of one run. The
+      # preview files travel with the build because they are not part of the plugin zip.
+      - name: Collect the files for the Playground previews
+        run: |
+          mkdir playground-preview
+          cp "release/${BETA_PLUGIN_SLUG}-dev.zip" playground-preview/
+          cp tests/playground/setup.php playground-preview/setup.php
+          cp wordpress_org_assets/blueprint-payfast-takeover.php.txt playground-preview/receipt-page.php
+
+      - name: Upload the files for the Playground previews as an artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playground-preview-${{ github.run_id }}
+          path: playground-preview
+          if-no-files-found: error
+          retention-days: 14
+
+      # Pull requests from forks and from Dependabot do not receive the secret.
+      - name: Check for the Jetpack Beta Builder secret
+        id: beta-builder
+        env:
+          SECRET: ${{ secrets.PAYFAST_LIVE_BRANCH_SECRET }}
+        run: |
+          if [ -n "$SECRET" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo ":information_source: No Jetpack Beta Builder secret in this run, so the comment marks the Jetpack Beta and Jurassic Ninja options as not available." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload the zip file as an artifact for the Jetpack Beta Builder
+        if: steps.beta-builder.outputs.available == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: plugins # The name the Jetpack Beta Builder looks for.
+          path: release
+          if-no-files-found: error
+          # The Jetpack Beta Builder copies it right away.
+          retention-days: 1
+
+      - name: Inform the Jetpack Beta Builder webhook
+        if: steps.beta-builder.outputs.available == 'true'
+        env:
+          SECRET: ${{ secrets.PAYFAST_LIVE_BRANCH_SECRET }}
+          DEV_VERSION: ${{ steps.dev-version.outputs.version }}
+          PR_NUMBER: ${{ github.event.number }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          PLUGIN_DATA=$( jq -cn --arg slug "$BETA_PLUGIN_SLUG" --arg version "$DEV_VERSION" '{ ($slug): { version: $version } }' )
+
+          # GITHUB_REF is "refs/pull/<number>/merge" here, and builds are looked up by branch name.
+          curl --fail --silent --show-error -L \
+            --url "https://betadownload.jetpack.me/gh-action.php?run_id=${GITHUB_RUN_ID}&pr=${PR_NUMBER}&commit=${GITHUB_SHA}" \
+            --form-string "repo=${GITHUB_REPOSITORY}" \
+            --form-string "branch=${PR_HEAD_REF}" \
+            --form-string "plugins=${PLUGIN_DATA}" \
+            --form-string "secret=${SECRET}"
+
+      # WordPress Playground runs in the visitor's browser and can only fetch public URLs. Its artifact
+      # proxy serves this workflow's artifacts for the pull request and finds the workflow by name, hence
+      # GITHUB_WORKFLOW rather than a literal that a rename would silently break.
+      #
+      # The proxy picks the build by branch name, so a link can end up serving the build of a fork whose
+      # branch has the same name. That is why no Blueprint holds credentials or asks for them: the demo
+      # one saves placeholder settings, and saves them before the plugin is active so that the plugin
+      # does not check them with Payfast.
+      - name: Build the WordPress Playground preview links
+        id: playground
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          ARTIFACT_URL=$( jq -rn \
+            --arg org "$GITHUB_REPOSITORY_OWNER" \
+            --arg repo "${GITHUB_REPOSITORY#*/}" \
+            --arg workflow "$GITHUB_WORKFLOW" \
+            --arg pr "$PR_NUMBER" \
+            --arg artifact "playground-preview-${GITHUB_RUN_ID}" \
+            '"https://playground.wordpress.net/plugin-proxy.php?org=\($org|@uri)&repo=\($repo|@uri)&workflow=\($workflow|@uri)&pr=\($pr|@uri)&artifact=\($artifact|@uri)"' )
+
+          BLUEPRINTS=$( jq -cn --arg artifact_url "$ARTIFACT_URL" --arg zip "${BETA_PLUGIN_SLUG}-dev.zip" '
+            {
+              "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+              landingPage: "/wp-admin/admin.php?page=wc-settings&tab=checkout&section=payfast",
+              preferredVersions: { php: "8.3", wp: "latest" },
+              features: { networking: true }
+            } as $base
+            | [
+                { step: "login", username: "admin" },
+                { step: "installPlugin", pluginData: { resource: "wordpress.org/plugins", slug: "woocommerce" }, options: { activate: true } },
+                { step: "unzip", zipFile: { resource: "url", url: $artifact_url, caption: "Downloading the Payfast build for this PR" }, extractToPath: "/tmp/pr" },
+                { step: "mkdir", path: "/wordpress/wp-content/mu-plugins" },
+                { step: "cp", fromPath: "/tmp/pr/receipt-page.php", toPath: "/wordpress/wp-content/mu-plugins/payfast-playground-receipt-page.php" }
+              ] as $store
+            | [
+                { step: "installPlugin", pluginData: { resource: "vfs", path: ( "/tmp/pr/" + $zip ) }, options: { activate: true } },
+                { step: "runPHP", code: "<?php require \"/tmp/pr/setup.php\";" }
+              ] as $payfast
+            | {
+                step: "setSiteOptions",
+                options: {
+                  woocommerce_payfast_settings: {
+                    enabled: "yes",
+                    testmode: "yes",
+                    merchant_id: "playground-preview",
+                    merchant_key: "playground-preview",
+                    pass_phrase: "playground-preview",
+                    send_debug_email: "no"
+                  }
+                }
+              } as $placeholder_settings
+            | {
+                unconfigured: ( $base + { steps: ( $store + $payfast ) } ),
+                demo: ( $base + { landingPage: "/shop/", steps: ( $store + [ $placeholder_settings ] + $payfast ) } )
+              }' )
+
+          {
+            echo "url=https://playground.wordpress.net/#$( jq -rn --argjson blueprints "$BLUEPRINTS" '$blueprints.unconfigured|tojson|@uri' )"
+            echo "demo_url=https://playground.wordpress.net/#$( jq -rn --argjson blueprints "$BLUEPRINTS" '$blueprints.demo|tojson|@uri' )"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Write the comment
+        env:
+          BETA_BUILDER_INFORMED: ${{ steps.beta-builder.outputs.available }}
+          PLAYGROUND_URL: ${{ steps.playground.outputs.url }}
+          PLAYGROUND_DEMO_URL: ${{ steps.playground.outputs.demo_url }}
+          PR_NUMBER: ${{ github.event.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          {
+            echo "### Test the build"
+            echo
+
+            # A link that cannot work is worse than no link, so without a build on the Jetpack Beta
+            # Builder the first two options say what they need instead.
+            if [ "$BETA_BUILDER_INFORMED" = "true" ]; then
+              cat <<EOF
+          #### Option 1. Jetpack Beta
+
+          - Install and activate [Jetpack Beta](https://jetpack.com/beta/#download-and-install).
+          - Use this build by searching for PR number \`${PR_NUMBER}\` or branch name \`${PR_HEAD_REF}\` in your-test.site/wp-admin/admin.php?page=jetpack-beta&plugin=${BETA_PLUGIN_SLUG}
+
+          :information_source: Payfast needs the store currency set to South African rand (ZAR) and sandbox credentials of your own. Payfast's payment notifications only arrive on a site with a public address; without one, orders stay "Pending payment".
+
+          #### Option 2. Jurassic Ninja - available for logged-in A12s
+
+          :warning: Log in at [jurassic.ninja](https://jurassic.ninja/) first. Without a login, the link below takes you to the Jurassic Ninja homepage and no site is created.
+
+          :rocket: [Launch a JN site with this branch and sample products](https://jurassic.ninja/create/?jetpack-beta&nojetpack&woocommerce&woocommerce-import-sample-data&branches.${BETA_PLUGIN_SLUG}=${PR_HEAD_REF}) :rocket:
+
+          :information_source: The new site has a public address, which Payfast's payment notifications need. Payfast still needs the store currency set to South African rand (ZAR) and sandbox credentials of your own.
+
+          EOF
+            else
+              cat <<EOF
+          #### Option 1. Jetpack Beta
+
+          :construction: Not available for this build. Jetpack Beta only offers builds that were sent to the Jetpack Beta Builder, and this one was not: the plugin has to be registered there, and the run needs the \`PAYFAST_LIVE_BRANCH_SECRET\` secret, which pull requests from forks and from Dependabot never receive.
+
+          #### Option 2. Jurassic Ninja - available for logged-in A12s
+
+          :construction: Not available for this build. Jurassic Ninja installs a branch through Jetpack Beta, so it needs what Option 1 needs.
+
+          EOF
+            fi
+
+            cat <<EOF
+          #### Option 3. WordPress Playground - runs in your browser
+
+          - :shopping_cart: [Open with a demo checkout](${PLAYGROUND_DEMO_URL}): Payfast is switched on with placeholder credentials, so it shows at checkout. Add the product to the cart, then pay on the "Checkout" page (Blocks) or the "Shortcode Checkout" page. Where the redirect to Payfast would be, you get a notice.
+          - :gear: [Open unconfigured](${PLAYGROUND_URL}): a fresh store on the Payfast settings screen, with no credentials. Payfast does not show at checkout.
+
+          :information_source: Neither can take a payment. The preview does not send you to Payfast, and Payfast's payment notifications cannot reach a site that runs in your browser, so orders stay "Pending payment". WooCommerce Subscriptions and Pre-Orders are not installed. Do not enter real Payfast credentials in a preview. The links stop working 14 days after the last build.
+
+          ---
+
+          Build info:
+
+          - Latest commit: ${PR_HEAD_SHA}
+          - Build time: $( date -u "+%Y-%m-%d %H:%M:%S UTC" )
+
+          _Note: the build is updated when a new commit is pushed to this PR._
+          EOF
+          } > "$RUNNER_TEMP/test-the-build.md"
+
+          cat "$RUNNER_TEMP/test-the-build.md" >> "$GITHUB_STEP_SUMMARY"
+
+      # The token of a pull request from a fork cannot write comments; the job summary has the same text.
+      - name: Add or update the comment in the PR
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          COMMENT_IDS=$( gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --paginate \
+            --jq '.[] | select( .user.login == "github-actions[bot]" and ( .body | startswith( "### Test the build" ) ) ) | .id' )
+          COMMENT_ID=$( head -n 1 <<<"$COMMENT_IDS" )
+
+          if [ -n "$COMMENT_ID" ]; then
+            gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${COMMENT_ID}" -X PATCH -F "body=@${RUNNER_TEMP}/test-the-build.md" --silent
+          else
+            gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -F "body=@${RUNNER_TEMP}/test-the-build.md" --silent
+          fi
