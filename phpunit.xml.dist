@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+	bootstrap="tests/phpunit/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	convertDeprecationsToExceptions="false"
+	cacheResultFile=".phpunit.cache/test-results"
+	>
+	<testsuites>
+		<testsuite name="WC_Gateway_PayFast">
+			<directory suffix="-test.php">./tests/phpunit</directory>
+		</testsuite>
+	</testsuites>
+	<coverage cacheDirectory=".phpunit.cache/code-coverage">
+		<include>
+			<file>./woocommerce-gateway-payfast.php</file>
+			<directory suffix=".php">./includes</directory>
+		</include>
+	</coverage>
+</phpunit>

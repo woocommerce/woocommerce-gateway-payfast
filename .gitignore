@@ -17,6 +17,8 @@ screenshots/
 /assets/**/*.css
 .idea
 .wp-env.override.json
+.wp-env.phpunit.override.json
+.phpunit.cache/
 
 # Ignore all log files except for .htaccess
 /logs/*
