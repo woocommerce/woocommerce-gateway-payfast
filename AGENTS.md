@@ -42,7 +42,7 @@ Use the smallest command set needed for the task. Run `nvm use` first so Node ma
 | PHP coding standards (full) | `npm run phpcs` | Runs on `*.php` and `includes/`. Exits non-zero on `trunk` because of existing warnings. |
 | Fix PHP coding standards | `./vendor/bin/phpcbf <files>` | Run on the files you changed only. |
 | PHP compatibility (7.4 to 8.4) | `./vendor/bin/phpcs --standard=phpcs-compat.xml.dist -p '--ignore=*/vendor/*,*/node_modules/*,*/build/*' .` | Do not use `npm run phpcompat` locally; it also scans `vendor/` and `node_modules/` and fails. CI runs the check on the unzipped production build. |
-| JS lint | `npm run lint:js` | Currently crashes with `prettier.resolveConfig.sync is not a function` (Prettier 3 is not supported by the installed ESLint Prettier plugin). |
+| JS lint | `npm run lint:js` | Configured in `eslint.config.js` (ESLint flat config; `.eslintrc.js` and `.eslintignore` are not read). `tests/` is not linted. |
 | Start E2E environment | `npm run env:start-local` | Needs Docker and SSH access to the private `woocommerce/woocommerce-subscriptions` repo. Site runs at `http://localhost` (port 80). |
 | Stop or reset E2E environment | `npm run env:stop` / `npm run env:clean` / `npm run env:destroy` | |
 | E2E run | `npm run test:e2e-local` | Run `npx playwright install` once first. Reads Payfast sandbox credentials from `tests/e2e/config/.env` (copy `tests/e2e/config/.sample-env`). |

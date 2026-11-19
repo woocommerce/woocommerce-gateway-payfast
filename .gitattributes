@@ -11,8 +11,7 @@ package.json export-ignore
 package-lock.json export-ignore
 composer.json export-ignore
 phpunit.xml.dist export-ignore
-.eslintrc.js export-ignore
-.eslintignore export-ignore
+eslint.config.js export-ignore
 .tx export-ignore
 .prettierrc.js export-ignore
 webpack.config.js export-ignore
