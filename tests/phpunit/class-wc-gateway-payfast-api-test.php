@@ -190,4 +190,35 @@ class WC_Gateway_PayFast_API_Test extends WC_Payfast_Unit_Test_Case {
 		$this->assertWPError( $result );
 		$this->assertSame( 'Subscription already cancelled', $result->get_error_message() );
 	}
+
+	/**
+	 * API requests with an empty token should return an immediate error.
+	 *
+	 * @param mixed $token The empty token to test.
+	 * @return void
+	 *
+	 * @dataProvider provide_api_request_empty_tokens
+	 */
+	public function test_api_request_with_empty_token_returns_error( $token ): void {
+		$result = $this->gateway->api_request( 'adhoc', $token, array(), 'POST' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 404, $result->get_error_code() );
+		$this->assertSame( 'Can not submit Payfast request with an empty token', $result->get_error_message() );
+	}
+
+	/**
+	 * Data provider for {@see test_api_request_with_empty_token_returns_error()}.
+	 *
+	 * @return array
+	 */
+	public static function provide_api_request_empty_tokens(): array {
+		return array(
+			'empty string' => array( '' ),
+			'null'         => array( null ),
+			'false'        => array( false ),
+			'zero'         => array( 0 ),
+			'empty array'  => array( '' ),
+		);
+	}
 }
