@@ -1576,7 +1576,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function api_request( $command, $token, $api_args, $method = 'POST' ) {
 		if ( empty( $token ) ) {
-			$this->log( 'Error posting API request: No token supplied', true );
+			$this->log( 'Error posting API request: No token supplied' );
 			return new WP_Error( '404', esc_html__( 'Can not submit Payfast request with an empty token', 'woocommerce-gateway-payfast' ) );
 		}
 
