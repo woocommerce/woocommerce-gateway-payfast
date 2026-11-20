@@ -30,3 +30,4 @@ CLAUDE.local.md export-ignore
 .agents export-ignore
 apm_modules export-ignore
 .aider* export-ignore
+.husky export-ignore

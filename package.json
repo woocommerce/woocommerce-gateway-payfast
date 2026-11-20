@@ -19,6 +19,8 @@
 		"@woocommerce/eslint-plugin": "^2.3.0",
 		"@wordpress/env": "^12.0.0",
 		"@wordpress/scripts": "^31.6.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^17.6.1",
 		"node-wp-i18n": "^1.2.8",
 		"prettier": "^3.6.2"
 	},
@@ -41,7 +43,9 @@
 		"archive": "composer archive --file=$npm_package_name --format=zip",
 		"postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
 		"makepot": "wpi18n makepot --domain-path languages --pot-file $npm_package_name.pot --type plugin --main-file $npm_package_name.php --exclude node_modules,tests,docs",
-		"phpcs": "./vendor/bin/phpcs *.php includes -p",
+		"lint:php": "./vendor/bin/phpcs *.php includes -p",
+		"lint:php-fix": "./vendor/bin/phpcbf *.php includes -p",
+		"phpcs": "npm run lint:php",
 		"env": "wp-env",
 		"env:start": "wp-env start",
 		"env:start-local": "npm run env:install-plugins && npm run env:start",
@@ -56,7 +60,11 @@
 		"test:e2e-codegen": "npx playwright codegen",
 		"test:e2e-report": "npx playwright show-report tests/e2e/test-results/playwright-report",
 		"test:e2e-foundational": "npx playwright test --config tests/e2e/playwright.config.js --grep @foundational",
-		"phpcompat": "./vendor/bin/phpcs --standard=phpcs-compat.xml.dist -p ."
+		"phpcompat": "./vendor/bin/phpcs --standard=phpcs-compat.xml.dist -p .",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"*.php": "./vendor/bin/phpcs-changed -s --git"
 	},
 	"config": {
 		"wp_org_slug": "woocommerce-payfast-gateway"
