@@ -39,8 +39,8 @@ jobs:
             wp: L-1
             wc: L-1
           - php: '8.5'
+            wp: L-1
             wc: L-2
-            wp: L-2
 
     steps:
       - name: Checkout
