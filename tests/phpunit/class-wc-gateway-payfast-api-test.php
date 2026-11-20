@@ -30,7 +30,7 @@ class WC_Gateway_PayFast_API_Test extends WC_Payfast_Unit_Test_Case {
 	 * @return string
 	 */
 	private function expected_signature( array $args ): string {
-		return WC_Payfast_Test_Signature::api( array_merge( $args['headers'], $args['body'] ?? array() ), self::PASS_PHRASE );
+		return WC_Payfast_Test_Signature::sign_api( array_merge( $args['headers'], $args['body'] ?? array() ), self::PASS_PHRASE );
 	}
 
 	/**
