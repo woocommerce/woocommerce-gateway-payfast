@@ -60,6 +60,13 @@ function wc_payfast_tests_install_woocommerce() {
 tests_add_filter( 'setup_theme', 'wc_payfast_tests_install_woocommerce' );
 
 require $_tests_dir . '/includes/bootstrap.php';
+require __DIR__ . '/includes/class-wc-payfast-test-signature.php';
+require __DIR__ . '/includes/class-wc-payfast-unit-test-case.php';
+
+// WP_UnitTestCase restores hooks to a snapshot taken before the first test. A gateway first constructed
+// inside a test would register its hooks after that snapshot, and every later test would lose them.
+// WooCommerce constructs the gateways while WordPress loads today; this keeps that true if it stops.
+WC()->payment_gateways()->payment_gateways();
 
 /**
  * Block outbound HTTP requests that a test has not mocked.
