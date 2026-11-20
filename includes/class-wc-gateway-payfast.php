@@ -1576,8 +1576,8 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 	 */
 	public function api_request( $command, $token, $api_args, $method = 'POST' ) {
 		if ( empty( $token ) ) {
-			$this->log( 'Error posting API request: No token supplied', true );
-			return new WP_Error( '404', esc_html__( 'Can not submit Payfast request with an empty token', 'woocommerce-gateway-payfast' ), $results );
+			$this->log( 'Error posting API request: No token supplied' );
+			return new WP_Error( '404', esc_html__( 'Can not submit Payfast request with an empty token', 'woocommerce-gateway-payfast' ) );
 		}
 
 		$api_endpoint  = "https://api.payfast.co.za/subscriptions/$token/$command";
@@ -1597,7 +1597,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 		}
 
 		// Generate signature.
-		$all_api_variables                = array_merge( $api_args['headers'], (array) $api_args['body'] );
+		$all_api_variables                = array_merge( $api_args['headers'], (array) ( $api_args['body'] ?? array() ) );
 		$api_args['headers']['signature'] = md5( $this->_generate_parameter_string( $all_api_variables ) );
 		$api_args['method']               = strtoupper( $method );
 

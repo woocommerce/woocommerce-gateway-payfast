@@ -56,6 +56,10 @@
 		"test:e2e-codegen": "npx playwright codegen",
 		"test:e2e-report": "npx playwright show-report tests/e2e/test-results/playwright-report",
 		"test:e2e-foundational": "npx playwright test --config tests/e2e/playwright.config.js --grep @foundational",
+		"test:php": "wp-env run cli --config=.wp-env.phpunit.json --env-cwd=wp-content/plugins/woocommerce-gateway-payfast -- vendor/bin/phpunit",
+		"test:php:env:start": "wp-env start --config=.wp-env.phpunit.json",
+		"test:php:env:stop": "wp-env stop --config=.wp-env.phpunit.json",
+		"test:php:env:destroy": "wp-env destroy --config=.wp-env.phpunit.json",
 		"phpcompat": "./vendor/bin/phpcs --standard=phpcs-compat.xml.dist -p ."
 	},
 	"config": {

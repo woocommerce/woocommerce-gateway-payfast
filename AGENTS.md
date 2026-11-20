@@ -15,7 +15,7 @@ WooCommerce Payfast Gateway lets WooCommerce stores accept payments through Payf
 - **CRITICAL:** Do not commit credentials: Payfast merchant IDs, merchant keys, passphrases, or `tests/e2e/config/.env` values.
 - **CRITICAL:** Keep changes scoped. Do not perform broad refactors unless explicitly requested.
 - **CRITICAL:** Code comments MUST explain *why* the code is the way it is, not *what* it does. Do not narrate the change history or the conversation that produced the code. Keep ticket keys (for example `PAYFAST-123`) out of code comments; put them in the commit message or PR. See [Code Comment Conventions](#code-comment-conventions).
-- **CRITICAL:** If you change runtime behavior, verify it before claiming completion. There is no PHPUnit suite, so use the E2E suite, a local site, or both, and state in the PR what was not tested.
+- **CRITICAL:** If you change runtime behavior, verify it before claiming completion. Use the PHPUnit suite, the E2E suite, a local site, or a combination, and state in the PR what was not tested.
 - **CRITICAL:** Changes to checkout, payment availability, or the payment form MUST be checked on both the Blocks checkout and the shortcode (classic) checkout.
 - **CRITICAL:** Never weaken the ITN validation sequence (signature, source IP, data validation with Payfast, amount, order key). See [Backward Compatibility](#backward-compatibility).
 - **CRITICAL:** Security fixes MUST NOT be developed in this public repository, its public branches, or public PRs. Ask the user where to work (for example a GitHub draft security advisory with a temporary private fork).
@@ -48,6 +48,9 @@ Use the smallest command set needed for the task. Run `nvm use` first so Node ma
 | E2E run | `npm run test:e2e-local` | Run `npx playwright install` once first. Reads Payfast sandbox credentials from `tests/e2e/config/.env` (copy `tests/e2e/config/.sample-env`). |
 | E2E foundational only | `npm run test:e2e-foundational` | The subset CI runs on PRs. Export the `.env` values first. |
 | E2E debug | `npm run test:e2e-debug` | Playwright debug mode. |
+| Start PHPUnit environment | `npm run test:php:env:start` | A separate wp-env environment (`.wp-env.phpunit.json`, port 8890) with WordPress and WooCommerce only. Needs Docker and `composer install`. Stop or remove it with `npm run test:php:env:stop` / `npm run test:php:env:destroy`. |
+| PHPUnit run | `npm run test:php` | Runs `vendor/bin/phpunit` in the environment's `cli` container. Pass PHPUnit options after `--`, for example `npm run test:php -- --filter test_name`. |
+| PHPUnit against other versions | `node tests/phpunit/bin/set-versions.js --wp=L-2 --wc=L-1` | Accepts `latest`, `L`, `L-1`, `L-2`, or an exact version, and writes `.wp-env.phpunit.override.json` (gitignored). Restart the environment afterwards; set `WP_ENV_PHP_VERSION` when starting it to change PHP. |
 
 ## Common Pitfalls
 
@@ -55,6 +58,9 @@ Use the smallest command set needed for the task. Run `nvm use` first so Node ma
 - `npm run env:start` alone does not install WooCommerce Subscriptions. Use `npm run env:start-local`, which clones it first.
 - The block checkout script is registered from `build/payment-method.js`. If `build/` is missing, the Blocks checkout has no Payfast script; run `npm run build:webpack`.
 - `npm run build` creates a zip in the repository root. Do not commit it.
+- Do not run PHPUnit in the E2E environment (`.wp-env.json`). The WordPress test installer drops the database tables on every run, and wp-env's test config shares the site's table prefix, so it would wipe the E2E site. Use `npm run test:php`, which runs in its own environment.
+- The PHPUnit bootstrap blocks every outbound HTTP request that a test has not mocked, so the request fails with a `WP_Error`. Mock responses with `mock_http_response()` from the base test case, which records only the requests it answers in `$this->http_requests`.
+- `WC_Gateway_PayFast::setup_constants()` defines constants without checking whether they exist, so constructing a second gateway in one request raises "already defined" warnings, and PHPUnit turns those into errors. In tests, use `$this->gateway` and change settings with `update_gateway_settings()`. Its Payfast process and validate URLs always stay on the sandbox, whatever `testmode` a test sets.
 - CI runs E2E on a PR only when the `needs: e2e testing` label is added, and then only the `@foundational` tests.
 - Every PR gets a "Test the build" comment from `.github/workflows/pr-build-live-branch.yml`. Its WordPress Playground links run `tests/playground/setup.php` and use `wordpress_org_assets/blueprint-payfast-takeover.php.txt` as a mu-plugin, so a change to either file changes the previews. The Blueprints MUST NOT contain or ask for Payfast credentials; see `tests/playground/README.md`.
 - Pushing to the `staging` branch deploys the plugin to a staging site (`.github/workflows/main.yml`). Do not push to it unless asked.
@@ -95,11 +101,16 @@ Use the smallest command set needed for the task. Run `nvm use` first so Node ma
 
 ## Testing Conventions
 
-- There is no PHPUnit suite. Do not add one as a side effect of another change; it is a separate piece of work.
+- PHPUnit 9.6 tests live in `tests/phpunit/`. Test files end in `-test.php` and extend `WC_Payfast_Unit_Test_Case` (`tests/phpunit/includes/`), which sets up ZAR, sandbox credentials, HTTP mocking, and turns the ITN sender DNS fallback off so no test makes a real DNS lookup; use the polyfilled `set_up()` / `tear_down()`, not `setUp()` / `tearDown()`. The bootstrap loads WooCommerce and the gateway and installs WooCommerce, including the HPOS tables, into the test database. Subscriptions and Pre-Orders are not loaded.
+- Compute expected Payfast signatures with `WC_Payfast_Test_Signature`, never with the gateway's own signature code, or a regression in it goes unnoticed.
+- Make a filter return a fixed value with `set_filter_result()`. Use one filter result per test case (a data provider), not several stacked in one test.
+- Make data providers `static`; PHPUnit 10 requires it.
+- CI runs PHPUnit on every PR (`.github/workflows/php-tests.yml`) across the supported WordPress and WooCommerce versions, from PHP 7.4 to 8.4.
+- Prefer PHPUnit for logic that does not need a browser (ITN validation, signatures, amounts, order state). Use E2E for checkout flows.
 - E2E tests use Playwright and live in `tests/e2e/`: specs in `tests/e2e/specs/` (`admin/`, `payment-flow/`), helpers in `tests/e2e/utils/`, setup in `tests/e2e/bin/`, and test-only plugins in `tests/e2e/test-plugins/`.
 - Tag tests that CI must run on every PR with `@foundational`. CI runs only `@foundational` tests, and only on PRs labelled `needs: e2e testing`.
 - Reuse the helpers in `tests/e2e/utils/` before adding new setup code.
-- For behavior changes, update or add the nearest E2E spec. If E2E cannot cover it, describe the manual test in the PR.
+- For behavior changes, update or add the nearest PHPUnit test or E2E spec. If neither can cover it, describe the manual test in the PR.
 
 ## Release Hygiene
 

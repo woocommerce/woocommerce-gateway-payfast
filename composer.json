@@ -15,11 +15,16 @@
     },
     "require-dev": {
         "woocommerce/woocommerce-sniffs": "1.0.1",
-        "sirbrillig/phpcs-changed": "^2.13.0"
+        "sirbrillig/phpcs-changed": "^2.13.0",
+        "phpunit/phpunit": "^9.6",
+        "yoast/phpunit-polyfills": "^2.0"
     },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "7.4"
         }
     }
 }
