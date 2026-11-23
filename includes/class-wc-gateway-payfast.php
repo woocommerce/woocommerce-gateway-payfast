@@ -261,7 +261,7 @@ class WC_Gateway_PayFast extends WC_Payment_Gateway {
 				'title'       => __( 'Description', 'woocommerce-gateway-payfast' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-gateway-payfast' ),
-				'default'     => '',
+				'default'     => __( 'Pay securely with Payfast.', 'woocommerce-gateway-payfast' ),
 				'desc_tip'    => true,
 			),
 			'testmode'         => array(
