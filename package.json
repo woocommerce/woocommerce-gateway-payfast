@@ -30,6 +30,9 @@
 		},
 		"@wp-playground/storage": {
 			"isomorphic-git": "~1.38.10"
+		},
+		"@wordpress/scripts": {
+			"adm-zip": "^0.6.1"
 		}
 	},
 	"scripts": {
