@@ -34,6 +34,14 @@ composer install
 npm run build:webpack
 ```
 
+## Settings
+
+Each gateway setting is explained in [docs/settings.md](docs/settings.md).
+
+## Assets
+
+- `assets/images/review-test.png`: a small 32×32 Payfast-red check mark icon, for use as a review test image.
+
 ## npm scripts
 
 ```bash

@@ -33,3 +33,4 @@ CLAUDE.local.md export-ignore
 .agents export-ignore
 apm_modules export-ignore
 .aider* export-ignore
+docs export-ignore
