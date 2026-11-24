@@ -5,6 +5,7 @@
 node_modules export-ignore
 bin export-ignore
 tests export-ignore
+docs export-ignore
 Gruntfile.js export-ignore
 README.md export-ignore
 package.json export-ignore
