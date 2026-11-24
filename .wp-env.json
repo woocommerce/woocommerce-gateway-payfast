@@ -11,7 +11,7 @@
   "themes": ["https://downloads.wordpress.org/theme/storefront.zip"],
   "env": {
     "tests": {
-      "port": 80,
+      "port": 8899,
       "mappings": {
         "wp-cli.yml": "./tests/e2e/bin/wp-cli.yml"
       }
