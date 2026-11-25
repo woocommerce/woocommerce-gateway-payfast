@@ -13,6 +13,7 @@ const {chromium, expect} = require( '@playwright/test' );
  */
 const fs = require( 'fs' );
 const {admin, customer} = require( './config' );
+const {login} = require( './utils' );
 
 module.exports = async ( config ) => {
 	const {stateDir, baseURL, userAgent} = config.projects[0].use;
@@ -47,10 +48,6 @@ module.exports = async ( config ) => {
 		}
 	}
 
-	// Pre-requisites
-	let adminLoggedIn = false;
-	let customerLoggedIn = false;
-
 	// Specify user agent when running against an external test site to avoid getting HTTP 406 NOT ACCEPTABLE errors.
 	const contextOptions = {baseURL, userAgent};
 
@@ -61,99 +58,32 @@ module.exports = async ( config ) => {
 	const adminPage = await adminContext.newPage();
 	const customerPage = await customerContext.newPage();
 
-	// Sign in as admin user and save state
-	const adminRetries = 5;
-	for ( let i = 0; i < adminRetries; i ++ ) {
-		try {
-			console.log( 'Trying to log-in as admin...' );
+	try {
+		// Sign in as admin user and save state
+		const adminRetries = 5;
+		await login( adminPage, admin.username, admin.password, adminRetries );
+		// Save state.
+		await adminPage
+			.context()
+			.storageState( {path: process.env.ADMINSTATE} );
 
-			// Login to admin.
-			const waitForNavigationPromise = adminPage.waitForURL( '**/wp-admin/' );
-			await adminPage.goto( '/wp-login.php', {waitUntil: 'networkidle'} );
-			const usernameLocator = await adminPage.locator( 'input[name="log"]' );
-			await usernameLocator.fill( admin.username );
-			const passwordLocator = await adminPage.locator( 'input[name="pwd"]' );
-			await passwordLocator.fill( admin.password );
-			const submitButtonLocator = await adminPage.locator( '#wp-submit' );
-			await submitButtonLocator.click();
-			await waitForNavigationPromise;
+		console.log( 'Logged-in as admin successfully.' );
 
-			// Check if logged in successfully.
-			const mainHeadingLocator = await adminPage.locator( '.wrap > h1' );
-			await expect( await mainHeadingLocator.evaluate( ( el ) => el.textContent ) )
-				.toBe( 'Dashboard' );
+		// Sign in as customer user and save state
+		const customerRetries = 5;
+		await login( customerPage, customer.username, customer.password, customerRetries );
+		// Save state.
+		await customerPage
+			.context()
+			.storageState( {path: process.env.CUSTOMERSTATE} );
 
-			// Save state.
-			await adminPage
-				.context()
-				.storageState( {path: process.env.ADMINSTATE} );
-
-			console.log( 'Logged-in as admin successfully.' );
-			adminLoggedIn = true;
-
-			break;
-		} catch ( e ) {
-			console.log(
-				`Admin log-in failed, Retrying... ${i}/${adminRetries}`
-			);
-			console.log( e );
-		}
-	}
-
-	if ( !adminLoggedIn ) {
-		console.error(
-			'Cannot proceed e2e test, as admin login failed. Please check if the test site has been setup correctly.'
-		);
+		console.log( 'Logged-in as customer successfully.' );
+	} catch ( error ) {
+		console.error( 'Failed to log in as admin or customer:', error );
 		process.exit( 1 );
+	} finally {
+		await adminContext.close();
+		await customerContext.close();
+		await browser.close();
 	}
-
-	// Sign in as customer user and save state
-	const customerRetries = 5;
-	for ( let i = 0; i < customerRetries; i ++ ) {
-		try {
-			console.log( 'Trying to log-in as customer...' );
-
-			// Login to admin.
-			const waitForNavigationPromise = adminPage.waitForURL( '**/wp-admin/' );
-			await customerPage.goto( '/wp-admin/', {waitUntil: 'networkidle'} );
-			const usernameLocator = await customerPage.locator( 'input[name="log"]' );
-			await usernameLocator.fill( admin.username );
-			const passwordLocator = await customerPage.locator( 'input[name="pwd"]' );
-			await passwordLocator.fill( admin.password );
-			const submitButtonLocator = await customerPage.locator( '#wp-submit' );
-			await submitButtonLocator.click();
-			await waitForNavigationPromise;
-
-			// Check if customer logged in successfully.
-			await customerPage.goto( '/my-account', {waitUntil: 'networkidle'} );
-			const customerLogoutLocator = await customerPage
-				.locator( '.woocommerce-MyAccount-navigation-link--customer-logout' )
-
-			// Save state.
-			await customerPage
-				.context()
-				.storageState( {path: process.env.CUSTOMERSTATE} );
-
-			console.log( 'Logged-in as customer successfully.' );
-			customerLoggedIn = true;
-
-			break;
-		} catch ( e ) {
-			console.log(
-				`Customer log-in failed. Retrying... ${i}/${customerRetries}`
-			);
-			console.log( e );
-		}
-	}
-
-	if ( !customerLoggedIn ) {
-		console.error(
-			'Cannot proceed e2e test, as customer login failed. Please check if the test site has been setup correctly.'
-		);
-		process.exit( 1 );
-	}
-
-	await adminContext.close();
-	await customerContext.close();
-	await browser.close();
 };
